@@ -28,19 +28,21 @@ namespace AlternateRacialTraits.Features.Human
         [LocalizedString]
         public static readonly string Description = $"Humans select one extra {new Link(Page.Feat, "feat")} at 1st level.";
 
-        internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeatureSelection> Create(BlueprintInitializationContext initContext) =>
-            initContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.HumanBonusFeat, nameof(HumanBonusFeat))
-                .Map((BlueprintFeatureSelection blueprint) =>
+        internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeature> Create(BlueprintInitializationContext initContext) =>
+            initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HumanBonusFeat, nameof(HumanBonusFeat))
+                .Map((BlueprintFeature blueprint) =>
                 {
                     blueprint.m_DisplayName = LocalizedStrings.Features_Human_HumanBonusFeat_DisplayName;
                     blueprint.m_Description = LocalizedStrings.Features_Human_HumanBonusFeat_Description;
 
-                    blueprint.Group = FeatureGroup.Feat;
                     blueprint.Groups = new[] { FeatureGroup.Racial };
 
                     blueprint.m_Icon = BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection.GetBlueprint()?.Icon;
 
-                    blueprint.AddFeatures(BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection);
+                    blueprint.AddComponent(new UnitFactActivateEvent(e =>
+                    {
+                        Util.AddRacialSelection(e.Owner, new[] { BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection.GetBlueprint()! });
+                    }));
 
                     return blueprint;
                 });
