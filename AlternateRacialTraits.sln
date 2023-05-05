@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33513.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlternateRacialTraits", "AlternateRacialTraits\AlternateRacialTraits.csproj", "{A4C2BF56-7298-4D64-8293-3F69D3C3C260}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlternateRacialTraits", "AlternateRacialTraits\AlternateRacialTraits.csproj", "{A4C2BF56-7298-4D64-8293-3F69D3C3C260}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroWrath", "..\MicroWrath\MicroWrath\MicroWrath.csproj", "{9574BBEA-6A96-430B-ACD9-2D34D0599DDD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroWrath.Generator", "..\MicroWrath\MicroWrath.Generator\MicroWrath.Generator.csproj", "{111E7A87-CAE5-4176-B06B-B7FF11FED52E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroWrath.Loader", "..\MicroWrath\MicroWrath.Loader\MicroWrath.Loader.csproj", "{7E2B80ED-8825-407B-ACAE-365C301AB7DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{A4C2BF56-7298-4D64-8293-3F69D3C3C260}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4C2BF56-7298-4D64-8293-3F69D3C3C260}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4C2BF56-7298-4D64-8293-3F69D3C3C260}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9574BBEA-6A96-430B-ACD9-2D34D0599DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9574BBEA-6A96-430B-ACD9-2D34D0599DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9574BBEA-6A96-430B-ACD9-2D34D0599DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9574BBEA-6A96-430B-ACD9-2D34D0599DDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{111E7A87-CAE5-4176-B06B-B7FF11FED52E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{111E7A87-CAE5-4176-B06B-B7FF11FED52E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{111E7A87-CAE5-4176-B06B-B7FF11FED52E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{111E7A87-CAE5-4176-B06B-B7FF11FED52E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E2B80ED-8825-407B-ACAE-365C301AB7DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E2B80ED-8825-407B-ACAE-365C301AB7DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E2B80ED-8825-407B-ACAE-365C301AB7DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E2B80ED-8825-407B-ACAE-365C301AB7DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

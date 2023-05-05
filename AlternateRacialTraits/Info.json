@@ -1,0 +1,13 @@
+{
+  "Id": "AlternateRacialTraits",
+  "Version": "0.0.1.0dev",
+  "AssemblyName": "MicroWrath.Loader.dll",
+  "EntryMethod": "MicroWrath.MicroMod.Load",
+
+  "DisplayName": "Alternate Racial Traits",
+
+  "Author": "microsoftenator",
+
+  "GameVersion": "2.1.3"
+
+}

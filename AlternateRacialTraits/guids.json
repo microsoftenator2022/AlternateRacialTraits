@@ -1,0 +1,21 @@
+{
+  "Awareness": "edc1383b-f930-4cd7-a45e-e22dd3468fc8",
+  "BasicFeatSelectionDummy": "771f9b2e-fd88-42c7-af7f-3d1887a0dd55",
+  "HumanFeatureSelection": "837e8b42-0528-4cbb-aa1a-e8227870be93",
+  "NoAdditionaHumanTraits": "591db971-9529-4968-a081-b7e5354bc090",
+  "HumanBonusFeat": "8a4a6f5e-be0c-416a-8fdb-7dd98a9ab1b4",
+  "ComprehensiveEducation": "07bc62ab-b0d9-4662-968c-e5374c1325ef",
+  "GiantAncestry": "e85ff5a3-484f-46a4-aead-3857b2eff9c3",
+  "HistoryOfTerrorsTrait": "e0a373ae-eab8-4ce9-96ab-d752fb9bccf6",
+  "PracticedHunter": "6fcc8889-f498-4ec6-8fd2-422fc59bc361",
+  "UnstoppableMagic": "051d05e9-70df-4929-a6d3-9d61adac1fc8",
+  "FocusedStudyProgression": "0073c8a5-2128-4e29-9d25-6f21833d3205",
+  "DualTalentSelection": "05efd0a9-ec2f-4cd5-841d-1b30d5adf312",
+  "DualTalentStrength": "ca578029-d10a-491e-ad3d-5d7568d36ba6",
+  "DualTalentDexterity": "c175ca53-8fcc-4d86-b1ba-568207a22b9d",
+  "DualTalentConstitution": "0d293f67-cd92-486d-b7b1-133ce89444a8",
+  "DualTalentIntelligence": "84ec1327-8fca-472e-8e58-16799b1c0ebd",
+  "DualTalentWisdom": "95ae6cff-0560-4228-ba7d-a7d5008565d5",
+  "DualTalentCharisma": "15df2403-926d-47d5-bd6b-78d56c46e270",
+  "DualTalent": "9c228cc2-baa7-4157-9661-869e4fea38e7"
+}
