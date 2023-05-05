@@ -118,6 +118,8 @@ namespace AlternateRacialTraits.Features.Human
                     selection.m_DisplayName = LocalizedStrings.Features_Human_DualTalent_DisplayName;
                     selection.m_Description = LocalizedStrings.Features_Human_DualTalent_Description;
 
+                    selection.SetIcon("0465d85ec271d694f93089def152b820", 21300000);
+
                     selection.AddFeatures(features.Select(bp => bp.ToMicroBlueprint()));
 
                     selection.Groups = new[] { FeatureGroup.Racial };
@@ -137,6 +139,8 @@ namespace AlternateRacialTraits.Features.Human
 
                     feature.m_DisplayName = LocalizedStrings.Features_Human_DualTalent_DisplayName;
                     feature.m_Description = LocalizedStrings.Features_Human_DualTalent_Description;
+
+                    feature.m_Icon = selection.Icon;
 
                     //feature.AddAddFacts(c => c.m_Facts = new[] { selection.ToReference<BlueprintUnitFactReference>() });
 
