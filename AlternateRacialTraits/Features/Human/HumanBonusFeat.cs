@@ -41,7 +41,11 @@ namespace AlternateRacialTraits.Features.Human
 
                     blueprint.AddComponent(new UnitFactActivateEvent(e =>
                     {
-                        Util.AddRacialSelection(e.Owner, new[] { BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection.GetBlueprint()! });
+                        Util.AddLevelUpSelection(
+                            e.Owner,
+                            new[] { BlueprintsDb.Owlcat.BlueprintFeatureSelection
+                                .BasicFeatSelection.ToReference<BlueprintFeatureBase, BlueprintFeatureBaseReference>() },
+                            e.Owner.Progression.Race);
                     }));
 
                     return blueprint;

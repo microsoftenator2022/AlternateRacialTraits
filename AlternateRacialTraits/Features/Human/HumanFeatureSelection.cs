@@ -20,6 +20,7 @@ using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
 using MicroWrath.Localization;
 using MicroWrath.Util.Linq;
+using static Kingmaker.Blueprints.Loot.BlueprintUnitLoot;
 
 namespace AlternateRacialTraits.Features.Human
 {
@@ -79,156 +80,187 @@ namespace AlternateRacialTraits.Features.Human
             var bonusFeatDummy = initContext.NewBlueprint<BlueprintFeature>(
                 GeneratedGuid.BasicFeatSelectionDummy, nameof(GeneratedGuid.BasicFeatSelectionDummy));
 
-            var noMoreSelections = NoAdditionalTraits.Create(initContext);
             var selection = HumanFeatureSelection.Create(initContext);
 
-            selection
+            var humanBonusFeat = HumanBonusFeat.Create(initContext)
                 .Combine(bonusFeatDummy)
-                .Combine(HumanBonusFeat.Create(initContext))
                 .Map(bps =>
                 {
-                    var ((selection, dummy), bonusFeat) = bps;
+                    var (bonusFeat, dummy) = bps;
 
                     bonusFeat.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
 
                     dummy.SetIcon(bonusFeat.Icon);
-                    
+
                     dummy.m_DisplayName = bonusFeat.m_DisplayName;
                     dummy.m_Description = bonusFeat.m_Description;
 
-                    selection.AddFeatures(bonusFeat.ToMicroBlueprint());
+                    return bonusFeat;
+                });
 
-                    return (selection, dummy.ToMicroBlueprint());
-                })
-                .Combine(noMoreSelections)
+            var noMoreSelections = NoAdditionalTraits.Create(initContext)
+                .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
-                    var ((selection, dummy), noTraits) = bps;
+                    var (noTraits, dummy) = bps;
 
                     noTraits.AddComponent<PrerequisiteNoFeature>(pnf =>
                     {
-                        pnf.m_Feature = dummy.ToReference<BlueprintFeature, BlueprintFeatureReference>();
+                        pnf.m_Feature = dummy.ToReference<BlueprintFeatureReference>();
 
                         pnf.HideInUI = true;
                     });
 
-                    selection.AddFeatures(noTraits.ToMicroBlueprint());
+                    return noTraits;
+                });
 
-                    return (selection, dummy);
-                })
-                .Combine(AwarenessFeature.Create(initContext))
+            var awareness = AwarenessFeature.Create(initContext)
+                .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
-                    var ((selection, dummy), awareness) = bps;
+                    var (awareness, dummy) = bps;
 
-                    awareness.AddPrerequisiteFeature(dummy, true, true);
+                    awareness.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
 
-                    selection.AddFeatures(awareness.ToMicroBlueprint());
+                    return awareness;
+                });
 
-                    return (selection, dummy);
-                })
-                .Combine(ComprehensiveEducation.Create(initContext))
+            var comprehensiveEducation = ComprehensiveEducation.Create(initContext);
+            var giantAcestry = GiantAncestry.Create(initContext);
+            var historyOfTerrors = HistoryOfTerrorsTrait.Create(initContext);
+            var practicedHunter = PracticedHunter.Create(initContext);
+            
+            var unstoppableMagic = UnstoppableMagic.Create(initContext)
+                .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
-                    var ((selection, dummy), comprehensiveEducation) = bps;
+                    var (unstoppableMagic, dummy) = bps;
 
-                    selection.AddFeatures(comprehensiveEducation.ToMicroBlueprint());
+                    unstoppableMagic.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
 
-                    return (selection, dummy);
-                })
-                .Combine(GiantAncestry.Create(initContext))
+                    return unstoppableMagic;
+                });
+
+            var focusedStudy = FocusedStudyProgression.Create(initContext)
+                .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
-                    var ((selection, dummy), giantAncestry) = bps;
+                    var (focusedStudy, dummy) = bps;
 
-                    selection.AddFeatures(giantAncestry.ToMicroBlueprint());
+                    focusedStudy.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
 
-                    return (selection, dummy);
-                })
-                .Combine(HistoryOfTerrorsTrait.Create(initContext))
+                    return focusedStudy as BlueprintFeature;
+                });
+
+            var dualTalent = DualTalent.Create(initContext)
+                .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
-                    var ((selection, dummy), historyOfTerrors) = bps;
+                    var (dualTalent, dummy) = bps;
 
-                    selection.AddFeatures(historyOfTerrors.ToMicroBlueprint());
-
-                    return (selection, dummy);
-                })
-                .Combine(PracticedHunter.Create(initContext))
-                .Map(bps =>
-                {
-                    var ((selection, dummy), practicedHunter) = bps;
-
-                    selection.AddFeatures(practicedHunter.ToMicroBlueprint());
-
-                    return (selection, dummy);
-                })
-                .Combine(UnstoppableMagic.Create(initContext))
-                .Map(bps =>
-                {
-                    var ((selection, dummy), unstoppableMagic) = bps;
-
-                    unstoppableMagic.AddPrerequisiteFeature(dummy, true, true);
-
-                    selection.AddFeatures(unstoppableMagic.ToMicroBlueprint());
-
-                    return (selection, dummy);
-                })
-                .Combine(FocusedStudyProgression.Create(initContext))
-                .Map(bps =>
-                {
-                    var ((selection, dummy), focusedStudy) = bps;
-
-                    focusedStudy.AddPrerequisiteFeature(dummy, true, true);
-
-                    selection.AddFeatures(focusedStudy.ToMicroBlueprint());
-
-                    return (selection, dummy);
-                })
-                .Combine(DualTalent.Create(initContext))
-                .Map(bps =>
-                {
-                    var ((selection, dummy), dualTalent) = bps;
-
-                    dualTalent.AddPrerequisiteFeature(dummy, true, true);
+                    dualTalent.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
                     dualTalent.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, false, true);
 
-                    selection.AddFeatures(dualTalent.ToMicroBlueprint());
+                    return dualTalent;
+                });
 
-                    return (selection, dummy);
-                })
-
-                .Combine(initContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HumanRace))
-                .Combine(noMoreSelections)
+            var militaryTradition = MilitaryTradition.Create(initContext)
+                .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
-                    MicroLogger.Debug(() => "Updating human features");
+                    var ((mtFirst, mtSecond), dummy) = bps;
 
-                    var (((selection, dummy), humanRace), noMoreSelections) = bps;
+                    mtFirst.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
 
-                    var features = new List<BlueprintFeatureBase> { selection, dummy.GetBlueprint()! };
+                    return (mtFirst, mtSecond);
+                });
 
-                    features.AddRange(humanRace.Features
+            var features = (new[]
+            {
+                humanBonusFeat,
+                noMoreSelections,
+                awareness,
+                comprehensiveEducation,
+                giantAcestry,
+                historyOfTerrors,
+                practicedHunter,
+                unstoppableMagic,
+                focusedStudy,
+                dualTalent
+            }).Combine()
+            .Combine(militaryTradition)
+            .Map(bps =>
+            {
+                var (list, (mtFirst, mtSecond)) = bps;
+
+                return list.Append(mtFirst).Append(mtSecond);
+            });
+
+            selection
+                .Combine(bonusFeatDummy)
+                .Combine(features)
+                .Combine(noMoreSelections)
+                .Combine(initContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HumanRace))
+                .Map(bps =>
+                {
+                    var ((((selection, dummy), features), noMoreSelections), humanRace) = bps;
+
+                    var raceFeatures = new List<BlueprintFeatureBase> { selection, dummy };
+
+                    raceFeatures.AddRange(humanRace.Features
                         .Where(f => f != BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection.GetBlueprint()));
 
-                    humanRace.m_Features = features
+                    humanRace.m_Features = raceFeatures
                         .Select(bp => bp.ToReference<BlueprintFeatureBaseReference>())
                         .ToArray();
 
                     var selectionRef = selection.ToReference<BlueprintFeatureBaseReference>();
 
-                    foreach (var f in selection.m_AllFeatures.Where(f => f.Get() != noMoreSelections))
+                    foreach (var f in features.Where(f => f != noMoreSelections))
                     {
-                        f.Get().AddComponent(new UnitFactActivateEvent(e =>
+                        f.AddComponent(new UnitFactActivateEvent(e =>
                         {
-                            Util.AddRacialSelection(e.Owner, new [] { selectionRef.Get() });
+                            Util.AddLevelUpSelection(e.Owner, new[] { selectionRef }, e.Owner.Progression.Race);
                         }));
                     }
 
-                    return (selection, dummy);
+                    selection.AddFeatures(features.Select(MicroBlueprint.ToMicroBlueprint));
                 })
-
                 .Register();
+
+
+
+            //.Combine(initContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HumanRace))
+            //.Combine(noMoreSelections)
+            //.Map(bps =>
+            //{
+            //    MicroLogger.Debug(() => "Updating human features");
+
+            //    var (((selection, dummy), humanRace), noMoreSelections) = bps;
+
+            //    var features = new List<BlueprintFeatureBase> { selection, dummy.GetBlueprint()! };
+
+            //    features.AddRange(humanRace.Features
+            //        .Where(f => f != BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection.GetBlueprint()));
+
+            //    humanRace.m_Features = features
+            //        .Select(bp => bp.ToReference<BlueprintFeatureBaseReference>())
+            //        .ToArray();
+
+            //    var selectionRef = selection.ToReference<BlueprintFeatureBaseReference>();
+
+            //    foreach (var f in selection.m_AllFeatures.Where(f => f.Get() != noMoreSelections))
+            //    {
+            //        f.Get().AddComponent(new UnitFactActivateEvent(e =>
+            //        {
+            //            Util.AddLevelUpSelection(e.Owner, new [] { selectionRef }, e.Owner.Progression.Race);
+            //        }));
+            //    }
+
+            //    return (selection, dummy);
+            //})
+
+            //.Register();
         }
     }
 }

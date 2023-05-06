@@ -148,7 +148,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     feature.AddComponent(new UnitFactActivateEvent(e =>
                     {
-                        Util.AddRacialSelection(e.Owner, new[] { selectionRef.Get() });
+                        Util.AddLevelUpSelection(e.Owner, new[] { selectionRef }, e.Owner.Progression.Race);
                     }));
 
                     feature.Groups = new[] { FeatureGroup.Racial };

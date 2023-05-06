@@ -8,12 +8,14 @@ using Kingmaker.UnitLogic.Class.LevelUp.Actions;
 using Kingmaker.UnitLogic.Class.LevelUp;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.Blueprints.Classes;
+using Kingmaker.UnitLogic;
+using Kingmaker.Blueprints;
 
 namespace AlternateRacialTraits
 {
     internal static class Util
     {
-        internal static void AddRacialSelection(UnitEntityData unit, IList<BlueprintFeatureBase> features)
+        internal static void AddLevelUpSelection(UnitEntityData unit, IEnumerable<BlueprintFeatureBaseReference> features, FeatureSource source)
         {
             LevelUpController? controller = Kingmaker.Game.Instance?.LevelUpController;
             if (controller == null) { return; }
@@ -22,8 +24,8 @@ namespace AlternateRacialTraits
             LevelUpHelper.AddFeaturesFromProgression(
                 controller.State,
                 unit,
-                features,
-                unit.Progression.Race,
+                features.Select(r => r.Get()).ToArray(),
+                source,
                 0);
         }
     }

@@ -28,7 +28,6 @@
     <Reference Include="Newtonsoft.Json" HintPath="$(WrathPath)\Wrath_Data\Managed\Newtonsoft.Json.dll" Private="False" />
     <Reference Include="Owlcat.Runtime.Core" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Core.dll" Private="False" />
     <Reference Include="Owlcat.Runtime.Visual" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Visual.dll" Private="False" />
-    <Reference Include="Owlcat.Runtime.UI" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.UI.dll" Private="False" />
     <Reference Include="Owlcat.Runtime.UniRx" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.UniRx.dll" Private="False" />
     <Reference Include="Owlcat.Runtime.Validation" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Validation.dll" Private="False" />
     <Reference Include="Owlcat.SharedTypes" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.SharedTypes.dll" Private="False" />
@@ -44,9 +43,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Assembly-CSharp"
-               HintPath="$(SolutionDir)lib\Assembly-CSharp_public.dll"
-               Private="False" />
+    <Reference Include="Assembly-CSharp" HintPath="$(SolutionDir)lib\Assembly-CSharp_public.dll" Private="False" />
+    <Reference Include="Owlcat.Runtime.UI" HintPath="$(SolutionDir)lib\Owlcat.Runtime.UI_public.dll" Private="False" />
   </ItemGroup>
 
   <ItemGroup>
