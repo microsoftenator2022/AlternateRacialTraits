@@ -6,10 +6,10 @@ Saves made with the previous version will hopefully still load.
 ## Features
 
 So far, the added traits are:
- * Adoptive Parentage (only playable non-human races for now)
+ * Adoptive Parentage
  * Awareness
  * Comprehensive Education
- * Dual Talent
+ * Dual Talent - **NEW**: Now correctly enforces the selection of 2 *different* attributes.
  * Focused Study
  * Giant Ancestry
  * History Of Terrors (the base game still has this as a feat. You can only select one or the other)
@@ -20,7 +20,6 @@ So far, the added traits are:
 More may be added in the future
 
 ## Missing/In progress:
- * Icons for more of the traits.
  * Localization
 
 ## Install Instructions
