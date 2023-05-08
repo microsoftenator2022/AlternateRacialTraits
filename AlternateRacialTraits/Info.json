@@ -1,6 +1,6 @@
 {
   "Id": "AlternateRacialTraits",
-  "Version": "0.0.1.0dev",
+  "Version": "1.0.0.0pre",
   "AssemblyName": "MicroWrath.Loader.dll",
   "EntryMethod": "MicroWrath.MicroMod.Load",
 

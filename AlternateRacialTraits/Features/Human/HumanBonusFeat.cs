@@ -37,6 +37,8 @@ namespace AlternateRacialTraits.Features.Human
 
                     blueprint.Groups = new[] { FeatureGroup.Racial };
 
+                    //blueprint.HideInCharacterSheetAndLevelUp = true;
+
                     blueprint.m_Icon = BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection.GetBlueprint()?.Icon;
 
                     blueprint.AddComponent(new UnitFactActivateEvent(e =>

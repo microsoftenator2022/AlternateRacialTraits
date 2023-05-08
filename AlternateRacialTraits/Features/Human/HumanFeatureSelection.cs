@@ -19,8 +19,8 @@ using MicroWrath.Constructors;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
 using MicroWrath.Localization;
+using MicroWrath.Util;
 using MicroWrath.Util.Linq;
-using static Kingmaker.Blueprints.Loot.BlueprintUnitLoot;
 
 namespace AlternateRacialTraits.Features.Human
 {
@@ -168,11 +168,22 @@ namespace AlternateRacialTraits.Features.Human
                 .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
-                    var ((mtFirst, mtSecond), dummy) = bps;
+                    var (mtFirst, mtSecond, dummy) = bps.Flatten();
 
                     mtFirst.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
 
                     return (mtFirst, mtSecond);
+                });
+
+            var adoptiveParentage = AdoptiveParentage.Create(initContext)
+                .Combine(bonusFeatDummy)
+                .Map(bps =>
+                {
+                    var (adoptiveParentage, dummy) = bps;
+
+                    adoptiveParentage.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
+
+                    return adoptiveParentage as BlueprintFeature;
                 });
 
             var features = (new[]
@@ -186,12 +197,13 @@ namespace AlternateRacialTraits.Features.Human
                 practicedHunter,
                 unstoppableMagic,
                 focusedStudy,
-                dualTalent
+                dualTalent,
+                adoptiveParentage
             }).Combine()
             .Combine(militaryTradition)
             .Map(bps =>
             {
-                var (list, (mtFirst, mtSecond)) = bps;
+                var (list, mtFirst, mtSecond) = bps.Flatten();
 
                 return list.Append(mtFirst).Append(mtSecond);
             });
@@ -203,7 +215,7 @@ namespace AlternateRacialTraits.Features.Human
                 .Combine(initContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HumanRace))
                 .Map(bps =>
                 {
-                    var ((((selection, dummy), features), noMoreSelections), humanRace) = bps;
+                    var (selection, dummy, features, noMoreSelections, humanRace) = bps.Flatten();
 
                     var raceFeatures = new List<BlueprintFeatureBase> { selection, dummy };
 
@@ -227,40 +239,6 @@ namespace AlternateRacialTraits.Features.Human
                     selection.AddFeatures(features.Select(MicroBlueprint.ToMicroBlueprint));
                 })
                 .Register();
-
-
-
-            //.Combine(initContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HumanRace))
-            //.Combine(noMoreSelections)
-            //.Map(bps =>
-            //{
-            //    MicroLogger.Debug(() => "Updating human features");
-
-            //    var (((selection, dummy), humanRace), noMoreSelections) = bps;
-
-            //    var features = new List<BlueprintFeatureBase> { selection, dummy.GetBlueprint()! };
-
-            //    features.AddRange(humanRace.Features
-            //        .Where(f => f != BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection.GetBlueprint()));
-
-            //    humanRace.m_Features = features
-            //        .Select(bp => bp.ToReference<BlueprintFeatureBaseReference>())
-            //        .ToArray();
-
-            //    var selectionRef = selection.ToReference<BlueprintFeatureBaseReference>();
-
-            //    foreach (var f in selection.m_AllFeatures.Where(f => f.Get() != noMoreSelections))
-            //    {
-            //        f.Get().AddComponent(new UnitFactActivateEvent(e =>
-            //        {
-            //            Util.AddLevelUpSelection(e.Owner, new [] { selectionRef }, e.Owner.Progression.Race);
-            //        }));
-            //    }
-
-            //    return (selection, dummy);
-            //})
-
-            //.Register();
         }
     }
 }

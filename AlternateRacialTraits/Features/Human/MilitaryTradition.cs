@@ -38,7 +38,6 @@ namespace AlternateRacialTraits.Features.Human
         internal static BlueprintInitializationContext.ContextInitializer<(BlueprintFeatureSelection, BlueprintFeatureSelection)>
             Create(BlueprintInitializationContext context)
         {
-
             var firstSelection = context.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSelection,
                 $"{nameof(MilitaryTradition)}.FirstSelection")
                 .Map(selection =>
@@ -47,6 +46,8 @@ namespace AlternateRacialTraits.Features.Human
                     selection.m_Description = LocalizedStrings.Features_Human_MilitaryTradition_Description;
 
                     selection.Groups = new[] { FeatureGroup.Racial };
+
+                    selection.AddComponent<OverrideUIFeatureGroup>(c => c.Group = OverrideUIFeatureGroup.UIFeatureGroup.Trait);
 
                     return selection;
                 });

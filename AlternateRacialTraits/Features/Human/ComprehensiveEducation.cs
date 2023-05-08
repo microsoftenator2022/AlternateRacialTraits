@@ -53,7 +53,9 @@ namespace AlternateRacialTraits.Features.Human
                         blueprint.AddComponent<AddBackgroundClassSkill>(abcs => abcs.Skill = skill);
                     }
 
-                    blueprint.SetIcon("702d40939a2693b4abb3fa3e9eee30cb", 21300000);
+                    blueprint.SetIcon("95c4bb72353edb34082f088a5bd18cb2", 21300000);
+
+                    blueprint.Groups = new[] { FeatureGroup.Racial };
                         
                     blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, false, true);
 

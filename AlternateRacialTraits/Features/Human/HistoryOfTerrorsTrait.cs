@@ -29,6 +29,8 @@ namespace AlternateRacialTraits.Features.Human
                     blueprint.m_Icon = feat.Icon;
 
                     blueprint.Groups = new[] { FeatureGroup.Racial };
+
+                    blueprint.HideInCharacterSheetAndLevelUp = true;
                         
                     blueprint.AddAddFacts(c =>
                     {

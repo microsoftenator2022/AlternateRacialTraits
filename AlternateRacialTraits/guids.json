@@ -21,5 +21,20 @@
   "MilitaryTraditionSelection": "241eb92d-e93b-4dc3-9378-6e1af0b264f5",
   "MilitaryTraditionSecondSelection": "2759047b-e8b1-43e1-8197-66a1e994f5b6",
   "MartialWeaponProficiencyParametrized": "39309b55-2ce6-420d-8203-9316387fca56",
-  "ExoticWeaponProficiencyParametrized": "cbbb68c5-cc51-4d52-a880-b9887c3a580b"
+  "ExoticWeaponProficiencyParametrized": "cbbb68c5-cc51-4d52-a880-b9887c3a580b",
+  "GnomishWeaponFamiliarity": "36e7997f-cb49-4722-aa5e-ee06caf86801",
+  "HalflingWeaponFamiliarity": "dfcc0aa9-8c3d-4826-a7e6-0911cf588b45",
+  "AdoptiveParentageSelection": "dcdb71d1-6c62-4423-a33b-0129bfd46ef3",
+  "AdoptiveParentageElf": "63fc06a0-236f-43e0-babc-eaffc98511eb",
+  "AdoptiveParentageOrc": "91aacae6-527c-4d8f-a436-dea9ed34260a",
+  "AdoptiveParentageDwarf": "dce0abdf-ef85-4906-99b5-1ef9514d0f56",
+  "AdoptiveParentageGnome": "1c8f130e-8c76-496d-80a0-966f22e04d36",
+  "AdoptiveParentageHalfling": "b0f8d1e0-49b0-4ae9-a8e6-d9d202ca776f",
+  "AdoptiveParentageAasimar": "61ff76cd-605c-476f-9c24-76b58cab2054",
+  "AdoptiveParentageTiefling": "c6c59659-d825-4c40-bbf3-0f65180ef5a6",
+  "AdoptiveParentageOread": "df412169-0d6a-4e02-bc76-94141cc3ff9d",
+  "AdoptiveParentageKitsune": "a6197833-85d2-42e9-ac96-248e27c9f0c3",
+  "AdoptiveParentageDhampir": "d6d22c99-ebb6-4a47-bcba-3f0292cee70b",
+  "Removed1": "cb96b756-bec5-433f-8b42-7501959e4eb6",
+  "Removed2": "8cbaabb4-d326-4f34-93ec-b13ac0373782"
 }
