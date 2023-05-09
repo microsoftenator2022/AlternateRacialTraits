@@ -39,6 +39,8 @@ namespace AlternateRacialTraits.Features.HalfElf
                     blueprint.m_DisplayName = LocalizedStrings.Features_HalfElf_WeaponFamiliarity_DisplayName;
                     blueprint.m_Description = LocalizedStrings.Features_HalfElf_WeaponFamiliarity_Description;
 
+                    blueprint.Groups = new[] { FeatureGroup.Racial };
+
                     var elvenWeaponFamiliarity = BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity;
 
                     blueprint.m_Icon = elvenWeaponFamiliarity.GetBlueprint()!.Icon;
