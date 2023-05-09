@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +13,7 @@ using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
 using Kingmaker.Blueprints.Classes.Prerequisites;
 using Kingmaker.Blueprints.Classes.Selection;
+using Kingmaker.Blueprints.Facts;
 using Kingmaker.Enums;
 using Kingmaker.UI.MVVM._VM.ServiceWindows.CharacterInfo.Sections.Martial.WeaponProficiency;
 using Kingmaker.UnitLogic;
@@ -22,7 +25,10 @@ using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
 using MicroWrath.Localization;
+using MicroWrath.Util;
 using MicroWrath.Util.Linq;
+
+using Mono.Cecil.Cil;
 
 namespace AlternateRacialTraits.Features
 {
@@ -120,30 +126,56 @@ namespace AlternateRacialTraits.Features
     [HarmonyPatch(typeof(CharInfoWeaponProficiencyVM))]
     public static class CharInfoWeaponProficiencyVM_Patch
     {
-        [HarmonyPatch(nameof(CharInfoWeaponProficiencyVM.GetProficiency))]
-        [HarmonyPostfix]
-        static List<CharInfoWeaponProficiencyEntryVM> GetProficiency_Postfix(
-            List<CharInfoWeaponProficiencyEntryVM> __result,
-            CharInfoWeaponProficiencyVM __instance,
-            UnitDescriptor unit)
-        {
-            __result = unit.Progression.Features.Visible
-                .Where(f =>
-                {
-                    var ac = f.GetComponent<AddProficiencies>();
-                    return ac != default && ac.WeaponProficiencies.Length > 0;
-                })
-                .Select(f =>
-                {
-                    return __instance.AddDisposableAndReturn<CharInfoWeaponProficiencyEntryVM>(new()
-                    {
-                        DisplayName = f.Name,
-                        Description = f.Description
-                    });
-                })
-                .ToList();
+        //[HarmonyPatch(nameof(CharInfoWeaponProficiencyVM.GetProficiency))]
+        //[HarmonyPostfix]
+        //static List<CharInfoWeaponProficiencyEntryVM> GetProficiency_Postfix(
+        //    List<CharInfoWeaponProficiencyEntryVM> __result,
+        //    CharInfoWeaponProficiencyVM __instance,
+        //    UnitDescriptor unit)
+        //{
+        //    __result = unit.Progression.Features.Visible
+        //        .Where(f =>
+        //        {
+        //            var ac = f.GetComponent<AddProficiencies>();
+        //            return ac != default && ac.WeaponProficiencies.Length > 0;
+        //        })
+        //        .Select(f =>
+        //        {
+        //            return __instance.AddDisposableAndReturn<CharInfoWeaponProficiencyEntryVM>(new()
+        //            {
+        //                DisplayName = f.Name,
+        //                Description = f.Description
+        //            });
+        //        })
+        //        .ToList();
 
-            return __result;
+        //    return __result;
+        //}
+
+        [HarmonyPatch(nameof(CharInfoWeaponProficiencyVM.GetProficiency))]
+        [HarmonyTranspiler]
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            MicroLogger.Debug(() => $"{nameof(CharInfoWeaponProficiencyVM_Patch)}.{nameof(Transpiler)}");
+
+            var t = typeof(CharInfoWeaponProficiencyEntryVM);
+
+            var toMatch = new[]
+            {
+                new CodeInstruction(OpCodes.Ldloc_2),
+                new CodeInstruction(OpCodes.Callvirt, typeof(UnitFact<BlueprintFeature>).GetMethod("get_Blueprint", AccessTools.allDeclared)),
+                new CodeInstruction(OpCodes.Callvirt, typeof(BlueprintUnitFact).GetMethod("get_Name", AccessTools.allDeclared)),
+                CodeInstruction.StoreField(t, "DisplayName")
+            };
+
+            var replaceWith = new[]
+            {
+                new CodeInstruction(OpCodes.Ldloc_2),
+                new CodeInstruction(OpCodes.Callvirt, typeof(Feature).GetMethod("get_Name", AccessTools.allDeclared)),
+                CodeInstruction.StoreField(t, "DisplayName")
+            };
+
+            return TranspilerUtil.ReplaceInstructions(instructions, toMatch, replaceWith);
         }
     }
 }
