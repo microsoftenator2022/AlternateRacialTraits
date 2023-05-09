@@ -82,7 +82,7 @@ namespace AlternateRacialTraits.Features.Human
                     first.AddFeatures(exotic, martial);
                     second.AddFeatures(exotic, martial);
 
-                    second.AddPrerequisiteFeature(first.ToMicroBlueprint(), true, false);
+                    second.AddPrerequisiteFeature(first.ToMicroBlueprint(), hideInUI: true, removeOnApply: false);
                     second.HideNotAvailibleInUI = true;
 
                     return (first, second);

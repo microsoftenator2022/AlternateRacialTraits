@@ -41,8 +41,6 @@ namespace AlternateRacialTraits.Features.Human
                     feat.HideInUI = true;
                     feat.HideInCharacterSheetAndLevelUp = true;
 
-                    feat.Groups = new[] { FeatureGroup.Racial }; 
-
                     return feat;
                 });
     }
@@ -88,7 +86,7 @@ namespace AlternateRacialTraits.Features.Human
                 {
                     var (bonusFeat, dummy) = bps;
 
-                    bonusFeat.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
+                    bonusFeat.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), hideInUI: true, removeOnApply: true);
 
                     dummy.SetIcon(bonusFeat.Icon);
 
@@ -120,7 +118,7 @@ namespace AlternateRacialTraits.Features.Human
                 {
                     var (awareness, dummy) = bps;
 
-                    awareness.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
+                    awareness.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), hideInUI: true, removeOnApply: true);
 
                     return awareness;
                 });
@@ -136,7 +134,7 @@ namespace AlternateRacialTraits.Features.Human
                 {
                     var (unstoppableMagic, dummy) = bps;
 
-                    unstoppableMagic.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
+                    unstoppableMagic.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), hideInUI: true, removeOnApply: true);
 
                     return unstoppableMagic;
                 });
@@ -147,7 +145,7 @@ namespace AlternateRacialTraits.Features.Human
                 {
                     var (focusedStudy, dummy) = bps;
 
-                    focusedStudy.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
+                    focusedStudy.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), hideInUI: true, removeOnApply: true);
 
                     return focusedStudy as BlueprintFeature;
                 });
@@ -158,8 +156,8 @@ namespace AlternateRacialTraits.Features.Human
                 {
                     var (dualTalent, dummy) = bps;
 
-                    dualTalent.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
-                    dualTalent.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, false, true);
+                    dualTalent.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), hideInUI: true, removeOnApply: true);
+                    dualTalent.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, hideInUI: false, removeOnApply: true);
 
                     return dualTalent;
                 });
@@ -170,7 +168,7 @@ namespace AlternateRacialTraits.Features.Human
                 {
                     var (mtFirst, mtSecond, dummy) = bps.Flatten();
 
-                    mtFirst.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
+                    mtFirst.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), hideInUI: true, removeOnApply: true);
 
                     return (mtFirst, mtSecond);
                 });
@@ -181,7 +179,7 @@ namespace AlternateRacialTraits.Features.Human
                 {
                     var (adoptiveParentage, dummy) = bps;
 
-                    adoptiveParentage.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), true, true);
+                    adoptiveParentage.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), hideInUI: true, removeOnApply: true);
 
                     return adoptiveParentage as BlueprintFeature;
                 });

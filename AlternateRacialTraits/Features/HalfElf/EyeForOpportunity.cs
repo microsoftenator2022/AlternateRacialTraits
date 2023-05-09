@@ -53,7 +53,7 @@ namespace AlternateRacialTraits.Features.HalfElf
                         c.Descriptor = ModifierDescriptor.Racial;
                     });
 
-                    blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.KeenSenses, false, true)
+                    blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.KeenSenses, hideInUI: false, removeOnApply: true)
                         .Group = Prerequisite.GroupType.All;
 
                     blueprint.AddComponent<PrerequisiteNoFeature>(c =>

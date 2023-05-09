@@ -37,7 +37,7 @@ namespace AlternateRacialTraits.Features.Human
                         c.m_Facts = new[] { feat.ToReference<BlueprintUnitFactReference>() };
                     });
 
-                    blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, false, true);
+                    blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, hideInUI: false, removeOnApply: true);
 
                     return blueprint;
                 });

@@ -67,7 +67,7 @@ namespace AlternateRacialTraits.Features.Human
                         c.Skill = StatType.SkillLoreNature;
                     });
 
-                    blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, false, true);
+                    blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, hideInUI: false, removeOnApply: true);
 
                     return blueprint;
                 });

@@ -63,7 +63,7 @@ namespace AlternateRacialTraits.Features.Human
                         c.Descriptor = ModifierDescriptor.Racial;
                     });
 
-                    blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, false, true);
+                    blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, hideInUI: false, removeOnApply: true);
 
                     return blueprint;
                 });

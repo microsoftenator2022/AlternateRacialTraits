@@ -57,7 +57,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     blueprint.Groups = new[] { FeatureGroup.Racial };
                         
-                    blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, false, true);
+                    blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, hideInUI: false, removeOnApply: true);
 
                     return blueprint;
                 });
