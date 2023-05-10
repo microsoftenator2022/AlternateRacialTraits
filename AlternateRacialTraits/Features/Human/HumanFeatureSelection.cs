@@ -65,7 +65,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     selection.AddComponent<OverrideSelectionPriority>(c =>
                         c.Priority = Kingmaker.UI.MVVM._VM.CharGen.Phases.
-                            CharGenPhaseBaseVM.ChargenPhasePriority.RaceFeatures - 1);
+                            CharGenPhaseBaseVM.ChargenPhasePriority.RaceFeatures);
 
                     return selection;
                 }));
