@@ -54,6 +54,7 @@ namespace AlternateRacialTraits.Features.Oread
 
             var noTraits = NoAlternateTraits.Create(initContext);
             var graniteSkin = GraniteSkin.Create(initContext);
+            var crystallineForm = CrystallineForm.Create(initContext);
 
             var selection = initContext.NewBlueprint<BlueprintFeatureSelection>(
                 GeneratedGuid.Get(nameof(OreadFeatureSelection)), nameof(OreadFeatureSelection))
@@ -72,14 +73,16 @@ namespace AlternateRacialTraits.Features.Oread
                 });
 
             selection
-                .Combine(graniteSkin)
                 .Combine(noTraits)
+                .Combine(graniteSkin)
+                .Combine(crystallineForm)
                 .Map(bps =>
                 {
-                    var (selection, graniteSkin, noTraits) = bps.Flatten();
+                    var (selection, noTraits, graniteSkin, crystallineForm) = bps.Flatten();
 
                     selection.AddFeatures(noTraits.ToMicroBlueprint());
                     selection.AddFeatures(graniteSkin.ToMicroBlueprint());
+                    selection.AddFeatures(crystallineForm.ToMicroBlueprint());
 
                     return selection;
                 })
