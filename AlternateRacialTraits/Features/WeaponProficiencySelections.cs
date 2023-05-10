@@ -28,8 +28,6 @@ using MicroWrath.Localization;
 using MicroWrath.Util;
 using MicroWrath.Util.Linq;
 
-using Mono.Cecil.Cil;
-
 namespace AlternateRacialTraits.Features
 {
     [AllowedOn(typeof(BlueprintParametrizedFeature))]

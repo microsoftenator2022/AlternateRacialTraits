@@ -55,7 +55,10 @@ namespace AlternateRacialTraits.Features
             public override void OnTurnOff()
             {
                 foreach (var w in WeaponCategories)
-                    Owner.Proficiencies.Remove(w);
+                {
+                    if (Owner.Proficiencies.Contains(w))
+                        Owner.Proficiencies.Remove(w);
+                }
             }
 
             public override void OnActivate() => OnTurnOn();

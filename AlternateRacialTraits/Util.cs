@@ -14,7 +14,6 @@ using HarmonyLib;
 using Kingmaker.UI.MVVM._VM.CharGen.Phases.FeatureSelector;
 using Kingmaker.UI.Common;
 using Kingmaker.UI.MVVM._VM.CharGen.Phases;
-using Epic.OnlineServices;
 
 namespace AlternateRacialTraits
 {
