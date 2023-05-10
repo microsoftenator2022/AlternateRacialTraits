@@ -46,6 +46,8 @@ namespace AlternateRacialTraits.Features.HalfElf
 
                     blueprint.Groups = new[] { FeatureGroup.Racial };
 
+                    blueprint.SetIcon("f1caa0aa81d2e7d469e00c793f284b07", 21300000);
+
                     blueprint.AddAttackOfOpportunityAttackBonus(c =>
                     {
                         c.Bonus = 1;

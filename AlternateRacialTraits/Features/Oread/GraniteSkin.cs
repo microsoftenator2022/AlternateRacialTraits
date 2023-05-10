@@ -36,6 +36,8 @@ namespace AlternateRacialTraits.Features.Oread
                     blueprint.m_DisplayName = LocalizedStrings.Features_Oread_GraniteSkin_DisplayName;
                     blueprint.m_Description = LocalizedStrings.Features_Oread_GraniteSkin_Description;
 
+                    blueprint.SetIcon("907f3ced5b254124ba6bebfeb1e6db09", 21300000);
+
                     blueprint.Groups = new[] { FeatureGroup.Racial };
 
                     blueprint.AddComponent<AddStatBonus>(c =>
