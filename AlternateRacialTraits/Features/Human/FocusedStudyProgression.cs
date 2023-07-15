@@ -38,9 +38,9 @@ namespace AlternateRacialTraits.Features.Human
 
                     var skillFocus = BlueprintsDb.Owlcat.BlueprintFeatureSelection.SkillFocusSelection.GetBlueprint()!;
 
-                    progression.AddEntry(1, skillFocus);
-                    progression.AddEntry(8, skillFocus);
-                    progression.AddEntry(16, skillFocus);
+                    progression.AddFeatures(1, skillFocus);
+                    progression.AddFeatures(8, skillFocus);
+                    progression.AddFeatures(16, skillFocus);
 
                     progression.SetIcon("42cb25b90b7c7d34e956c7822a9349cb", 21300000);
 

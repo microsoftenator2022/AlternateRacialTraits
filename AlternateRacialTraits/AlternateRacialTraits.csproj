@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <VersionPrefix>1.1.0.0</VersionPrefix>
+    <VersionPrefix>1.1.1.0</VersionPrefix>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -33,8 +33,10 @@
     <Reference Include="Owlcat.SharedTypes" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.SharedTypes.dll" Private="False" />
     <Reference Include="Unity.TextMeshPro" HintPath="$(WrathPath)\Wrath_Data\Managed\Unity.TextMeshPro.dll" Private="False" />
     <Reference Include="UnityEngine" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.dll" Private="False" />
+    <Reference Include="UnityEngine.AssetBundleModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.AssetBundleModule.dll" Private="False" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.CoreModule.dll" Private="False" />
     <Reference Include="UnityEngine.IMGUIModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.IMGUIModule.dll" Private="False" />
+    <Reference Include="UnityEngine.ParticleSystemModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.ParticleSystemModule.dll" Private="False" />
     <Reference Include="UnityEngine.UI" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.UI.dll" Private="False" />
     <Reference Include="UnityEngine.UIModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.UIModule.dll" Private="False" />
     <Reference Include="Unity.RenderPipelines.Core.Runtime" HintPath="$(WrathPath)\Wrath_Data\Managed\Unity.RenderPipelines.Core.Runtime.dll" Private="False" />
@@ -45,7 +47,10 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp" HintPath="$(SolutionDir)lib\Assembly-CSharp_public.dll" Private="False" />
     <Reference Include="Owlcat.Runtime.UI" HintPath="$(SolutionDir)lib\Owlcat.Runtime.UI_public.dll" Private="False" />
+    <Reference Include="Owlcat.Runtime.Core" HintPath="$(SolutionDir)lib\Owlcat.Runtime.Core_public.dll" Private="False" />
+    <Reference Include="Owlcat.SharedTypes" HintPath="$(SolutionDir)lib\Owlcat.SharedTypes_public.dll" Private="False" />
   </ItemGroup>
+
 
   <ItemGroup>
     <ProjectReference Include="..\..\MicroWrath\MicroWrath.Generator\MicroWrath.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />

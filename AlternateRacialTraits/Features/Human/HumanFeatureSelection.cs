@@ -15,6 +15,7 @@ using Kingmaker.UnitLogic.Class.LevelUp;
 using MicroWrath;
 using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
+using MicroWrath.Components;
 using MicroWrath.Constructors;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
@@ -54,7 +55,7 @@ namespace AlternateRacialTraits.Features.Human
 
         internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeatureSelection> Create(BlueprintInitializationContext context) =>
             context.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.HumanFeatureSelection, nameof(HumanFeatureSelection))
-                .Map(((BlueprintFeatureSelection selection) =>
+                .Map((BlueprintFeatureSelection selection) =>
                 {
                     MicroLogger.Debug(() => $"Setting up {nameof(HumanFeatureSelection)}");
 
@@ -68,7 +69,7 @@ namespace AlternateRacialTraits.Features.Human
                             CharGenPhaseBaseVM.ChargenPhasePriority.RaceFeatures);
 
                     return selection;
-                }));
+                });
 
         [Init]
         internal static void Init()

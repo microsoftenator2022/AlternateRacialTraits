@@ -31,7 +31,7 @@ namespace AlternateRacialTraits.Features.Human
                     blueprint.Groups = new[] { FeatureGroup.Racial };
 
                     blueprint.HideInCharacterSheetAndLevelUp = true;
-                        
+                    
                     blueprint.AddAddFacts(c =>
                     {
                         c.m_Facts = new[] { feat.ToReference<BlueprintUnitFactReference>() };

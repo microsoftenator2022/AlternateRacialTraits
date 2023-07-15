@@ -57,7 +57,7 @@ namespace AlternateRacialTraits.Features.Human
                     {
                         component.Value = 1;
                     });
-                        
+
                     return blueprint;
                 });
     }

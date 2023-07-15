@@ -18,6 +18,7 @@ using Kingmaker.UnitLogic.Class.LevelUp;
 
 using MicroWrath;
 using MicroWrath.BlueprintInitializationContext;
+using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
 using MicroWrath.Localization;

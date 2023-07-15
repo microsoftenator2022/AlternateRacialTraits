@@ -12,6 +12,7 @@ using Kingmaker.Blueprints.Classes.Selection;
 using MicroWrath;
 using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
+using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
 using MicroWrath.Localization;
