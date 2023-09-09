@@ -1,7 +1,7 @@
 # AlternateRacialTraits
 
 Rewrite of https://github.com/microsoftenator2022/AlternateHumanTraits using my MicroWrath library and using the experience I've gained since writing the original (it was my first mod and it shows). Eventually will have a handful of traits for non-human races as well.
-Saves made with the previous version will hopefully still load.
+Saves made with the previous version will hopefully still load (no guarantees though)
 
 ## Features
 
