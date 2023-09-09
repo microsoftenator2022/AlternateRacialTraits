@@ -5,7 +5,7 @@ Saves made with the previous version will hopefully still load.
 
 ## Features
 
-So far, the added traits are:
+### Human
  * Adoptive Parentage
  * Awareness
  * Comprehensive Education
@@ -17,10 +17,20 @@ So far, the added traits are:
  * Practiced Hunter
  * Unstoppable Magic
 
-More may be added in the future
+### Half Elf
+ * Eye For Opportunity
+ * Weapon Familiarity
 
-## Missing/In progress:
- * Localization
+### Oread
+ * Crystalline Form
+ * Granite Skin
+
+## Planned/In development
+
+### Oread
+ * Stone in the Blood
+
+More to come.
 
 ## Install Instructions
  1. Download the mod from the releases page
