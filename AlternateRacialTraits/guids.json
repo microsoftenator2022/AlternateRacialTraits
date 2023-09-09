@@ -43,5 +43,7 @@
   "GraniteSkin": "f4d4c8d5-fefb-4cef-bfb5-26bd3782050f",
   "NoAlternateOreadTraits": "c890c6a4-43a6-4717-a596-4ee3793bb3b5",
   "StoneInTheBloodBuff": "3086b27a-c76c-4d6e-826a-18aa3b9acba7",
-  "CrystallineForm": "e9652cec-4098-42ee-9177-104e7bf06860"
+  "CrystallineForm": "e9652cec-4098-42ee-9177-104e7bf06860",
+  "CrystallineFormResource": "1f45e842-4bc4-4a44-9583-0ec1e3e21eb8",
+  "StoneInTheBloodFeature": "6218c22c-0428-42fe-96d1-72099e5cf1fc"
 }

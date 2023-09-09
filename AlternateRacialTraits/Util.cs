@@ -27,7 +27,7 @@ namespace AlternateRacialTraits
             //if (unit.Descriptor.Progression.CharacterLevel > 1) { return; }
 
             var featureBps = features.Select(r => r.Get()).ToArray();
-
+            
             LevelUpHelper.AddFeaturesFromProgression(
                 controller.State,
                 unit,
