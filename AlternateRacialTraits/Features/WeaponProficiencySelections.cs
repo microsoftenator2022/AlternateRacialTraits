@@ -59,12 +59,14 @@ namespace AlternateRacialTraits.Features
     {
         private static BlueprintInitializationContext.ContextInitializer<BlueprintParametrizedFeature>
             ExoticWeaponProficiencyParametrized(BlueprintInitializationContext context) =>
-            context.NewBlueprint<BlueprintParametrizedFeature>(
-                GeneratedGuid.ExoticWeaponProficiencyParametrized,
-                nameof(ExoticWeaponProficiencyParametrized))
-                .Map((BlueprintParametrizedFeature blueprint) =>
+            context
+                .NewBlueprint<BlueprintParametrizedFeature>(
+                    GeneratedGuid.ExoticWeaponProficiencyParametrized,
+                    nameof(ExoticWeaponProficiencyParametrized))
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.ExoticWeaponProficiencySelection)
+                .Map(bps =>
                 {
-                    var eps = BlueprintsDb.Owlcat.BlueprintFeatureSelection.ExoticWeaponProficiencySelection.GetBlueprint()!;
+                    var (blueprint, eps) = bps;
 
                     blueprint.m_DisplayName = eps.m_DisplayName;
                     blueprint.m_Description = eps.m_Description;

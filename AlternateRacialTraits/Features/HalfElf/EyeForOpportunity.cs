@@ -39,8 +39,11 @@ namespace AlternateRacialTraits.Features.HalfElf
             var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
 
             initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("EyeForOpportunity"), nameof(GeneratedGuid.EyeForOpportunity))
-                .Map(blueprint =>
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection)
+                .Map(bps =>
                 {
+                    var (blueprint, halfElfHeritageSelection) = bps;
+
                     blueprint.m_DisplayName = LocalizedStrings.Features_HalfElf_EyeForOpportunity_DisplayName;
                     blueprint.m_Description = LocalizedStrings.Features_HalfElf_EyeForOpportunity_Description;
 
@@ -66,8 +69,7 @@ namespace AlternateRacialTraits.Features.HalfElf
                         c.Group = Prerequisite.GroupType.All;
                     });
 
-                    BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection.GetBlueprint()!
-                        .AddFeatures(blueprint.ToMicroBlueprint());
+                    halfElfHeritageSelection.AddFeatures(blueprint);
                 })
                 .Register();
         }

@@ -16,6 +16,7 @@ using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
 using MicroWrath.Localization;
+using MicroWrath.Util;
 
 using static MicroWrath.Encyclopedia;
 
@@ -121,31 +122,43 @@ namespace AlternateRacialTraits.Features
                     return blueprint;
                 });
 
-            return gnomeWF
-                .Combine(halflingWF)
+            var wfs = context.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.ElfRace)
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity)
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HalfOrcRace)
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.OrcWeaponFamiliarity)
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.DwarfRace)
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.DwarvenWeaponFamiliarity)
                 .Map(bps =>
                 {
-                    var (gwf, hwf) = bps;
+                    var (elf, elfWf, halfOrc, orcWf, dwarf, dwarfWf) = bps.Expand();
 
-                    var weaponFamiliarity = new[]
-                    {
-                        (BlueprintsDb.Owlcat.BlueprintRace.ElfRace, BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity),
-                        (BlueprintsDb.Owlcat.BlueprintRace.HalfOrcRace, BlueprintsDb.Owlcat.BlueprintFeature.OrcWeaponFamiliarity),
-                        (BlueprintsDb.Owlcat.BlueprintRace.DwarfRace, BlueprintsDb.Owlcat.BlueprintFeature.DwarvenWeaponFamiliarity)
-                    }
-                    .Select(wf => (wf.Item1, wf.Item2.GetBlueprint()!))
-                    .ToList();
+                    return new[] {
+                        (elf, elfWf),
+                        (halfOrc, orcWf),
+                        (dwarf, dwarfWf)
+                    };
+                });
 
-                    weaponFamiliarity.Add((BlueprintsDb.Owlcat.BlueprintRace.GnomeRace, gwf));
-                    weaponFamiliarity.Add((BlueprintsDb.Owlcat.BlueprintRace.HalflingRace, hwf));
+            return gnomeWF
+                .Combine(halflingWF)
+                .Combine(wfs)
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.GnomeRace)
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HalflingRace)
+                .Map(bps =>
+                {
+                    var (gwf, hwf, wfs, gnomeRace, halflingRace) = bps.Expand();
+
+                    var weaponFamiliarity = wfs.ToList();
+
+                    weaponFamiliarity.Add((gnomeRace, gwf));
+                    weaponFamiliarity.Add((halflingRace, hwf));
 
                     foreach (var (race, feature) in weaponFamiliarity)
                     {
-                        feature.AddComponent<WeaponFamiliarityComponent>(c =>
-                            c.Race = race.ToReference<BlueprintRace, BlueprintRaceReference>());
+                        feature.AddComponent<WeaponFamiliarityComponent>(c => c.Race = race.ToReference());
                     }
 
-                    return bps;
+                    return (gwf, hwf);
                 });
         }
         

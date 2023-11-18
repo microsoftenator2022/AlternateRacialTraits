@@ -19,9 +19,10 @@ namespace AlternateRacialTraits.Features.Human
     {
         public static BlueprintInitializationContext.ContextInitializer<BlueprintFeature> Create(BlueprintInitializationContext initContext) =>
             initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HistoryOfTerrorsTrait, nameof(HistoryOfTerrorsTrait))
-                .Map((BlueprintFeature blueprint) =>
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.HistoryOfTerrors)
+                .Map(bps =>
                 {
-                    var feat = BlueprintsDb.Owlcat.BlueprintFeature.HistoryOfTerrors.GetBlueprint()!;
+                    var (blueprint, feat) = bps;
 
                     blueprint.m_DisplayName = feat.m_DisplayName;
                     blueprint.m_Description = feat.m_Description;

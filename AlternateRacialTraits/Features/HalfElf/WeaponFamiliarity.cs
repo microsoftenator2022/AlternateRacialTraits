@@ -15,6 +15,7 @@ using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
 using MicroWrath.Localization;
+using MicroWrath.Util;
 
 namespace AlternateRacialTraits.Features.HalfElf
 {
@@ -34,19 +35,21 @@ namespace AlternateRacialTraits.Features.HalfElf
             var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
 
             initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("HalfElfWeaponFamiliarity"), nameof(GeneratedGuid.HalfElfWeaponFamiliarity))
-                .Map(blueprint =>
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection)
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity)
+                .Map(bps =>
                 {
+                    var (blueprint, halfElfHeritageSelection, elvenWeaponFamiliarity) = bps.Expand();
+
                     blueprint.m_DisplayName = LocalizedStrings.Features_HalfElf_WeaponFamiliarity_DisplayName;
                     blueprint.m_Description = LocalizedStrings.Features_HalfElf_WeaponFamiliarity_Description;
 
                     blueprint.Groups = new[] { FeatureGroup.Racial };
 
-                    var elvenWeaponFamiliarity = BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity;
-
-                    blueprint.m_Icon = elvenWeaponFamiliarity.GetBlueprint()!.Icon;
+                    blueprint.m_Icon = elvenWeaponFamiliarity.Icon;
 
                     blueprint.AddAddFacts(c => c.m_Facts =
-                        new[] { elvenWeaponFamiliarity.ToReference<BlueprintUnitFact, BlueprintUnitFactReference>() });
+                        new[] { elvenWeaponFamiliarity.ToReference<BlueprintUnitFactReference>() });
 
                     // TODO: rework to allow for multiple selections (if TTT doesn't already)
                     //blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeatureSelection.Adaptability, false, true)
@@ -64,7 +67,7 @@ namespace AlternateRacialTraits.Features.HalfElf
                             c.Group = Prerequisite.GroupType.Any;
                         });
 
-                    BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection.GetBlueprint()!.AddFeatures(blueprint.ToMicroBlueprint());
+                    //BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection.GetBlueprint()!.AddFeatures(blueprint.ToMicroBlueprint());
 
                 })
                 .Register();

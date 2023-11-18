@@ -31,8 +31,11 @@ namespace AlternateRacialTraits.Features.Human
 
         internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeature> Create(BlueprintInitializationContext initContext) =>
             initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HumanBonusFeat, nameof(HumanBonusFeat))
-                .Map((BlueprintFeature blueprint) =>
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection)
+                .Map(bps =>
                 {
+                    var (blueprint, bfs) = bps;
+
                     blueprint.m_DisplayName = LocalizedStrings.Features_Human_HumanBonusFeat_DisplayName;
                     blueprint.m_Description = LocalizedStrings.Features_Human_HumanBonusFeat_Description;
 
@@ -40,7 +43,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     //blueprint.HideInCharacterSheetAndLevelUp = true;
 
-                    blueprint.m_Icon = BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection.GetBlueprint()?.Icon;
+                    blueprint.m_Icon = bfs.Icon;
 
                     blueprint.AddComponent(new UnitFactActivateEvent(e =>
                     {

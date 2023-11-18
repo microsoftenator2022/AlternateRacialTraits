@@ -46,12 +46,12 @@ namespace AlternateRacialTraits.Features.Human
             new(GeneratedGuid.AdoptiveParentageDwarf,
                 nameof(GeneratedGuid.AdoptiveParentageDwarf),
                 BlueprintsDb.Owlcat.BlueprintRace.DwarfRace,
-                new[] { BlueprintsDb.Owlcat.BlueprintFeature.DwarvenWeaponFamiliarity }),
+                new IMicroBlueprint<BlueprintFeature>[] { BlueprintsDb.Owlcat.BlueprintFeature.DwarvenWeaponFamiliarity }),
 
             new(GeneratedGuid.AdoptiveParentageElf,
                 nameof(GeneratedGuid.AdoptiveParentageElf),
                 BlueprintsDb.Owlcat.BlueprintRace.ElfRace,
-                new[] { BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity }),
+                new IMicroBlueprint<BlueprintFeature>[] { BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity }),
 
             new(GeneratedGuid.AdoptiveParentageGnome,
                 nameof(GeneratedGuid.AdoptiveParentageGnome),
@@ -66,36 +66,36 @@ namespace AlternateRacialTraits.Features.Human
             new(GeneratedGuid.AdoptiveParentageOrc,
                 nameof(GeneratedGuid.AdoptiveParentageOrc),
                 BlueprintsDb.Owlcat.BlueprintRace.HalfOrcRace,
-                new[] { BlueprintsDb.Owlcat.BlueprintFeature.OrcWeaponFamiliarity }),
+                new IMicroBlueprint<BlueprintFeature>[] { BlueprintsDb.Owlcat.BlueprintFeature.OrcWeaponFamiliarity }),
 
             new(GeneratedGuid.AdoptiveParentageAasimar,
                 nameof(GeneratedGuid.AdoptiveParentageAasimar),
                 BlueprintsDb.Owlcat.BlueprintRace.AasimarRace,
-                new[] { BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusDiplomacy,
+                new IMicroBlueprint<BlueprintFeature>[] { BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusDiplomacy,
                     BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusPerception }),
 
             new(GeneratedGuid.AdoptiveParentageDhampir,
                 nameof(GeneratedGuid.AdoptiveParentageDhampir),
                 BlueprintsDb.Owlcat.BlueprintRace.DhampirRace,
-                new[] { BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusDiplomacy,
+                new IMicroBlueprint<BlueprintFeature>[] { BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusDiplomacy,
                     BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusPerception }),
 
             new(GeneratedGuid.AdoptiveParentageKitsune,
                 nameof(GeneratedGuid.AdoptiveParentageKitsune),
                 BlueprintsDb.Owlcat.BlueprintRace.KitsuneRace,
-                new[] { BlueprintsDb.Owlcat.BlueprintFeature.WeaponFocusBite,
+                new IMicroBlueprint<BlueprintFeature>[] { BlueprintsDb.Owlcat.BlueprintFeature.WeaponFocusBite,
                     BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusAcrobatics }),
 
             new(GeneratedGuid.AdoptiveParentageOread,
                 nameof(GeneratedGuid.AdoptiveParentageOread),
                 BlueprintsDb.Owlcat.BlueprintRace.OreadRace,
-                new[] { BlueprintsDb.Owlcat.BlueprintFeature.WeaponFocusLongbow,
+                new IMicroBlueprint<BlueprintFeature>[] { BlueprintsDb.Owlcat.BlueprintFeature.WeaponFocusLongbow,
                     BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusDiplomacy}),
 
             new(GeneratedGuid.AdoptiveParentageTiefling,
                 nameof(GeneratedGuid.AdoptiveParentageTiefling),
                 BlueprintsDb.Owlcat.BlueprintRace.TieflingRace,
-                new[] { BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusDiplomacy,
+                new IMicroBlueprint<BlueprintFeature>[] { BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusDiplomacy,
                     BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusStealth })
         };
 

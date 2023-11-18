@@ -52,13 +52,17 @@
   </ItemGroup>
 
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <ProjectReference Include="..\..\MicroWrath\MicroWrath.Generator\MicroWrath.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\..\MicroWrath\MicroWrath.Loader\MicroWrath.Loader.csproj" />
     <ProjectReference Include="..\..\MicroWrath\MicroWrath\MicroWrath.csproj" />
   </ItemGroup>
 
-  <UsingTask TaskName="MicroWrath.Generator.GenerateGuidsFile" AssemblyFile="..\..\MicroWrath\MicroWrath.Generator.Tasks\bin\$(Configuration)\net472\MicroWrath.Generator.Tasks.dll" />
+  <UsingTask TaskName="MicroWrath.Generator.GenerateGuidsFile" AssemblyFile="..\..\MicroWrath\MicroWrath.Generator.Tasks\bin\$(Configuration)\net472\MicroWrath.Generator.Tasks.dll" />-->
+
+  <ItemGroup>
+    <PackageReference Include="MicroWrath" Version="0.8.0-prerelease-20231117-1343" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Update="Info.json">

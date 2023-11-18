@@ -58,14 +58,15 @@ namespace AlternateRacialTraits.Features.Oread
 
             var selection = initContext.NewBlueprint<BlueprintFeatureSelection>(
                 GeneratedGuid.Get(nameof(OreadFeatureSelection)), nameof(OreadFeatureSelection))
-                .Map(selection =>
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.OreadRace)
+                .Map(bps =>
                 {
+                    var (selection, race) = bps;
+
                     selection.m_DisplayName = LocalizedStrings.Features_Oread_OreadFeatureSelection_DisplayName;
                     selection.m_Description = LocalizedStrings.Features_Oread_OreadFeatureSelection_Description;
 
                     selection.Groups = new[] { FeatureGroup.Racial };
-
-                    var race = BlueprintsDb.Owlcat.BlueprintRace.OreadRace.GetBlueprint()!;
 
                     race.m_Features = race.m_Features.Append(selection.ToReference<BlueprintFeatureBaseReference>());
 

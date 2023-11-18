@@ -31,12 +31,13 @@ namespace AlternateRacialTraits.Features.Human
 
         internal static BlueprintInitializationContext.ContextInitializer<BlueprintProgression> Create(BlueprintInitializationContext context) =>
             context.NewBlueprint<BlueprintProgression>(GeneratedGuid.FocusedStudyProgression, nameof(FocusedStudyProgression))
-                .Map((BlueprintProgression progression) =>
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.SkillFocusSelection)
+                .Map(bps =>
                 {
+                    var (progression, skillFocus) = bps;
+
                     progression.m_DisplayName = LocalizedStrings.Features_Human_FocusedStudyProgression_DisplayName;
                     progression.m_Description = LocalizedStrings.Features_Human_FocusedStudyProgression_Description;
-
-                    var skillFocus = BlueprintsDb.Owlcat.BlueprintFeatureSelection.SkillFocusSelection.GetBlueprint()!;
 
                     progression.AddFeatures(1, skillFocus);
                     progression.AddFeatures(8, skillFocus);

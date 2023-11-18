@@ -211,15 +211,16 @@ namespace AlternateRacialTraits.Features.Human
                 .Combine(bonusFeatDummy)
                 .Combine(features)
                 .Combine(noMoreSelections)
-                .Combine(initContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HumanRace))
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HumanRace)
+                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection)
                 .Map(bps =>
                 {
-                    var (selection, dummy, features, noMoreSelections, humanRace) = bps.Flatten();
+                    var (selection, dummy, features, noMoreSelections, humanRace, bfs) = bps.Expand();
 
                     var raceFeatures = new List<BlueprintFeatureBase> { selection, dummy };
 
                     raceFeatures.AddRange(humanRace.Features
-                        .Where(f => f != BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection.GetBlueprint()));
+                        .Where(f => f != bfs));
 
                     humanRace.m_Features = raceFeatures
                         .Select(bp => bp.ToReference<BlueprintFeatureBaseReference>())
