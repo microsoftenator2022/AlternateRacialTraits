@@ -41,8 +41,8 @@
 
   <ItemGroup>
     <PackageReference Include="AssemblyPublicizer" Version="1.0.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>none</PrivateAssets>
+      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="MicroWrath" Version="0.8.2-*" />
   </ItemGroup>
