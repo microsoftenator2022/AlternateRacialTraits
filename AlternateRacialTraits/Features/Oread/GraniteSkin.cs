@@ -10,10 +10,11 @@ using Kingmaker.Enums;
 using Kingmaker.UnitLogic.FactLogic;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -29,8 +30,8 @@ namespace AlternateRacialTraits.Features.Oread
             $"They gain a +1 racial {new Link(Page.Bonus, "bonus")} to natural " +
             $"{new Link(Page.Armor_Class, "armor")}. This racial trait replaces Oread energy resistance.";
 
-        internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeature> Create(BlueprintInitializationContext context) =>
-            context.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(GraniteSkin)), nameof(GraniteSkin))
+        internal static IInitContextBlueprint<BlueprintFeature> Create() =>
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(GraniteSkin)))
                 .Map(blueprint =>
                 {
                     blueprint.m_DisplayName = LocalizedStrings.Features_Oread_GraniteSkin_DisplayName;
@@ -50,6 +51,7 @@ namespace AlternateRacialTraits.Features.Oread
                     blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.EnergyResistanceOread, true);
 
                     return blueprint;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.GraniteSkin);
     }
 }

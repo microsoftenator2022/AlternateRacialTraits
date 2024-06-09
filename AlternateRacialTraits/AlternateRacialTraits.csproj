@@ -44,7 +44,7 @@
       <PrivateAssets>none</PrivateAssets>
       <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MicroWrath" Version="0.8.2-*" />
+    <PackageReference Include="MicroWrath" Version="0.8.3-*" />
   </ItemGroup>
 
   <Target Name="GenerateJson" AfterTargets="Build">

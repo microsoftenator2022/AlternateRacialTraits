@@ -25,10 +25,11 @@ using Kingmaker.UnitLogic.Abilities.Components;
 using Kingmaker.Utility;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -36,7 +37,7 @@ using static MicroWrath.Encyclopedia;
 
 namespace AlternateRacialTraits.Features.Oread
 {
-    using InitFeature = BlueprintInitializationContext.ContextInitializer<BlueprintFeature>;
+    //using InitFeature = BlueprintInitializationContext.ContextInitializer<BlueprintFeature>;
 
     internal static class CrystallineForm
     {
@@ -282,19 +283,20 @@ namespace AlternateRacialTraits.Features.Oread
             }
         }
 
-        internal static InitFeature Create(BlueprintInitializationContext context)
+        internal static IInitContextBlueprint<BlueprintFeature> Create()
         {
-            var resource = context.NewBlueprint<BlueprintAbilityResource>(GeneratedGuid.Get("CrystallineFormResource"))
+            var resource = InitContext.NewBlueprint<BlueprintAbilityResource>(GeneratedGuid.Get("CrystallineFormResource"))
                 .Map(resource =>
                 {
                     resource.m_MaxAmount = new() { BaseValue = 1 };
 
                     return resource;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.CrystallineFormResource);
 
-            var feature = context.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("CrystallineForm"), nameof(CrystallineForm))
+            var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("CrystallineForm"))
                 .Combine(resource)
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintItemWeapon.RayItem)
+                .Combine(InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintItemWeapon.RayItem))
                 .Map(bps =>
                 {
                     (BlueprintFeature feature, var resource, var ray) = bps.Expand();
@@ -329,7 +331,8 @@ namespace AlternateRacialTraits.Features.Oread
                     feature.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.AcidAffinityOread, true);
 
                     return feature;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.CrystallineForm);
 
             return feature;
         }

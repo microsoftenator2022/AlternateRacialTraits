@@ -11,10 +11,11 @@ using Kingmaker.Blueprints.Classes.Prerequisites;
 using Kingmaker.Enums;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -36,10 +37,9 @@ namespace AlternateRacialTraits.Features.HalfElf
         [Init]
         internal static void Init()
         {
-            var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
-
-            initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("EyeForOpportunity"), nameof(GeneratedGuid.EyeForOpportunity))
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection)
+            //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
+            var context = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("EyeForOpportunity"))
+                .Combine(InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection))
                 .Map(bps =>
                 {
                     var (blueprint, halfElfHeritageSelection) = bps;
@@ -47,7 +47,7 @@ namespace AlternateRacialTraits.Features.HalfElf
                     blueprint.m_DisplayName = LocalizedStrings.Features_HalfElf_EyeForOpportunity_DisplayName;
                     blueprint.m_Description = LocalizedStrings.Features_HalfElf_EyeForOpportunity_Description;
 
-                    blueprint.Groups = new[] { FeatureGroup.Racial };
+                    blueprint.Groups = [FeatureGroup.Racial];
 
                     blueprint.SetIcon("f1caa0aa81d2e7d469e00c793f284b07", 21300000);
 
@@ -70,8 +70,12 @@ namespace AlternateRacialTraits.Features.HalfElf
                     });
 
                     halfElfHeritageSelection.AddFeatures(blueprint);
-                })
-                .Register();
+
+                    return (blueprint, halfElfHeritageSelection);
+                });
+
+            context.RegisterBlueprint(GeneratedGuid.EyeForOpportunity, pair => pair.blueprint);
+            context.RegisterBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection, pair => pair.halfElfHeritageSelection);
         }
     }
 }
