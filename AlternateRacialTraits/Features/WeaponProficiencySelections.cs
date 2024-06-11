@@ -20,10 +20,11 @@ using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.FactLogic;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 using MicroWrath.Util.Linq;
@@ -35,7 +36,7 @@ namespace AlternateRacialTraits.Features
     {
         public AddWeaponProficiencyParametrized()
         {
-            this.WeaponProficiencies ??= new WeaponCategory[0];
+            this.WeaponProficiencies ??= [];
         }
 
         public override void OnTurnOn()
@@ -57,13 +58,10 @@ namespace AlternateRacialTraits.Features
 
     internal static class WeaponProficiencySelections
     {
-        private static BlueprintInitializationContext.ContextInitializer<BlueprintParametrizedFeature>
-            ExoticWeaponProficiencyParametrized(BlueprintInitializationContext context) =>
-            context
-                .NewBlueprint<BlueprintParametrizedFeature>(
-                    GeneratedGuid.ExoticWeaponProficiencyParametrized,
-                    nameof(ExoticWeaponProficiencyParametrized))
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.ExoticWeaponProficiencySelection)
+        private static IInitContext<BlueprintParametrizedFeature> ExoticWeaponProficiencyParametrized() =>
+            InitContext
+                .NewBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.ExoticWeaponProficiencyParametrized)
+                .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.ExoticWeaponProficiencySelection)
                 .Map(bps =>
                 {
                     var (blueprint, eps) = bps;
@@ -77,7 +75,7 @@ namespace AlternateRacialTraits.Features
 
                     blueprint.AddComponent<AddWeaponProficiencyParametrized>();
 
-                    blueprint.Groups = new[] { FeatureGroup.CombatFeat };
+                    blueprint.Groups = [FeatureGroup.CombatFeat];
 
                     return blueprint;
                 });
@@ -88,11 +86,9 @@ namespace AlternateRacialTraits.Features
         [LocalizedString]
         internal const string MartialWeaponProficiencyDescription = "You become proficient with a single martial weapon";
 
-        private static BlueprintInitializationContext.ContextInitializer<BlueprintParametrizedFeature>
-            MartialWeaponProficiencyParametrized(BlueprintInitializationContext context) =>
-            context.NewBlueprint<BlueprintParametrizedFeature>(
-                GeneratedGuid.MartialWeaponProficiencyParametrized,
-                nameof(MartialWeaponProficiencyParametrized))
+        private static IInitContext<BlueprintParametrizedFeature>
+            MartialWeaponProficiencyParametrized() =>
+                InitContext.NewBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.MartialWeaponProficiencyParametrized)
                 .Map((BlueprintParametrizedFeature blueprint) =>
                 {
                     blueprint.m_DisplayName = LocalizedStrings.Features_WeaponProficiencySelections_MartialWeaponProficiencyDisplayName;
@@ -108,7 +104,7 @@ namespace AlternateRacialTraits.Features
                         c.m_Feature = BlueprintsDb.Owlcat.BlueprintFeature
                             .MartialWeaponProficiency.ToReference<BlueprintFeature, BlueprintFeatureReference>());
 
-                    blueprint.Groups = new[] { FeatureGroup.CombatFeat };
+                    blueprint.Groups = [FeatureGroup.CombatFeat];
 
                     return blueprint;
                 });
@@ -116,10 +112,10 @@ namespace AlternateRacialTraits.Features
         [Init]
         internal static void Init()
         {
-            var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
+            //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
 
-            ExoticWeaponProficiencyParametrized(initContext).Register();
-            MartialWeaponProficiencyParametrized(initContext).Register();
+            ExoticWeaponProficiencyParametrized().RegisterBlueprint(GeneratedGuid.ExoticWeaponProficiencyParametrized, Triggers.BlueprintsCache_Init);
+            MartialWeaponProficiencyParametrized().RegisterBlueprint(GeneratedGuid.MartialWeaponProficiencyParametrized, Triggers.BlueprintsCache_Init);
         }
     }
 

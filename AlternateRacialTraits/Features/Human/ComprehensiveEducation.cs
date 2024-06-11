@@ -10,20 +10,21 @@ using Kingmaker.Enums;
 using Kingmaker.UnitLogic.FactLogic;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
 
 namespace AlternateRacialTraits.Features.Human
 {
-    internal static class ComprehensiveEducation
+    internal static partial class ComprehensiveEducation
     {
         [LocalizedString]
-        public static readonly string DisplayName = "Comprehensive Eduction";
+        public static readonly string DisplayName = "Comprehensive Education";
 
         [LocalizedString]
         public static readonly string Description =
@@ -34,12 +35,12 @@ namespace AlternateRacialTraits.Features.Human
             "each Knowledge or Lore skill that they gain as a class skill from their class levels. This " +
             "racial trait replaces the Skilled trait.";
 
-        internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeature> Create(BlueprintInitializationContext initContext) =>
-            initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.ComprehensiveEducation, nameof(ComprehensiveEducation))
+        internal static IInitContext<BlueprintFeature> Create() =>
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.ComprehensiveEducation)
                 .Map((BlueprintFeature blueprint) =>
                 {
-                    blueprint.m_DisplayName = LocalizedStrings.Features_Human_ComprehensiveEducation_DisplayName;
-                    blueprint.m_Description = LocalizedStrings.Features_Human_ComprehensiveEducation_Description;
+                    blueprint.m_DisplayName = Localized.DisplayName;
+                    blueprint.m_Description = Localized.Description;
 
                     foreach (var skill in new[]
                         {
@@ -60,7 +61,8 @@ namespace AlternateRacialTraits.Features.Human
                     blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, hideInUI: false, removeOnApply: true);
 
                     return blueprint;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.ComprehensiveEducation, Triggers.BlueprintsCache_Init);
     }
 
 }

@@ -11,10 +11,11 @@ using Kingmaker.Blueprints.Facts;
 using Kingmaker.UnitLogic.FactLogic;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -22,7 +23,7 @@ using static MicroWrath.Encyclopedia;
 
 namespace AlternateRacialTraits.Features.Human
 {
-    internal static class AdoptiveParentage
+    internal static partial class AdoptiveParentage
     {
         [LocalizedString]
         public static readonly string DisplayName = "Adoptive Parentage";
@@ -90,7 +91,7 @@ namespace AlternateRacialTraits.Features.Human
                 nameof(GeneratedGuid.AdoptiveParentageOread),
                 BlueprintsDb.Owlcat.BlueprintRace.OreadRace,
                 new IMicroBlueprint<BlueprintFeature>[] { BlueprintsDb.Owlcat.BlueprintFeature.WeaponFocusLongbow,
-                    BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusDiplomacy}),
+                    BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusDiplomacy }),
 
             new(GeneratedGuid.AdoptiveParentageTiefling,
                 nameof(GeneratedGuid.AdoptiveParentageTiefling),
@@ -99,61 +100,65 @@ namespace AlternateRacialTraits.Features.Human
                     BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusStealth })
         };
 
-        internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeatureSelection> Create(BlueprintInitializationContext context)
+        internal static IInitContext<BlueprintFeatureSelection> Create()
         {
             var apFeatures = AdoptingRaces
                 .Select(ar =>
                 {
                     if (ar.Features.Count() == 1)
                     {
-                        return context.NewBlueprint<BlueprintFeature>(ar.Guid, ar.BlueprintName)
+                        return (ar, InitContext.NewBlueprint<BlueprintFeature>(ar.Guid, ar.BlueprintName)
                             .Map((BlueprintFeature bp) =>
                             {
                                 bp.AddComponent<AddFacts>(c =>
-                                    c.m_Facts = new[] { ar.Features.First().ToReference<BlueprintUnitFact, BlueprintUnitFactReference>() });
+                                    c.m_Facts = [ar.Features.First().ToReference<BlueprintUnitFact, BlueprintUnitFactReference>()]);
 
-                                return (ar, bp);
-                            });
+                                return bp;
+                            }));
                     }
                     else
                     {
-                        return context.NewBlueprint<BlueprintFeatureSelection>(ar.Guid, ar.BlueprintName)
+                        return (ar, InitContext.NewBlueprint<BlueprintFeatureSelection>(ar.Guid, ar.BlueprintName)
                             .Map((BlueprintFeatureSelection selection) =>
                             {
                                 selection.AddFeatures(ar.Features);
 
-                                return (ar, selection as BlueprintFeature);
-                            });
+                                return selection as BlueprintFeature;
+                            }));
                     }
                 })
-                .Combine()
-                .Map(bps =>
+                .Select(pair =>
                 {
-                    foreach (var (ar, bp) in bps)
-                    {
-                        bp.m_DisplayName = ar.Race.GetBlueprint()!.m_DisplayName;
-                        bp.m_Description = LocalizedStrings.Features_Human_AdoptiveParentage_Description;
+                    var (ar, context) = pair;
+                    
+                    return context
+                        .Map(bp =>
+                        {
+                            bp.m_DisplayName = ar.Race.GetBlueprint()!.m_DisplayName;
+                            bp.m_Description = Localized.Description;
 
-                        bp.m_Icon = ar.Features.FirstOrDefault()?.GetBlueprint()?.Icon;
+                            bp.m_Icon = ar.Features.FirstOrDefault()?.GetBlueprint()?.Icon;
 
-                        bp.Groups = new[] { FeatureGroup.Racial };
-                    }
+                            bp.Groups = [FeatureGroup.Racial];
 
-                    return bps.Select(x => x.Item2);
+                            return bp;
+                        })
+                        .RegisterBlueprint(ar.Guid, Triggers.BlueprintsCache_Init);
                 });
 
-            var selection = context.NewBlueprint<BlueprintFeatureSelection>(
-                GeneratedGuid.AdoptiveParentageSelection, nameof(AdoptiveParentage))
+            var selection = InitContext.NewBlueprint<BlueprintFeatureSelection>(
+                GeneratedGuid.AdoptiveParentageSelection,
+                nameof(AdoptiveParentage))
                 .Map(selection =>
                 {
-                    selection.m_DisplayName = LocalizedStrings.Features_Human_AdoptiveParentage_DisplayName;
-                    selection.m_Description = LocalizedStrings.Features_Human_AdoptiveParentage_Description;
+                    selection.m_DisplayName = Localized.DisplayName;
+                    selection.m_Description = Localized.Description;
 
-                    selection.Groups = new[] { FeatureGroup.Racial };
+                    selection.Groups = [FeatureGroup.Racial];
 
                     return selection;
                 })
-                .Combine(apFeatures)
+                .Combine(apFeatures.Collect())
                 .Map(bps =>
                 {
                     var (selection, apFeatures) = bps;
@@ -161,7 +166,8 @@ namespace AlternateRacialTraits.Features.Human
                     selection.AddFeatures(apFeatures.Select(MicroBlueprint.ToMicroBlueprint));
 
                     return selection;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.AdoptiveParentageSelection, Triggers.BlueprintsCache_Init);
 
             return selection;
         }

@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 using Kingmaker.Blueprints.Classes;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
+using MicroWrath.InitContext;
 
 namespace AlternateRacialTraits
 {
@@ -16,11 +17,10 @@ namespace AlternateRacialTraits
         [Init]
         internal static void Init()
         {
-            var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
+            //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
 
-            initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Removed1, nameof(GeneratedGuid.Removed1))
-                .Combine(initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Removed2, nameof(GeneratedGuid.Removed2)))
-                .Register();
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Removed1).RegisterBlueprint(GeneratedGuid.Removed1, Triggers.BlueprintsCache_Init);
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Removed2).RegisterBlueprint(GeneratedGuid.Removed2, Triggers.BlueprintsCache_Init);
         }
     }
 }

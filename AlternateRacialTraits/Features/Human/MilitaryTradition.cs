@@ -13,11 +13,12 @@ using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.FactLogic;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 using MicroWrath.Util.Linq;
 
@@ -36,10 +37,9 @@ namespace AlternateRacialTraits.Features.Human
             $"{new Link(Page.Weapon_Proficiency, "proficiency")} with up to two martial or " +
             "exotic weapons appropriate to their culture. This racial trait replaces the bonus feat trait.";
 
-        internal static BlueprintInitializationContext.ContextInitializer<(BlueprintFeatureSelection, BlueprintFeatureSelection)>
-            Create(BlueprintInitializationContext context)
+        internal static (IInitContext<BlueprintFeatureSelection>, IInitContext<BlueprintFeatureSelection>) Create()
         {
-            var firstSelection = context.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSelection,
+            var firstSelection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSelection,
                 $"{nameof(MilitaryTradition)}.FirstSelection")
                 .Map(selection =>
                 {
@@ -53,7 +53,7 @@ namespace AlternateRacialTraits.Features.Human
                     return selection;
                 });
 
-            var secondSelection = context.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSecondSelection,
+            var secondSelection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSecondSelection,
                 $"{nameof(MilitaryTradition)}.SecondSelection")
                 .Map(selection =>
                 {
@@ -71,14 +71,14 @@ namespace AlternateRacialTraits.Features.Human
                     return selection;
                 });
 
-            return firstSelection
+            var selections = firstSelection
                 .Combine(secondSelection)
                 .Map(bps =>
                 {
                     var (first, second) = bps;
 
-                    var exotic = new MicroBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.ExoticWeaponProficiencyParametrized.ToString());
-                    var martial = new MicroBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.MartialWeaponProficiencyParametrized.ToString());
+                    var exotic = new MicroBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.ExoticWeaponProficiencyParametrized);
+                    var martial = new MicroBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.MartialWeaponProficiencyParametrized);
 
                     first.AddFeatures(exotic, martial);
                     second.AddFeatures(exotic, martial);
@@ -88,6 +88,10 @@ namespace AlternateRacialTraits.Features.Human
 
                     return (first, second);
                 });
+
+            return
+                (selections.Map(pair => pair.first).RegisterBlueprint(GeneratedGuid.MilitaryTraditionSelection, Triggers.BlueprintsCache_Init),
+                selections.Map(pair => pair.second).RegisterBlueprint(GeneratedGuid.MilitaryTraditionSecondSelection, Triggers.BlueprintsCache_Init));
         }
     }
 }

@@ -39,7 +39,7 @@ namespace AlternateRacialTraits.Features.Oread
 {
     //using InitFeature = BlueprintInitializationContext.ContextInitializer<BlueprintFeature>;
 
-    internal static class CrystallineForm
+    internal static partial class CrystallineForm
     {
         [LocalizedString]
         public const string DisplayName = "Crystalline Form";
@@ -283,7 +283,7 @@ namespace AlternateRacialTraits.Features.Oread
             }
         }
 
-        internal static IInitContextBlueprint<BlueprintFeature> Create()
+        internal static IInitContext<BlueprintFeature> Create()
         {
             var resource = InitContext.NewBlueprint<BlueprintAbilityResource>(GeneratedGuid.Get("CrystallineFormResource"))
                 .Map(resource =>
@@ -292,21 +292,21 @@ namespace AlternateRacialTraits.Features.Oread
 
                     return resource;
                 })
-                .RegisterBlueprint(GeneratedGuid.CrystallineFormResource);
+                .RegisterBlueprint(GeneratedGuid.CrystallineFormResource, Triggers.BlueprintsCache_Init);
 
             var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("CrystallineForm"))
                 .Combine(resource)
-                .Combine(InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintItemWeapon.RayItem))
+                .Combine(BlueprintsDb.Owlcat.BlueprintItemWeapon.RayItem)
                 .Map(bps =>
                 {
                     (BlueprintFeature feature, var resource, var ray) = bps.Expand();
 
-                    feature.m_DisplayName = LocalizedStrings.Features_Oread_CrystallineForm_DisplayName;
-                    feature.m_Description = LocalizedStrings.Features_Oread_CrystallineForm_Description;
+                    feature.m_DisplayName = Localized.DisplayName;
+                    feature.m_Description = Localized.Description;
 
                     feature.SetIcon("b3355206cc666b543addf8d60df20299", 21300000);
 
-                    feature.Groups = new[] { FeatureGroup.Racial };
+                    feature.Groups = [FeatureGroup.Racial];
 
                     feature.AddACBonusAgainstWeaponCategory(c =>
                     {
@@ -332,7 +332,7 @@ namespace AlternateRacialTraits.Features.Oread
 
                     return feature;
                 })
-                .RegisterBlueprint(GeneratedGuid.CrystallineForm);
+                .RegisterBlueprint(GeneratedGuid.CrystallineForm, Triggers.BlueprintsCache_Init);
 
             return feature;
         }

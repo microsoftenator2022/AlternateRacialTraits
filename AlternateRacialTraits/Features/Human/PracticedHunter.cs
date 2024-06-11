@@ -10,10 +10,11 @@ using Kingmaker.Enums;
 using Kingmaker.UnitLogic.FactLogic;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -32,8 +33,8 @@ namespace AlternateRacialTraits.Features.Human
             $"{new Link(Page.Check, "checks")}, and Stealth and Lore (Nature) are always class " +
             "skills for them. This racial trait replaces Skilled.";
 
-        internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeature> Create(BlueprintInitializationContext initContext) =>
-            initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.PracticedHunter, nameof(PracticedHunter))
+        internal static IInitContext<BlueprintFeature> Create() =>
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.PracticedHunter)
                 .Map((BlueprintFeature blueprint) =>
                 {
                     blueprint.m_DisplayName = LocalizedStrings.Features_Human_PracticedHunter_DisplayName;
@@ -70,6 +71,7 @@ namespace AlternateRacialTraits.Features.Human
                     blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, hideInUI: false, removeOnApply: true);
 
                     return blueprint;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.PracticedHunter, Triggers.BlueprintsCache_Init);
     }
 }

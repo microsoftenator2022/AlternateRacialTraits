@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net481</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
@@ -49,7 +49,16 @@
 
   <Target Name="GenerateJson" AfterTargets="Build">
     <GenerateGuidsFile WrathPath="$(WrathPath)" Assembly="$(OutDir)\$(MSBuildProjectName).dll" GuidsFile="guids.json" />
-    <InfoJson OutputPath="$(OutDir)" Id="$(MSBuildProjectName)" Version="$(VersionPrefix)" DisplayName="Alternate Racial Traits" Author="microsoftenator" GameVersion="2.2.0" HomePage="https://github.com/microsoftenator2022/AlternateRacialTraits" Repository="https://raw.githubusercontent.com/microsoftenator2022/AlternateRacialTraits/master/Repository.json" />
+    <InfoJson
+      OutputPath="$(OutDir)"
+      Id="$(MSBuildProjectName)"
+      Version="$(VersionPrefix)"
+      DisplayName="Alternate Racial Traits"
+      Author="microsoftenator"
+      GameVersion="2.3.0"
+      ManagerVersion="0.27.11"
+      HomePage="https://github.com/microsoftenator2022/AlternateRacialTraits"
+      Repository="https://raw.githubusercontent.com/microsoftenator2022/AlternateRacialTraits/master/Repository.json" />
   </Target>
 
   <Target Name="Deploy" AfterTargets="Build">

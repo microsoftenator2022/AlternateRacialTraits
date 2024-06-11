@@ -8,18 +8,19 @@ using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 
 namespace AlternateRacialTraits.Features.Human
 {
     internal static class HistoryOfTerrorsTrait
     {
-        public static BlueprintInitializationContext.ContextInitializer<BlueprintFeature> Create(BlueprintInitializationContext initContext) =>
-            initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HistoryOfTerrorsTrait, nameof(HistoryOfTerrorsTrait))
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.HistoryOfTerrors)
+        public static IInitContext<BlueprintFeature> Create() =>
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HistoryOfTerrorsTrait)
+                .Combine(BlueprintsDb.Owlcat.BlueprintFeature.HistoryOfTerrors)
                 .Map(bps =>
                 {
                     var (blueprint, feat) = bps;
@@ -35,13 +36,14 @@ namespace AlternateRacialTraits.Features.Human
                     
                     blueprint.AddAddFacts(c =>
                     {
-                        c.m_Facts = new[] { feat.ToReference<BlueprintUnitFactReference>() };
+                        c.m_Facts = [feat.ToReference<BlueprintUnitFactReference>()];
                     });
 
                     blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, hideInUI: false, removeOnApply: true);
 
                     return blueprint;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.HistoryOfTerrorsTrait, Triggers.BlueprintsCache_Init);
     }
 
 }

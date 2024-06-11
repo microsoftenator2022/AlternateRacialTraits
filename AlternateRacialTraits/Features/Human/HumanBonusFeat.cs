@@ -10,18 +10,19 @@ using Kingmaker.Blueprints.Classes.Prerequisites;
 using Kingmaker.Blueprints.Classes.Selection;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
 
 namespace AlternateRacialTraits.Features.Human
 {
-    internal static class HumanBonusFeat
+    internal static partial class HumanBonusFeat
     {
         [LocalizedString]
         public static readonly string DisplayName = "Bonus Feat";
@@ -29,17 +30,17 @@ namespace AlternateRacialTraits.Features.Human
         [LocalizedString]
         public static readonly string Description = $"Humans select one extra {new Link(Page.Feat, "feat")} at 1st level.";
 
-        internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeature> Create(BlueprintInitializationContext initContext) =>
-            initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HumanBonusFeat, nameof(HumanBonusFeat))
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection)
+        internal static IInitContext<BlueprintFeature> Create() =>
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HumanBonusFeat)
+                .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection)
                 .Map(bps =>
                 {
                     var (blueprint, bfs) = bps;
 
-                    blueprint.m_DisplayName = LocalizedStrings.Features_Human_HumanBonusFeat_DisplayName;
-                    blueprint.m_Description = LocalizedStrings.Features_Human_HumanBonusFeat_Description;
+                    blueprint.m_DisplayName = Localized.DisplayName;
+                    blueprint.m_Description = Localized.Description;
 
-                    blueprint.Groups = new[] { FeatureGroup.Racial };
+                    blueprint.Groups = [FeatureGroup.Racial];
 
                     //blueprint.HideInCharacterSheetAndLevelUp = true;
 
@@ -49,13 +50,15 @@ namespace AlternateRacialTraits.Features.Human
                     {
                         Util.AddLevelUpSelection(
                             e.Owner,
-                            new[] { BlueprintsDb.Owlcat.BlueprintFeatureSelection
-                                .BasicFeatSelection.ToReference<BlueprintFeatureBase, BlueprintFeatureBaseReference>() },
+                            [
+                                BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection.ToReference<BlueprintFeatureBase,
+                                BlueprintFeatureBaseReference>()
+                            ],
                             e.Owner.Progression.Race);
                     }));
 
                     return blueprint;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.HumanBonusFeat, Triggers.BlueprintsCache_Init);
     }
-
 }

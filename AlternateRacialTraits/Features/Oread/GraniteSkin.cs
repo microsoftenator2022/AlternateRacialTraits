@@ -30,7 +30,7 @@ namespace AlternateRacialTraits.Features.Oread
             $"They gain a +1 racial {new Link(Page.Bonus, "bonus")} to natural " +
             $"{new Link(Page.Armor_Class, "armor")}. This racial trait replaces Oread energy resistance.";
 
-        internal static IInitContextBlueprint<BlueprintFeature> Create() =>
+        internal static IInitContext<BlueprintFeature> Create() =>
             InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(GraniteSkin)))
                 .Map(blueprint =>
                 {
@@ -52,6 +52,6 @@ namespace AlternateRacialTraits.Features.Oread
 
                     return blueprint;
                 })
-                .RegisterBlueprint(GeneratedGuid.GraniteSkin);
+                .RegisterBlueprint(GeneratedGuid.GraniteSkin, Triggers.BlueprintsCache_Init);
     }
 }

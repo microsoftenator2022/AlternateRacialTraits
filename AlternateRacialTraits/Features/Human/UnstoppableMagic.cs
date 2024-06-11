@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 using Kingmaker.Blueprints.Classes;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -28,8 +29,8 @@ namespace AlternateRacialTraits.Features.Human
             $"against {new Link(Page.Spell_Resistance, "spell resistance")}. This racial trait " +
             $"replaces the bonus feat trait.";
 
-        internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeature> Create(BlueprintInitializationContext initContext) =>
-            initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.UnstoppableMagic, nameof(UnstoppableMagic))
+        internal static IInitContext<BlueprintFeature> Create() =>
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.UnstoppableMagic)
                 .Map((BlueprintFeature blueprint) =>
                 {
                     blueprint.m_DisplayName = LocalizedStrings.Features_Human_UnstoppableMagic_DisplayName;
@@ -42,6 +43,7 @@ namespace AlternateRacialTraits.Features.Human
                     blueprint.SetIcon("15d11c952fdc96b45849f312f3931192", 21300000);
 
                     return blueprint;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.UnstoppableMagic, Triggers.BlueprintsCache_Init);
     }
 }

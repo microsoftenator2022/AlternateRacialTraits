@@ -14,6 +14,7 @@ using HarmonyLib;
 using Kingmaker.UI.MVVM._VM.CharGen.Phases.FeatureSelector;
 using Kingmaker.UI.Common;
 using Kingmaker.UI.MVVM._VM.CharGen.Phases;
+using Kingmaker.Blueprints.Classes.Selection;
 
 namespace AlternateRacialTraits
 {
@@ -38,10 +39,29 @@ namespace AlternateRacialTraits
 
     }
 
+    [HarmonyPatch]
+    [AllowedOn(typeof(BlueprintFeatureSelection))]
+    [AllowedOn(typeof(BlueprintParametrizedFeature))]
+    internal class SelectFeaturePriority : UnitFactComponentDelegate
+    {
+        public LevelUpActionPriority Priority = LevelUpActionPriority.Features;
+
+        [HarmonyPatch(typeof(SelectFeature), nameof(SelectFeature.CalculatePriority))]
+        [HarmonyPostfix]
+        static LevelUpActionPriority CalculatePriority_Postfix(LevelUpActionPriority __result, IFeatureSelection selection)
+        {
+            if (selection is BlueprintScriptableObject blueprint &&
+                blueprint.GetComponent<SelectFeaturePriority>() is { } component)
+                return component.Priority;
+
+            return __result;
+        }
+    }
+
     [HarmonyPatch(
-    typeof(CharGenFeatureSelectorPhaseVM),
-    nameof(CharGenFeatureSelectorPhaseVM.OrderPriority),
-    MethodType.Getter)]
+        typeof(CharGenFeatureSelectorPhaseVM),
+        nameof(CharGenFeatureSelectorPhaseVM.OrderPriority),
+        MethodType.Getter)]
     static class Background_OrderPriority_Patch
     {
         static int Postfix(int __result, CharGenFeatureSelectorPhaseVM __instance)

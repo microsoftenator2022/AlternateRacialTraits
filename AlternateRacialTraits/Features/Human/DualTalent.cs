@@ -17,17 +17,18 @@ using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Class.LevelUp;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
 
 namespace AlternateRacialTraits.Features.Human
 {
-    internal static class DualTalent
+    internal static partial class DualTalent
     {
         [AllowedOn(typeof(BlueprintFeature))]
         internal class PrerequisiteNoRaceAttributeBonus : Prerequisite
@@ -48,7 +49,7 @@ namespace AlternateRacialTraits.Features.Human
             }
 
             public override string GetUITextInternal(UnitDescriptor unit) =>
-                $"{UIStrings.Instance.Tooltips.NoFeature} {LocalizedTexts.Instance.Stats.GetText(Stat)}";
+                $"{UIStrings.Instance.Tooltips.NoFeature}: {LocalizedTexts.Instance.Stats.GetText(Stat)}";
         }
 
         [LocalizedString]
@@ -61,7 +62,7 @@ namespace AlternateRacialTraits.Features.Human
             $"{new Link(Page.Bonus, "bonus")} in each of those scores. This racial trait replaces the +2 " +
             "bonus to any one ability score, the bonus feat trait and the Skilled trait.";
 
-        internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeature> Create(BlueprintInitializationContext context)
+        internal static IInitContext<BlueprintFeature> Create()
         {
             var stats = (new[]
             {
@@ -80,38 +81,42 @@ namespace AlternateRacialTraits.Features.Human
                 return (guid.Guid, bpName, stat);
             });
 
-            var dualTalentFeatures = context.NewBlueprints<BlueprintFeature, StatType>(stats)
-                .Map(bps =>
+            var dualTalentFeatures = stats
+                .Select(items =>
                 {
-                    foreach (var (blueprint, stat) in bps)
-                    {
-                        var statName = LocalizedTexts.Instance.Stats.GetText(stat);
+                    var (guid, name, stat) = items;
 
-                        var displayNameKey = $"{LocalizedStrings.Features_Human_DualTalent_DisplayName.Key}.{blueprint.name}";
-                        LocalizedStrings.DefaultStringEntries.Add(displayNameKey, $"{DisplayName} - {statName}");
-
-                        blueprint.m_DisplayName = new LocalizedString { m_Key = displayNameKey };
-                        blueprint.m_Description = LocalizedStrings.Features_Human_DualTalent_Description;
-
-                        blueprint.m_Icon = (UnityEngine.Sprite?)LocalizedTexts.Instance.Stats.GetIcon(stat);
-
-                        blueprint.Groups = new[] { FeatureGroup.Racial };
-
-                        blueprint.AddAddStatBonus(c =>
+                    return InitContext.NewBlueprint<BlueprintFeature>(guid, name)
+                        .Map(blueprint =>
                         {
-                            c.Stat = stat;
-                            c.Value = 2;
-                            c.Descriptor = ModifierDescriptor.Racial;
-                        });
+                            var statName = LocalizedTexts.Instance.Stats.GetText(stat);
 
-                        blueprint.AddComponent<PrerequisiteNoRaceAttributeBonus>(c => c.Stat = stat);
-                    }
+                            var displayNameKey = $"{Localized.DisplayName.Key}.{blueprint.name}";
+                            LocalizedStrings.DefaultStringEntries.Add(displayNameKey, $"{DisplayName} - {statName}");
 
-                    return bps.Select(bp => bp.Item1);
+                            blueprint.m_DisplayName = new LocalizedString { m_Key = displayNameKey };
+                            blueprint.m_Description = Localized.Description;
+
+                            blueprint.m_Icon = (UnityEngine.Sprite?)LocalizedTexts.Instance.Stats.GetIcon(stat);
+
+                            blueprint.Groups = [FeatureGroup.Racial];
+
+                            blueprint.AddAddStatBonus(c =>
+                            {
+                                c.Stat = stat;
+                                c.Value = 2;
+                                c.Descriptor = ModifierDescriptor.Racial;
+                            });
+
+                            blueprint.AddComponent<PrerequisiteNoRaceAttributeBonus>(c => c.Stat = stat);
+
+                            return blueprint;
+                        })
+                        .RegisterBlueprint(guid, Triggers.BlueprintsCache_Init);
                 });
 
-            var selection = context.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.DualTalentSelection, $"{nameof(DualTalent)}Selection")
-                .Combine(dualTalentFeatures)
+            var selection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.DualTalentSelection, $"{nameof(DualTalent)}Selection")
+                .Combine(dualTalentFeatures.Collect())
                 .Map(bps =>
                 {
                     var (selection, features) = bps;
@@ -123,23 +128,24 @@ namespace AlternateRacialTraits.Features.Human
 
                     selection.AddFeatures(features.Select(bp => bp.ToMicroBlueprint()));
 
-                    selection.Groups = new[] { FeatureGroup.Racial };
+                    selection.Groups = [FeatureGroup.Racial];
                     
                     selection.AddComponent<OverrideSelectionPriority>(c =>
                         c.Priority = Kingmaker.UI.MVVM._VM.CharGen.Phases.CharGenPhaseBaseVM
                             .ChargenPhasePriority.AbilityScores);
 
                     return selection;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.DualTalentSelection, Triggers.BlueprintsCache_Init);
 
-            return context.NewBlueprint<BlueprintFeature>(GeneratedGuid.DualTalent, nameof(DualTalent))
+            return InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.DualTalent)
                 .Combine(selection)
                 .Map(bps =>
                 {
                     var (feature, selection) = bps;
 
-                    feature.m_DisplayName = LocalizedStrings.Features_Human_DualTalent_DisplayName;
-                    feature.m_Description = LocalizedStrings.Features_Human_DualTalent_Description;
+                    feature.m_DisplayName = Localized.DisplayName;
+                    feature.m_Description = Localized.Description;
 
                     feature.m_Icon = selection.Icon;
 
@@ -149,13 +155,14 @@ namespace AlternateRacialTraits.Features.Human
 
                     feature.AddComponent(new UnitFactActivateEvent(e =>
                     {
-                        Util.AddLevelUpSelection(e.Owner, new[] { selectionRef }, e.Owner.Progression.Race);
+                        Util.AddLevelUpSelection(e.Owner, [selectionRef], e.Owner.Progression.Race);
                     }));
 
-                    feature.Groups = new[] { FeatureGroup.Racial };
+                    feature.Groups = [FeatureGroup.Racial];
 
                     return feature;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.DualTalent, Triggers.BlueprintsCache_Init);
         }
     }
 }

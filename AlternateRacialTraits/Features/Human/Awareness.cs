@@ -13,15 +13,16 @@ using Kingmaker.Enums;
 using Kingmaker.Localization;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 using static MicroWrath.Encyclopedia;
 
 namespace AlternateRacialTraits.Features.Human
 {
-    internal static class AwarenessFeature
+    internal static partial class AwarenessFeature
     {
         [LocalizedString]
         public static readonly string DisplayName = "Awareness";
@@ -35,14 +36,14 @@ namespace AlternateRacialTraits.Features.Human
             $"{new Link(Page.Concentration, "concentration checks")}. This racial trait replaces " +
             "humans’ bonus feat.";
 
-        internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeature> Create(BlueprintInitializationContext initContext) =>
-            initContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Awareness, "AwarenessFeature")
+        internal static IInitContext<BlueprintFeature> Create() =>
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Awareness, "AwarenessFeature")
                 .Map((BlueprintFeature blueprint) =>
                 {
-                    blueprint.m_DisplayName = LocalizedStrings.Features_Human_AwarenessFeature_DisplayName;
-                    blueprint.m_Description = LocalizedStrings.Features_Human_AwarenessFeature_Description;
+                    blueprint.m_DisplayName = Localized.DisplayName;
+                    blueprint.m_Description = Localized.Description;
 
-                    blueprint.Groups = new[] { FeatureGroup.Racial };
+                    blueprint.Groups = [FeatureGroup.Racial];
 
                     // JudjemntProtection
                     blueprint.SetIcon("af5df55819255b54fb3491bbd67a569e", 21300000);
@@ -59,6 +60,7 @@ namespace AlternateRacialTraits.Features.Human
                     });
 
                     return blueprint;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.Awareness, Triggers.BlueprintsCache_Init);
     }
 }

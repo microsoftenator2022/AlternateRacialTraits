@@ -13,15 +13,18 @@ using Kingmaker.UnitLogic.Class.LevelUp.Actions;
 using Kingmaker.UnitLogic.Class.LevelUp;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Components;
 using MicroWrath.Constructors;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 using MicroWrath.Util.Linq;
+using HarmonyLib;
+using System.Threading;
 
 namespace AlternateRacialTraits.Features.Human
 {
@@ -32,8 +35,8 @@ namespace AlternateRacialTraits.Features.Human
         [LocalizedString]
         public static readonly string Description = "No alternate trait";
 
-        internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeature> Create(BlueprintInitializationContext context) =>
-            context.NewBlueprint<BlueprintFeature>(GeneratedGuid.NoAdditionaHumanTraits, nameof(NoAdditionalTraits))
+        internal static IInitContext<BlueprintFeature> Create() =>
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.NoAdditionaHumanTraits, nameof(NoAdditionalTraits))
                 .Map((BlueprintFeature feat) =>
                 {
                     feat.m_DisplayName = LocalizedStrings.Features_Human_NoAdditionalTraits_DisplayName;
@@ -43,7 +46,8 @@ namespace AlternateRacialTraits.Features.Human
                     feat.HideInCharacterSheetAndLevelUp = true;
 
                     return feat;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.NoAdditionaHumanTraits, Triggers.BlueprintsCache_Init);
     }
 
     internal static class HumanFeatureSelection
@@ -53,39 +57,39 @@ namespace AlternateRacialTraits.Features.Human
         [LocalizedString]
         public static readonly string Description = "The following alternate traits are available";
 
-        internal static BlueprintInitializationContext.ContextInitializer<BlueprintFeatureSelection> Create(BlueprintInitializationContext context) =>
-            context.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.HumanFeatureSelection, nameof(HumanFeatureSelection))
-                .Map((BlueprintFeatureSelection selection) =>
-                {
-                    MicroLogger.Debug(() => $"Setting up {nameof(HumanFeatureSelection)}");
-
-                    selection.m_DisplayName = LocalizedStrings.Features_Human_HumanFeatureSelection_DisplayName;
-                    selection.m_Description = LocalizedStrings.Features_Human_HumanFeatureSelection_Description;
-
-                    selection.Groups = new[] { FeatureGroup.Racial };
-
-                    selection.AddComponent<OverrideSelectionPriority>(c =>
-                        c.Priority = Kingmaker.UI.MVVM._VM.CharGen.Phases.
-                            CharGenPhaseBaseVM.ChargenPhasePriority.RaceFeatures);
-
-                    return selection;
-                });
-
-        [Init]
-        internal static void Init()
+        internal static IInitContext<BlueprintFeatureSelection> Create()
         {
-            var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
+            var bonusFeatDummy = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.BasicFeatSelectionDummy)
+                .RegisterBlueprint(GeneratedGuid.BasicFeatSelectionDummy, Triggers.BlueprintsCache_Init);
 
-            var bonusFeatDummy = initContext.NewBlueprint<BlueprintFeature>(
-                GeneratedGuid.BasicFeatSelectionDummy, nameof(GeneratedGuid.BasicFeatSelectionDummy));
+            var selection =
+                InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.HumanFeatureSelection)
+                    .Map((BlueprintFeatureSelection selection) =>
+                    {
+                        MicroLogger.Debug(() => $"Setting up {nameof(HumanFeatureSelection)}");
 
-            var selection = HumanFeatureSelection.Create(initContext);
+                        selection.m_DisplayName = LocalizedStrings.Features_Human_HumanFeatureSelection_DisplayName;
+                        selection.m_Description = LocalizedStrings.Features_Human_HumanFeatureSelection_Description;
 
-            var humanBonusFeat = HumanBonusFeat.Create(initContext)
+                        selection.Groups = [FeatureGroup.Racial];
+
+                        selection.AddComponent<OverrideSelectionPriority>(c =>
+                            c.Priority = Kingmaker.UI.MVVM._VM.CharGen.Phases.
+                                CharGenPhaseBaseVM.ChargenPhasePriority.RaceFeatures);
+                        
+                        selection.AddComponent<SelectFeaturePriority>(c => c.Priority = LevelUpActionPriority.Heritage);
+
+                        return selection;
+                    });
+
+            var humanBonusFeat = HumanBonusFeat.Create()
                 .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
                     var (bonusFeat, dummy) = bps;
+
+                    if (bonusFeat is null)
+                        throw new NullReferenceException();
 
                     bonusFeat.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), hideInUI: true, removeOnApply: true);
 
@@ -97,7 +101,7 @@ namespace AlternateRacialTraits.Features.Human
                     return bonusFeat;
                 });
 
-            var noMoreSelections = NoAdditionalTraits.Create(initContext)
+            var noMoreSelections = NoAdditionalTraits.Create()
                 .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
@@ -113,7 +117,7 @@ namespace AlternateRacialTraits.Features.Human
                     return noTraits;
                 });
 
-            var awareness = AwarenessFeature.Create(initContext)
+            var awareness = AwarenessFeature.Create()
                 .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
@@ -124,12 +128,12 @@ namespace AlternateRacialTraits.Features.Human
                     return awareness;
                 });
 
-            var comprehensiveEducation = ComprehensiveEducation.Create(initContext);
-            var giantAcestry = GiantAncestry.Create(initContext);
-            var historyOfTerrors = HistoryOfTerrorsTrait.Create(initContext);
-            var practicedHunter = PracticedHunter.Create(initContext);
-            
-            var unstoppableMagic = UnstoppableMagic.Create(initContext)
+            var comprehensiveEducation = ComprehensiveEducation.Create();
+            var giantAcestry = GiantAncestry.Create();
+            var historyOfTerrors = HistoryOfTerrorsTrait.Create();
+            var practicedHunter = PracticedHunter.Create();
+
+            var unstoppableMagic = UnstoppableMagic.Create()
                 .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
@@ -140,7 +144,7 @@ namespace AlternateRacialTraits.Features.Human
                     return unstoppableMagic;
                 });
 
-            var focusedStudy = FocusedStudyProgression.Create(initContext)
+            var focusedStudy = FocusedStudyProgression.Create()
                 .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
@@ -151,7 +155,7 @@ namespace AlternateRacialTraits.Features.Human
                     return focusedStudy as BlueprintFeature;
                 });
 
-            var dualTalent = DualTalent.Create(initContext)
+            var dualTalent = DualTalent.Create()
                 .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
@@ -163,7 +167,11 @@ namespace AlternateRacialTraits.Features.Human
                     return dualTalent;
                 });
 
-            var militaryTradition = MilitaryTradition.Create(initContext)
+            var (militaryTraditionFirst, militaryTraditionSecond) = MilitaryTradition.Create();
+
+            var militaryTradition =
+                militaryTraditionFirst
+                .Combine(militaryTraditionSecond)
                 .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
@@ -174,7 +182,7 @@ namespace AlternateRacialTraits.Features.Human
                     return (mtFirst, mtSecond);
                 });
 
-            var adoptiveParentage = AdoptiveParentage.Create(initContext)
+            var adoptiveParentage = AdoptiveParentage.Create()
                 .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {
@@ -198,7 +206,7 @@ namespace AlternateRacialTraits.Features.Human
                 focusedStudy,
                 dualTalent,
                 adoptiveParentage
-            }).Combine()
+            }).Collect()
             .Combine(militaryTradition)
             .Map(bps =>
             {
@@ -207,12 +215,17 @@ namespace AlternateRacialTraits.Features.Human
                 return list.Append(mtFirst).Append(mtSecond);
             });
 
-            selection
+            //InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled)
+            //    .Map(skilled =>
+            //    {
+            //    });
+
+            return selection
                 .Combine(bonusFeatDummy)
                 .Combine(features)
                 .Combine(noMoreSelections)
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HumanRace)
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection)
+                .Combine(BlueprintsDb.Owlcat.BlueprintRace.HumanRace)
+                .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection)
                 .Map(bps =>
                 {
                     var (selection, dummy, features, noMoreSelections, humanRace, bfs) = bps.Expand();
@@ -232,13 +245,21 @@ namespace AlternateRacialTraits.Features.Human
                     {
                         f.AddComponent(new UnitFactActivateEvent(e =>
                         {
-                            Util.AddLevelUpSelection(e.Owner, new[] { selectionRef }, e.Owner.Progression.Race);
+                            Util.AddLevelUpSelection(e.Owner, [selectionRef], e.Owner.Progression.Race);
                         }));
                     }
 
                     selection.AddFeatures(features.Select(MicroBlueprint.ToMicroBlueprint));
-                })
-                .Register();
+
+                    return selection;
+                });
+        }
+
+        [Init]
+        internal static void Init()
+        {
+            HumanFeatureSelection.Create()
+                .RegisterBlueprint(GeneratedGuid.HumanFeatureSelection, Triggers.BlueprintsCache_Init);
         }
     }
 }

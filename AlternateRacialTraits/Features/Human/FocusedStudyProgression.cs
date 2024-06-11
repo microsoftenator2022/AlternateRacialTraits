@@ -10,14 +10,14 @@ using Kingmaker.Blueprints.Classes.Selection;
 using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
-using MicroWrath.BlueprintInitializationContext;
 
 using static MicroWrath.Encyclopedia;
 
 namespace AlternateRacialTraits.Features.Human
 {
-    internal static class FocusedStudyProgression
+    internal static partial class FocusedStudyProgression
     {
         [LocalizedString]
         public static readonly string DisplayName = "Focused Study";
@@ -29,15 +29,15 @@ namespace AlternateRacialTraits.Features.Human
             "gain Skill Focus in a skill of their choice as a bonus feat. This racial trait replaces the " +
             "bonus feat trait.";
 
-        internal static BlueprintInitializationContext.ContextInitializer<BlueprintProgression> Create(BlueprintInitializationContext context) =>
-            context.NewBlueprint<BlueprintProgression>(GeneratedGuid.FocusedStudyProgression, nameof(FocusedStudyProgression))
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.SkillFocusSelection)
+        internal static IInitContext<BlueprintProgression> Create() =>
+            InitContext.NewBlueprint<BlueprintProgression>(GeneratedGuid.FocusedStudyProgression)
+                .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.SkillFocusSelection)
                 .Map(bps =>
                 {
                     var (progression, skillFocus) = bps;
 
-                    progression.m_DisplayName = LocalizedStrings.Features_Human_FocusedStudyProgression_DisplayName;
-                    progression.m_Description = LocalizedStrings.Features_Human_FocusedStudyProgression_Description;
+                    progression.m_DisplayName = Localized.DisplayName;
+                    progression.m_Description = Localized.Description;
 
                     progression.AddFeatures(1, skillFocus);
                     progression.AddFeatures(8, skillFocus);
@@ -46,6 +46,7 @@ namespace AlternateRacialTraits.Features.Human
                     progression.SetIcon("42cb25b90b7c7d34e956c7822a9349cb", 21300000);
 
                     return progression;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.FocusedStudyProgression, Triggers.BlueprintsCache_Init);
     }
 }

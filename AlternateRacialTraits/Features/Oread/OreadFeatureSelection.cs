@@ -27,7 +27,7 @@ namespace AlternateRacialTraits.Features.Oread
         [LocalizedString]
         public const string Description = "No alternate trait";
 
-        internal static IInitContextBlueprint<BlueprintFeature> Create() =>
+        internal static IInitContext<BlueprintFeature> Create() =>
             InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(GeneratedGuid.NoAlternateOreadTraits)))
                 .Map(blueprint =>
                 {
@@ -39,7 +39,7 @@ namespace AlternateRacialTraits.Features.Oread
 
                     return blueprint;
                 })
-                .RegisterBlueprint(GeneratedGuid.NoAlternateOreadTraits);
+                .RegisterBlueprint(GeneratedGuid.NoAlternateOreadTraits, Triggers.BlueprintsCache_Init);
     }
 
     internal static class OreadFeatureSelection
@@ -49,7 +49,7 @@ namespace AlternateRacialTraits.Features.Oread
         [LocalizedString]
         public const string Description = "The following alternate traits are available";
 
-        [Init]
+        //[Init]
         internal static void Init()
         {
             //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
@@ -58,9 +58,8 @@ namespace AlternateRacialTraits.Features.Oread
             var graniteSkin = GraniteSkin.Create();
             var crystallineForm = CrystallineForm.Create();
 
-            var context = InitContext.NewBlueprint<BlueprintFeatureSelection>(
-                GeneratedGuid.Get(nameof(OreadFeatureSelection)), nameof(OreadFeatureSelection))
-                .Combine(InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.OreadRace))
+            var context = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get(nameof(OreadFeatureSelection)))
+                .Combine(BlueprintsDb.Owlcat.BlueprintRace.OreadRace)
                 .Map(bps =>
                 {
                     var (selection, race) = bps;
@@ -76,7 +75,7 @@ namespace AlternateRacialTraits.Features.Oread
                 });
 
             //var selection = context.RegisterBlueprint(GeneratedGuid.OreadFeatureSelection, pair => pair.selection);
-            context.RegisterBlueprint(BlueprintsDb.Owlcat.BlueprintRace.OreadRace, pair => pair.race);
+            context.Map(pair => pair.race).RegisterBlueprint(BlueprintsDb.Owlcat.BlueprintRace.OreadRace.BlueprintGuid, Triggers.BlueprintsCache_Init);
 
             context.Map(pair => pair.selection) 
                 .Combine(noTraits)
@@ -92,7 +91,7 @@ namespace AlternateRacialTraits.Features.Oread
 
                     return selection;
                 })
-                .RegisterBlueprint(GeneratedGuid.OreadFeatureSelection);
+                .RegisterBlueprint(GeneratedGuid.OreadFeatureSelection, Triggers.BlueprintsCache_Init);
         }
     }
 }

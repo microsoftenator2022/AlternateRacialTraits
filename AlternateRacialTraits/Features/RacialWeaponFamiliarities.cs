@@ -11,10 +11,11 @@ using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.FactLogic;
 
 using MicroWrath;
-using MicroWrath.BlueprintInitializationContext;
+//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
+using MicroWrath.InitContext;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -91,16 +92,13 @@ namespace AlternateRacialTraits.Features
                 "Halflings treat sling staffs and any weapon with the word \"Halfling\" in its name as a " +
                 $"{new Link(Page.Weapon_Proficiency, "martial weapon")}.";
         }
-
-        internal static BlueprintInitializationContext.ContextInitializer<(BlueprintFeature, BlueprintFeature)>
-            Create(BlueprintInitializationContext context)
+        
+        internal static IEnumerable<(IInitContext<BlueprintFeature>, BlueprintGuid)> Create()
         {
+            //var gnome = BlueprintsDb.Owlcat.BlueprintRace.GnomeRace;
+            //var halfling = BlueprintsDb.Owlcat.BlueprintRace.HalflingRace;
 
-
-            var gnome = BlueprintsDb.Owlcat.BlueprintRace.GnomeRace;
-            var halfling = BlueprintsDb.Owlcat.BlueprintRace.HalflingRace;
-
-            var gnomeWF = context.NewBlueprint<BlueprintFeature>(GeneratedGuid.GnomishWeaponFamiliarity, nameof(GeneratedGuid.GnomishWeaponFamiliarity))
+            var gnomeWF = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.GnomishWeaponFamiliarity)
                 .Map(blueprint =>
                 {
                     blueprint.m_DisplayName = LocalizedStrings.Features_RacialWeaponFamiliarities_Gnome_DisplayName;
@@ -109,9 +107,10 @@ namespace AlternateRacialTraits.Features
                     blueprint.SetIcon("ac128c37256e37d408b7149b3edeaa8f", 21300000);
 
                     return blueprint;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.GnomishWeaponFamiliarity, Triggers.BlueprintsCache_Init);
 
-            var halflingWF = context.NewBlueprint<BlueprintFeature>(GeneratedGuid.HalflingWeaponFamiliarity, nameof(GeneratedGuid.HalflingWeaponFamiliarity))
+            var halflingWF = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HalflingWeaponFamiliarity)
                 .Map(blueprint =>
                 {
                     blueprint.m_DisplayName = LocalizedStrings.Features_RacialWeaponFamiliarities_Halfling_DisplayName;
@@ -120,55 +119,86 @@ namespace AlternateRacialTraits.Features
                     blueprint.SetIcon("2fd0a6cb0f7152941a036ea43f0361cb", 21300000);
 
                     return blueprint;
-                });
+                })
+                .RegisterBlueprint(GeneratedGuid.HalflingWeaponFamiliarity, Triggers.BlueprintsCache_Init);
 
-            var wfs = context.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.ElfRace)
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity)
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HalfOrcRace)
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.OrcWeaponFamiliarity)
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.DwarfRace)
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.DwarvenWeaponFamiliarity)
-                .Map(bps =>
+            return
+                new (OwlcatBlueprint<BlueprintRace> race, OwlcatBlueprint<BlueprintFeature> wf)[]
                 {
-                    var (elf, elfWf, halfOrc, orcWf, dwarf, dwarfWf) = bps.Expand();
-
-                    return new[] {
-                        (elf, elfWf),
-                        (halfOrc, orcWf),
-                        (dwarf, dwarfWf)
-                    };
-                });
-
-            return gnomeWF
-                .Combine(halflingWF)
-                .Combine(wfs)
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.GnomeRace)
-                .GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HalflingRace)
-                .Map(bps =>
+                    (BlueprintsDb.Owlcat.BlueprintRace.ElfRace, BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity),
+                    (BlueprintsDb.Owlcat.BlueprintRace.HalfOrcRace, BlueprintsDb.Owlcat.BlueprintFeature.OrcWeaponFamiliarity),
+                    (BlueprintsDb.Owlcat.BlueprintRace.DwarfRace, BlueprintsDb.Owlcat.BlueprintFeature.DwarvenWeaponFamiliarity)
+                }
+                .Select(pair => (InitContext.GetBlueprint(pair.race).Combine(pair.wf), pair.wf.BlueprintGuid))
+                .Append((InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.GnomeRace).Combine(gnomeWF), GeneratedGuid.GnomishWeaponFamiliarity))
+                .Append((InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HalflingRace).Combine(halflingWF), GeneratedGuid.HalfElfWeaponFamiliarity))
+                .Select(pair =>
                 {
-                    var (gwf, hwf, wfs, gnomeRace, halflingRace) = bps.Expand();
+                    var (context, guid) = pair;
 
-                    var weaponFamiliarity = wfs.ToList();
+                    return (
+                        context.Map(pair =>
+                        {
+                            var (race, wf) = pair;
 
-                    weaponFamiliarity.Add((gnomeRace, gwf));
-                    weaponFamiliarity.Add((halflingRace, hwf));
+                            wf.AddComponent<WeaponFamiliarityComponent>(c => c.Race = race.ToReference());
 
-                    foreach (var (race, feature) in weaponFamiliarity)
-                    {
-                        feature.AddComponent<WeaponFamiliarityComponent>(c => c.Race = race.ToReference());
-                    }
-
-                    return (gwf, hwf);
+                            return wf;
+                        }),
+                        guid);
                 });
+
+            //InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.ElfRace)
+            //    .Combine(BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity)
+            //    .Combine(BlueprintsDb.Owlcat.BlueprintRace.HalfOrcRace)
+            //    .Combine(BlueprintsDb.Owlcat.BlueprintFeature.OrcWeaponFamiliarity)
+            //    .Combine(BlueprintsDb.Owlcat.BlueprintRace.DwarfRace)
+            //    .Combine(BlueprintsDb.Owlcat.BlueprintFeature.DwarvenWeaponFamiliarity)
+            //    .Map(bps =>
+            //    {
+            //        var (elf, elfWf, halfOrc, orcWf, dwarf, dwarfWf) = bps.Expand();
+
+            //        return new[] {
+            //            (elf, elfWf),
+            //            (halfOrc, orcWf),
+            //            (dwarf, dwarfWf)
+            //        };
+            //    });
+
+            //gnomeWF
+            //    .Combine(halflingWF)
+            //    .Combine(wfs)
+            //    .Combine(BlueprintsDb.Owlcat.BlueprintRace.GnomeRace)
+            //    .Combine(BlueprintsDb.Owlcat.BlueprintRace.HalflingRace)
+            //    .Map(bps =>
+            //    {
+            //        var (gwf, hwf, wfs, gnomeRace, halflingRace) = bps.Expand();
+
+            //        var weaponFamiliarity = wfs.ToList();
+
+            //        weaponFamiliarity.Add((gnomeRace, gwf));
+            //        weaponFamiliarity.Add((halflingRace, hwf));
+
+            //        foreach (var (race, feature) in weaponFamiliarity)
+            //        {
+            //            feature.AddComponent<WeaponFamiliarityComponent>(c => c.Race = race.ToReference());
+            //        }
+
+            //        return (gwf, hwf);
+            //    });
         }
         
-
-            [Init]
+        [Init]
         internal static void Init()
         {
-            var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
+            foreach (var (context, guid) in Create())
+            {
+                context.RegisterBlueprint(guid, Triggers.BlueprintsCache_Init);
+            }
 
-            Create(initContext).Register();
+            //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
+
+            //Create(initContext).Register();
         }
     }
 }

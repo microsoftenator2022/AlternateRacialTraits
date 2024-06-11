@@ -22,7 +22,7 @@ using static MicroWrath.Encyclopedia;
 
 namespace AlternateRacialTraits.Features.HalfElf
 {
-    internal static class EyeForOpportunity
+    internal static partial class EyeForOpportunity
     {
         [LocalizedString]
         public const string DisplayName = "Eye for Opportunity";
@@ -39,13 +39,13 @@ namespace AlternateRacialTraits.Features.HalfElf
         {
             //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
             var context = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("EyeForOpportunity"))
-                .Combine(InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection))
+                .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection)
                 .Map(bps =>
                 {
                     var (blueprint, halfElfHeritageSelection) = bps;
 
-                    blueprint.m_DisplayName = LocalizedStrings.Features_HalfElf_EyeForOpportunity_DisplayName;
-                    blueprint.m_Description = LocalizedStrings.Features_HalfElf_EyeForOpportunity_Description;
+                    blueprint.m_DisplayName = Localized.DisplayName;
+                    blueprint.m_Description = Localized.Description;
 
                     blueprint.Groups = [FeatureGroup.Racial];
 
@@ -74,8 +74,8 @@ namespace AlternateRacialTraits.Features.HalfElf
                     return (blueprint, halfElfHeritageSelection);
                 });
 
-            context.RegisterBlueprint(GeneratedGuid.EyeForOpportunity, pair => pair.blueprint);
-            context.RegisterBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection, pair => pair.halfElfHeritageSelection);
+            context.Map(pair => pair.blueprint).RegisterBlueprint(GeneratedGuid.EyeForOpportunity, Triggers.BlueprintsCache_Init);
+            context.Map(pair => pair.halfElfHeritageSelection).RegisterBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection.BlueprintGuid, Triggers.BlueprintsCache_Init);
         }
     }
 }
