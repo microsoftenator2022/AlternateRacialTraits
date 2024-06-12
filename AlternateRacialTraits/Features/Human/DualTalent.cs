@@ -130,8 +130,12 @@ namespace AlternateRacialTraits.Features.Human
 
                     selection.Groups = [FeatureGroup.Racial];
                     
-                    selection.AddComponent<OverrideSelectionPriority>(c =>
-                        c.Priority = Kingmaker.UI.MVVM._VM.CharGen.Phases.CharGenPhaseBaseVM
+                    //selection.AddComponent<OverrideSelectionPriority>(c =>
+                    //    c.Priority = Kingmaker.UI.MVVM._VM.CharGen.Phases.CharGenPhaseBaseVM
+                    //        .ChargenPhasePriority.AbilityScores);
+
+                    selection.AddComponent<SelectionPriority>(c =>
+                        c.PhasePriority = Kingmaker.UI.MVVM._VM.CharGen.Phases.CharGenPhaseBaseVM
                             .ChargenPhasePriority.AbilityScores);
 
                     return selection;

@@ -73,11 +73,19 @@ namespace AlternateRacialTraits.Features.Human
 
                         selection.Groups = [FeatureGroup.Racial];
 
-                        selection.AddComponent<OverrideSelectionPriority>(c =>
-                            c.Priority = Kingmaker.UI.MVVM._VM.CharGen.Phases.
-                                CharGenPhaseBaseVM.ChargenPhasePriority.RaceFeatures);
+                        //selection.AddComponent<OverrideSelectionPriority>(c =>
+                        //    c.Priority = Kingmaker.UI.MVVM._VM.CharGen.Phases.
+                        //        CharGenPhaseBaseVM.ChargenPhasePriority.RaceFeatures);
                         
-                        selection.AddComponent<SelectFeaturePriority>(c => c.Priority = LevelUpActionPriority.Heritage);
+                        //selection.AddComponent<SelectFeaturePriority>(c => c.Priority = LevelUpActionPriority.Heritage);
+
+                        selection.AddComponent<SelectionPriority>(c =>
+                        {
+                            c.PhasePriority = Kingmaker.UI.MVVM._VM.CharGen.Phases.
+                                CharGenPhaseBaseVM.ChargenPhasePriority.RaceFeatures;
+
+                            c.ActionPriority = LevelUpActionPriority.Heritage;
+                        });
 
                         return selection;
                     });
@@ -87,9 +95,6 @@ namespace AlternateRacialTraits.Features.Human
                 .Map(bps =>
                 {
                     var (bonusFeat, dummy) = bps;
-
-                    if (bonusFeat is null)
-                        throw new NullReferenceException();
 
                     bonusFeat.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), hideInUI: true, removeOnApply: true);
 

@@ -39,24 +39,24 @@ namespace AlternateRacialTraits
 
     }
 
-    [HarmonyPatch]
-    [AllowedOn(typeof(BlueprintFeatureSelection))]
-    [AllowedOn(typeof(BlueprintParametrizedFeature))]
-    internal class SelectFeaturePriority : UnitFactComponentDelegate
-    {
-        public LevelUpActionPriority Priority = LevelUpActionPriority.Features;
+    //[HarmonyPatch]
+    //[AllowedOn(typeof(BlueprintFeatureSelection))]
+    //[AllowedOn(typeof(BlueprintParametrizedFeature))]
+    //internal class SelectFeaturePriority : UnitFactComponentDelegate
+    //{
+    //    public LevelUpActionPriority Priority = LevelUpActionPriority.Features;
 
-        [HarmonyPatch(typeof(SelectFeature), nameof(SelectFeature.CalculatePriority))]
-        [HarmonyPostfix]
-        static LevelUpActionPriority CalculatePriority_Postfix(LevelUpActionPriority __result, IFeatureSelection selection)
-        {
-            if (selection is BlueprintScriptableObject blueprint &&
-                blueprint.GetComponent<SelectFeaturePriority>() is { } component)
-                return component.Priority;
+    //    [HarmonyPatch(typeof(SelectFeature), nameof(SelectFeature.CalculatePriority))]
+    //    [HarmonyPostfix]
+    //    static LevelUpActionPriority CalculatePriority_Postfix(LevelUpActionPriority __result, IFeatureSelection selection)
+    //    {
+    //        if (selection is BlueprintScriptableObject blueprint &&
+    //            blueprint.GetComponent<SelectFeaturePriority>() is { } component)
+    //            return component.Priority;
 
-            return __result;
-        }
-    }
+    //        return __result;
+    //    }
+    //}
 
     [HarmonyPatch(
         typeof(CharGenFeatureSelectorPhaseVM),
