@@ -108,7 +108,7 @@ namespace AlternateRacialTraits.Features
 
                     return blueprint;
                 })
-                .RegisterBlueprint(GeneratedGuid.GnomishWeaponFamiliarity, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.GnomishWeaponFamiliarity, Triggers.BlueprintsCache_Init);
 
             var halflingWF = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HalflingWeaponFamiliarity)
                 .Map(blueprint =>
@@ -120,7 +120,7 @@ namespace AlternateRacialTraits.Features
 
                     return blueprint;
                 })
-                .RegisterBlueprint(GeneratedGuid.HalflingWeaponFamiliarity, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.HalflingWeaponFamiliarity, Triggers.BlueprintsCache_Init);
 
             return
                 new (OwlcatBlueprint<BlueprintRace> race, OwlcatBlueprint<BlueprintFeature> wf)[]
@@ -193,7 +193,7 @@ namespace AlternateRacialTraits.Features
         {
             foreach (var (context, guid) in Create())
             {
-                context.RegisterBlueprint(guid, Triggers.BlueprintsCache_Init);
+                context.AddOnTrigger(guid, Triggers.BlueprintsCache_Init);
             }
 
             //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);

@@ -47,6 +47,6 @@ namespace AlternateRacialTraits.Features.Human
 
                     return progression;
                 })
-                .RegisterBlueprint(GeneratedGuid.FocusedStudyProgression, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.FocusedStudyProgression, Triggers.BlueprintsCache_Init);
     }
 }

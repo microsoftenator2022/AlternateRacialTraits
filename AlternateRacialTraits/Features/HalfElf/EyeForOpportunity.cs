@@ -74,8 +74,8 @@ namespace AlternateRacialTraits.Features.HalfElf
                     return (blueprint, halfElfHeritageSelection);
                 });
 
-            context.Map(pair => pair.blueprint).RegisterBlueprint(GeneratedGuid.EyeForOpportunity, Triggers.BlueprintsCache_Init);
-            context.Map(pair => pair.halfElfHeritageSelection).RegisterBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection.BlueprintGuid, Triggers.BlueprintsCache_Init);
+            context.Map(pair => pair.blueprint).AddOnTrigger(GeneratedGuid.EyeForOpportunity, Triggers.BlueprintsCache_Init);
+            context.Map(pair => pair.halfElfHeritageSelection).AddOnTrigger(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection.BlueprintGuid, Triggers.BlueprintsCache_Init);
         }
     }
 }

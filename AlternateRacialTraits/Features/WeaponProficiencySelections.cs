@@ -114,8 +114,8 @@ namespace AlternateRacialTraits.Features
         {
             //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
 
-            ExoticWeaponProficiencyParametrized().RegisterBlueprint(GeneratedGuid.ExoticWeaponProficiencyParametrized, Triggers.BlueprintsCache_Init);
-            MartialWeaponProficiencyParametrized().RegisterBlueprint(GeneratedGuid.MartialWeaponProficiencyParametrized, Triggers.BlueprintsCache_Init);
+            ExoticWeaponProficiencyParametrized().AddOnTrigger(GeneratedGuid.ExoticWeaponProficiencyParametrized, Triggers.BlueprintsCache_Init);
+            MartialWeaponProficiencyParametrized().AddOnTrigger(GeneratedGuid.MartialWeaponProficiencyParametrized, Triggers.BlueprintsCache_Init);
         }
     }
 

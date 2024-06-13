@@ -143,7 +143,7 @@ namespace AlternateRacialTraits.Features.Human
 
                             return bp;
                         })
-                        .RegisterBlueprint(ar.Guid, Triggers.BlueprintsCache_Init);
+                        .AddOnTrigger(ar.Guid, Triggers.BlueprintsCache_Init);
                 });
 
             var selection = InitContext.NewBlueprint<BlueprintFeatureSelection>(
@@ -167,7 +167,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     return selection;
                 })
-                .RegisterBlueprint(GeneratedGuid.AdoptiveParentageSelection, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.AdoptiveParentageSelection, Triggers.BlueprintsCache_Init);
 
             return selection;
         }

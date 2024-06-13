@@ -68,6 +68,6 @@ namespace AlternateRacialTraits.Features.Human
 
                     return blueprint;
                 })
-                .RegisterBlueprint(GeneratedGuid.GiantAncestry, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.GiantAncestry, Triggers.BlueprintsCache_Init);
     }
 }

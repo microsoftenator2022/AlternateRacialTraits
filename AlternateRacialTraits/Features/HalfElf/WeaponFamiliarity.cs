@@ -75,9 +75,9 @@ namespace AlternateRacialTraits.Features.HalfElf
                 });
 
             context.Map(pair => pair.blueprint)
-                .RegisterBlueprint(GeneratedGuid.HalfElfWeaponFamiliarity, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.HalfElfWeaponFamiliarity, Triggers.BlueprintsCache_Init);
             context.Map(pair => pair.halfElfHeritageSelection)
-                .RegisterBlueprint(
+                .AddOnTrigger(
                     BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection.BlueprintGuid,
                     Triggers.BlueprintsCache_Init);
         }

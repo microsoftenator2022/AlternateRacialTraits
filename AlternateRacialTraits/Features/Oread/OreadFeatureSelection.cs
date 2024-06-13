@@ -39,7 +39,7 @@ namespace AlternateRacialTraits.Features.Oread
 
                     return blueprint;
                 })
-                .RegisterBlueprint(GeneratedGuid.NoAlternateOreadTraits, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.NoAlternateOreadTraits, Triggers.BlueprintsCache_Init);
     }
 
     internal static class OreadFeatureSelection
@@ -74,8 +74,8 @@ namespace AlternateRacialTraits.Features.Oread
                     return (selection, race);
                 });
 
-            //var selection = context.RegisterBlueprint(GeneratedGuid.OreadFeatureSelection, pair => pair.selection);
-            context.Map(pair => pair.race).RegisterBlueprint(BlueprintsDb.Owlcat.BlueprintRace.OreadRace.BlueprintGuid, Triggers.BlueprintsCache_Init);
+            //var selection = context.AddOnTrigger(GeneratedGuid.OreadFeatureSelection, pair => pair.selection);
+            context.Map(pair => pair.race).AddOnTrigger(BlueprintsDb.Owlcat.BlueprintRace.OreadRace.BlueprintGuid, Triggers.BlueprintsCache_Init);
 
             context.Map(pair => pair.selection) 
                 .Combine(noTraits)
@@ -91,7 +91,7 @@ namespace AlternateRacialTraits.Features.Oread
 
                     return selection;
                 })
-                .RegisterBlueprint(GeneratedGuid.OreadFeatureSelection, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.OreadFeatureSelection, Triggers.BlueprintsCache_Init);
         }
     }
 }

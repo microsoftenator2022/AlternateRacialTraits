@@ -47,7 +47,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     return feat;
                 })
-                .RegisterBlueprint(GeneratedGuid.NoAdditionaHumanTraits, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.NoAdditionaHumanTraits, Triggers.BlueprintsCache_Init);
     }
 
     internal static class HumanFeatureSelection
@@ -60,7 +60,7 @@ namespace AlternateRacialTraits.Features.Human
         internal static IInitContext<BlueprintFeatureSelection> Create()
         {
             var bonusFeatDummy = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.BasicFeatSelectionDummy)
-                .RegisterBlueprint(GeneratedGuid.BasicFeatSelectionDummy, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.BasicFeatSelectionDummy, Triggers.BlueprintsCache_Init);
 
             var selection =
                 InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.HumanFeatureSelection)
@@ -264,7 +264,7 @@ namespace AlternateRacialTraits.Features.Human
         internal static void Init()
         {
             HumanFeatureSelection.Create()
-                .RegisterBlueprint(GeneratedGuid.HumanFeatureSelection, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.HumanFeatureSelection, Triggers.BlueprintsCache_Init);
         }
     }
 }

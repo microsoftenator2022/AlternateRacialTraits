@@ -43,7 +43,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     return blueprint;
                 })
-                .RegisterBlueprint(GeneratedGuid.HistoryOfTerrorsTrait, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.HistoryOfTerrorsTrait, Triggers.BlueprintsCache_Init);
     }
 
 }

@@ -52,6 +52,6 @@ namespace AlternateRacialTraits.Features.Oread
 
                     return blueprint;
                 })
-                .RegisterBlueprint(GeneratedGuid.GraniteSkin, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.GraniteSkin, Triggers.BlueprintsCache_Init);
     }
 }

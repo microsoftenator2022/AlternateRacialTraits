@@ -112,7 +112,7 @@ namespace AlternateRacialTraits.Features.Human
 
                             return blueprint;
                         })
-                        .RegisterBlueprint(guid, Triggers.BlueprintsCache_Init);
+                        .AddOnTrigger(guid, Triggers.BlueprintsCache_Init);
                 });
 
             var selection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.DualTalentSelection, $"{nameof(DualTalent)}Selection")
@@ -140,7 +140,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     return selection;
                 })
-                .RegisterBlueprint(GeneratedGuid.DualTalentSelection, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.DualTalentSelection, Triggers.BlueprintsCache_Init);
 
             return InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.DualTalent)
                 .Combine(selection)
@@ -166,7 +166,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     return feature;
                 })
-                .RegisterBlueprint(GeneratedGuid.DualTalent, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.DualTalent, Triggers.BlueprintsCache_Init);
         }
     }
 }

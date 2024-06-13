@@ -19,8 +19,8 @@ namespace AlternateRacialTraits
         {
             //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
 
-            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Removed1).RegisterBlueprint(GeneratedGuid.Removed1, Triggers.BlueprintsCache_Init);
-            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Removed2).RegisterBlueprint(GeneratedGuid.Removed2, Triggers.BlueprintsCache_Init);
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Removed1).AddOnTrigger(GeneratedGuid.Removed1, Triggers.BlueprintsCache_Init);
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Removed2).AddOnTrigger(GeneratedGuid.Removed2, Triggers.BlueprintsCache_Init);
         }
     }
 }

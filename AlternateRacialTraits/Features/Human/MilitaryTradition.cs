@@ -90,8 +90,8 @@ namespace AlternateRacialTraits.Features.Human
                 });
 
             return
-                (selections.Map(pair => pair.first).RegisterBlueprint(GeneratedGuid.MilitaryTraditionSelection, Triggers.BlueprintsCache_Init),
-                selections.Map(pair => pair.second).RegisterBlueprint(GeneratedGuid.MilitaryTraditionSecondSelection, Triggers.BlueprintsCache_Init));
+                (selections.Map(pair => pair.first).AddOnTrigger(GeneratedGuid.MilitaryTraditionSelection, Triggers.BlueprintsCache_Init),
+                selections.Map(pair => pair.second).AddOnTrigger(GeneratedGuid.MilitaryTraditionSecondSelection, Triggers.BlueprintsCache_Init));
         }
     }
 }

@@ -292,7 +292,7 @@ namespace AlternateRacialTraits.Features.Oread
 
                     return resource;
                 })
-                .RegisterBlueprint(GeneratedGuid.CrystallineFormResource, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.CrystallineFormResource, Triggers.BlueprintsCache_Init);
 
             var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("CrystallineForm"))
                 .Combine(resource)
@@ -332,7 +332,7 @@ namespace AlternateRacialTraits.Features.Oread
 
                     return feature;
                 })
-                .RegisterBlueprint(GeneratedGuid.CrystallineForm, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.CrystallineForm, Triggers.BlueprintsCache_Init);
 
             return feature;
         }

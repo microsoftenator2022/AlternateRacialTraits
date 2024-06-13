@@ -44,6 +44,6 @@ namespace AlternateRacialTraits.Features.Human
 
                     return blueprint;
                 })
-                .RegisterBlueprint(GeneratedGuid.UnstoppableMagic, Triggers.BlueprintsCache_Init);
+                .AddOnTrigger(GeneratedGuid.UnstoppableMagic, Triggers.BlueprintsCache_Init);
     }
 }
