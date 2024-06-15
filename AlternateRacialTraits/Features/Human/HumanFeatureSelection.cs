@@ -28,7 +28,7 @@ using System.Threading;
 
 namespace AlternateRacialTraits.Features.Human
 {
-    internal static class NoAdditionalTraits
+    internal static partial class NoAdditionalTraits
     {
         [LocalizedString]
         public static readonly string DisplayName = "None";
@@ -39,18 +39,18 @@ namespace AlternateRacialTraits.Features.Human
             InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.NoAdditionaHumanTraits, nameof(NoAdditionalTraits))
                 .Map((BlueprintFeature feat) =>
                 {
-                    feat.m_DisplayName = LocalizedStrings.Features_Human_NoAdditionalTraits_DisplayName;
-                    feat.m_Description = LocalizedStrings.Features_Human_NoAdditionalTraits_Description;
+                    feat.m_DisplayName = Localized.DisplayName;
+                    feat.m_Description = Localized.Description;
                         
                     feat.HideInUI = true;
                     feat.HideInCharacterSheetAndLevelUp = true;
 
                     return feat;
                 })
-                .AddOnTrigger(GeneratedGuid.NoAdditionaHumanTraits, Triggers.BlueprintsCache_Init);
+                .AddBlueprintDeferred(GeneratedGuid.NoAdditionaHumanTraits);
     }
 
-    internal static class HumanFeatureSelection
+    internal static partial class HumanFeatureSelection
     {
         [LocalizedString]
         public static readonly string DisplayName = "Alternate Racial Traits";
@@ -60,7 +60,7 @@ namespace AlternateRacialTraits.Features.Human
         internal static IInitContext<BlueprintFeatureSelection> Create()
         {
             var bonusFeatDummy = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.BasicFeatSelectionDummy)
-                .AddOnTrigger(GeneratedGuid.BasicFeatSelectionDummy, Triggers.BlueprintsCache_Init);
+                .AddBlueprintDeferred(GeneratedGuid.BasicFeatSelectionDummy);
 
             var selection =
                 InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.HumanFeatureSelection)
@@ -68,8 +68,8 @@ namespace AlternateRacialTraits.Features.Human
                     {
                         MicroLogger.Debug(() => $"Setting up {nameof(HumanFeatureSelection)}");
 
-                        selection.m_DisplayName = LocalizedStrings.Features_Human_HumanFeatureSelection_DisplayName;
-                        selection.m_Description = LocalizedStrings.Features_Human_HumanFeatureSelection_Description;
+                        selection.m_DisplayName = Localized.DisplayName;
+                        selection.m_Description = Localized.Description;
 
                         selection.Groups = [FeatureGroup.Racial];
 

@@ -62,7 +62,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     return blueprint;
                 })
-                .AddOnTrigger(GeneratedGuid.ComprehensiveEducation, Triggers.BlueprintsCache_Init);
+                .AddBlueprintDeferred(GeneratedGuid.ComprehensiveEducation);
     }
 
 }

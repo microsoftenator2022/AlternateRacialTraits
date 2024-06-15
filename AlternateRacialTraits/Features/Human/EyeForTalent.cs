@@ -60,7 +60,8 @@ namespace AlternateRacialTraits.Features.Human
 
                         return selection;
                     })
-                    .AddOnTrigger(GeneratedGuid.EyeForTalentCompanionBonus, Triggers.BlueprintsCache_Init);
+                    .AddBlueprintDeferred(GeneratedGuid.EyeForTalentCompanionBonus);
+                    //.AddOnTrigger(GeneratedGuid.EyeForTalentCompanionBonus, Triggers.BlueprintsCache_Init);
 
             var companionProgression = 
                 InitContext.NewBlueprint<BlueprintProgression>(GeneratedGuid.Get("EyeForTalentCompanionProgression"))
@@ -75,7 +76,8 @@ namespace AlternateRacialTraits.Features.Human
 
                         return progression;
                     })
-                    .AddOnTrigger(GeneratedGuid.EyeForTalentCompanionProgression, Triggers.BlueprintsCache_Init);
+                    .AddBlueprintDeferred(GeneratedGuid.EyeForTalentCompanionProgression);
+                    //.AddOnTrigger(GeneratedGuid.EyeForTalentCompanionProgression, Triggers.BlueprintsCache_Init);
 
             var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("EyeForTalentFeature"))
                 .Combine(companionProgression)
@@ -101,7 +103,8 @@ namespace AlternateRacialTraits.Features.Human
                     
                     return feature;
                 })
-                .AddOnTrigger(GeneratedGuid.EyeForTalentFeature, Triggers.BlueprintsCache_Init);
+                .AddBlueprintDeferred(GeneratedGuid.EyeForTalentFeature);
+                //.AddOnTrigger(GeneratedGuid.EyeForTalentFeature, Triggers.BlueprintsCache_Init);
 
             return feature;
         }

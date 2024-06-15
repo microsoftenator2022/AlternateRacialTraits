@@ -78,7 +78,8 @@ namespace AlternateRacialTraits.Features.Human
 
                             return blueprint;
                         })
-                        .AddOnTrigger(guid, Triggers.BlueprintsCache_Init);
+                        .AddBlueprintDeferred(guid);
+                        //.AddOnTrigger(guid, Triggers.BlueprintsCache_Init);
                 });
 
             var selection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.DualTalentSelection, $"{nameof(DualTalent)}Selection")
@@ -102,7 +103,8 @@ namespace AlternateRacialTraits.Features.Human
 
                     return selection;
                 })
-                .AddOnTrigger(GeneratedGuid.DualTalentSelection, Triggers.BlueprintsCache_Init);
+                .AddBlueprintDeferred(GeneratedGuid.DualTalentSelection);
+                //.AddOnTrigger(GeneratedGuid.DualTalentSelection, Triggers.BlueprintsCache_Init);
 
 #endregion
             var bonusFeature =
@@ -138,7 +140,8 @@ namespace AlternateRacialTraits.Features.Human
 
                         return selection;
                     })
-                    .AddOnTrigger(GeneratedGuid.DualTalentBonus, Triggers.BlueprintsCache_Init);
+                    .AddBlueprintDeferred(GeneratedGuid.DualTalentBonus);
+                    //.AddOnTrigger(GeneratedGuid.DualTalentBonus, Triggers.BlueprintsCache_Init);
 
             return InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.DualTalent)
                 .Combine(bonusFeature)
@@ -164,7 +167,8 @@ namespace AlternateRacialTraits.Features.Human
 
                     return feature;
                 })
-                .AddOnTrigger(GeneratedGuid.DualTalent, Triggers.BlueprintsCache_Init);
+                .AddBlueprintDeferred(GeneratedGuid.DualTalent);
+                //.AddOnTrigger(GeneratedGuid.DualTalent, Triggers.BlueprintsCache_Init);
         }
     }
 }

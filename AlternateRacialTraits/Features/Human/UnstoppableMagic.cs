@@ -36,7 +36,7 @@ namespace AlternateRacialTraits.Features.Human
                     blueprint.m_DisplayName = LocalizedStrings.Features_Human_UnstoppableMagic_DisplayName;
                     blueprint.m_Description = LocalizedStrings.Features_Human_UnstoppableMagic_Description;
 
-                    blueprint.Groups = new[] { FeatureGroup.Racial };
+                    blueprint.Groups = [FeatureGroup.Racial];
                     
                     blueprint.AddSpellPenetrationBonus(c => c.Value = 2);
 
@@ -44,6 +44,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     return blueprint;
                 })
-                .AddOnTrigger(GeneratedGuid.UnstoppableMagic, Triggers.BlueprintsCache_Init);
+                .AddBlueprintDeferred(GeneratedGuid.UnstoppableMagic);
+                //.AddOnTrigger(GeneratedGuid.UnstoppableMagic, Triggers.BlueprintsCache_Init);
     }
 }

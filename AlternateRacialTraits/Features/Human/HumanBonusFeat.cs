@@ -59,6 +59,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     return blueprint;
                 })
-                .AddOnTrigger(GeneratedGuid.HumanBonusFeat, Triggers.BlueprintsCache_Init);
+                .AddBlueprintDeferred(GeneratedGuid.HumanBonusFeat);
+                //.AddOnTrigger(GeneratedGuid.HumanBonusFeat, Triggers.BlueprintsCache_Init);
     }
 }

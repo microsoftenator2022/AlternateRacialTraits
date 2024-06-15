@@ -72,6 +72,7 @@ namespace AlternateRacialTraits.Features.Human
 
                     return blueprint;
                 })
-                .AddOnTrigger(GeneratedGuid.PracticedHunter, Triggers.BlueprintsCache_Init);
+                .AddBlueprintDeferred(GeneratedGuid.PracticedHunter);
+                //.AddOnTrigger(GeneratedGuid.PracticedHunter, Triggers.BlueprintsCache_Init);
     }
 }
