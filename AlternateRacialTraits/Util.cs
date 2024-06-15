@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
-using Kingmaker.UnitLogic.Class.LevelUp.Actions;
-using Kingmaker.UnitLogic.Class.LevelUp;
-using Kingmaker.EntitySystem.Entities;
-using Kingmaker.Blueprints.Classes;
-using Kingmaker.UnitLogic;
-using Kingmaker.Blueprints;
 using HarmonyLib;
-using Kingmaker.UI.MVVM._VM.CharGen.Phases.FeatureSelector;
+
+using Kingmaker;
+using Kingmaker.Blueprints;
+using Kingmaker.Blueprints.Classes;
+using Kingmaker.Blueprints.Classes.Selection;
+using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UI.Common;
 using Kingmaker.UI.MVVM._VM.CharGen.Phases;
-using Kingmaker.Blueprints.Classes.Selection;
+using Kingmaker.UI.MVVM._VM.CharGen.Phases.FeatureSelector;
+using Kingmaker.UnitLogic;
+using Kingmaker.UnitLogic.Class.LevelUp;
+using Kingmaker.UnitLogic.Class.LevelUp.Actions;
+using Kingmaker.Utility;
+
+using MicroWrath;
 
 namespace AlternateRacialTraits
 {
@@ -39,25 +45,6 @@ namespace AlternateRacialTraits
 
     }
 
-    //[HarmonyPatch]
-    //[AllowedOn(typeof(BlueprintFeatureSelection))]
-    //[AllowedOn(typeof(BlueprintParametrizedFeature))]
-    //internal class SelectFeaturePriority : UnitFactComponentDelegate
-    //{
-    //    public LevelUpActionPriority Priority = LevelUpActionPriority.Features;
-
-    //    [HarmonyPatch(typeof(SelectFeature), nameof(SelectFeature.CalculatePriority))]
-    //    [HarmonyPostfix]
-    //    static LevelUpActionPriority CalculatePriority_Postfix(LevelUpActionPriority __result, IFeatureSelection selection)
-    //    {
-    //        if (selection is BlueprintScriptableObject blueprint &&
-    //            blueprint.GetComponent<SelectFeaturePriority>() is { } component)
-    //            return component.Priority;
-
-    //        return __result;
-    //    }
-    //}
-
     [HarmonyPatch(
         typeof(CharGenFeatureSelectorPhaseVM),
         nameof(CharGenFeatureSelectorPhaseVM.OrderPriority),
@@ -74,6 +61,41 @@ namespace AlternateRacialTraits
             }
 
             return __result;
+        }
+    }
+
+    // Don't yell at me about missing feature param when I haven't even finished level up
+    [HarmonyPatch]
+    static class ShutUpShutUpShutUpShutUp
+    {
+        static bool IsCurrentlyLevelingUp()
+        {
+            if (Game.Instance.LevelUpController is not { } controller)
+                return false;
+
+            return !controller.Committed;
+        }
+
+        [HarmonyPatch(typeof(Feature), nameof(Feature.OnActivate))]
+        [HarmonyTranspiler]
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var index = instructions.FindIndex(ci => ci.Calls(AccessTools.Method(typeof(FeatureParam), "op_Equality")));
+
+            if (index < 0)
+                throw new Exception("Could not find target instruction");
+
+            var iList = instructions.ToList();
+
+            var ifFalse = iList[index + 1];
+            
+            iList.InsertRange(index + 2,
+            [
+                CodeInstruction.Call(() => IsCurrentlyLevelingUp()),
+                new(OpCodes.Brtrue_S, ifFalse.operand)
+            ]);
+
+            return iList;
         }
     }
 }

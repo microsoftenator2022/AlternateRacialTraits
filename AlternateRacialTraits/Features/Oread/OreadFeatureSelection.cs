@@ -49,7 +49,7 @@ namespace AlternateRacialTraits.Features.Oread
         [LocalizedString]
         public const string Description = "The following alternate traits are available";
 
-        //[Init]
+        [Init]
         internal static void Init()
         {
             //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);

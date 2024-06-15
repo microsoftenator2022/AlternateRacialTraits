@@ -3,21 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
-using Kingmaker.Blueprints.Classes.Prerequisites;
 using Kingmaker.Blueprints.Classes.Selection;
 using Kingmaker.Blueprints.Root;
-using Kingmaker.Blueprints.Root.Strings;
 using Kingmaker.EntitySystem.Stats;
 using Kingmaker.Enums;
 using Kingmaker.Localization;
-using Kingmaker.UnitLogic;
-using Kingmaker.UnitLogic.Class.LevelUp;
 
 using MicroWrath;
-//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
@@ -30,28 +24,6 @@ namespace AlternateRacialTraits.Features.Human
 {
     internal static partial class DualTalent
     {
-        [AllowedOn(typeof(BlueprintFeature))]
-        internal class PrerequisiteNoRaceAttributeBonus : Prerequisite
-        {
-            public StatType Stat;
-
-            public override bool CheckInternal(
-                FeatureSelectionState selectionState,
-                UnitDescriptor unit,
-                LevelUpState state)
-            {
-                var statValue = unit.Stats.Attributes.First(s => s.Type == Stat);
-
-                return !statValue.Modifiers.Any(m =>
-                    m.ModDescriptor == ModifierDescriptor.Racial &&
-                    m.Source.Blueprint == unit.Progression.Race &&
-                    m.ModValue > 0);
-            }
-
-            public override string GetUITextInternal(UnitDescriptor unit) =>
-                $"{UIStrings.Instance.Tooltips.NoFeature}: {LocalizedTexts.Instance.Stats.GetText(Stat)}";
-        }
-
         [LocalizedString]
         public static readonly string DisplayName = "Dual Talent";
 
@@ -59,20 +31,14 @@ namespace AlternateRacialTraits.Features.Human
         public static readonly string Description =
             "Some humans are uniquely skilled at maximizing their natural gifts. These humans pick two " +
             $"{new Link(Page.Ability_Scores, "ability scores")} and gain a +2 racial " +
-            $"{new Link(Page.Bonus, "bonus")} in each of those scores. This racial trait replaces the +2 " +
+            $"{new Link(Page.Bonus, "bonus")} in each of those scores. " +
+            $"This racial trait replaces the +2 " +
             "bonus to any one ability score, the bonus feat trait and the Skilled trait.";
 
         internal static IInitContext<BlueprintFeature> Create()
         {
-            var stats = (new[]
-            {
-                StatType.Strength,
-                StatType.Dexterity,
-                StatType.Constitution,
-                StatType.Intelligence,
-                StatType.Wisdom,
-                StatType.Charisma
-            })
+#region Obsolete
+            var stats = StatTypeHelper.Attributes
             .Select(stat =>
             {
                 var bpName = $"DualTalent{Enum.GetName(typeof(StatType), stat)}";
@@ -108,7 +74,7 @@ namespace AlternateRacialTraits.Features.Human
                                 c.Descriptor = ModifierDescriptor.Racial;
                             });
 
-                            blueprint.AddComponent<PrerequisiteNoRaceAttributeBonus>(c => c.Stat = stat);
+                            blueprint.AddComponent<PrerequisiteNoRaceStatBonus>(c => c.Stat = stat);
 
                             return blueprint;
                         })
@@ -130,10 +96,6 @@ namespace AlternateRacialTraits.Features.Human
 
                     selection.Groups = [FeatureGroup.Racial];
                     
-                    //selection.AddComponent<OverrideSelectionPriority>(c =>
-                    //    c.Priority = Kingmaker.UI.MVVM._VM.CharGen.Phases.CharGenPhaseBaseVM
-                    //        .ChargenPhasePriority.AbilityScores);
-
                     selection.AddComponent<SelectionPriority>(c =>
                         c.PhasePriority = Kingmaker.UI.MVVM._VM.CharGen.Phases.CharGenPhaseBaseVM
                             .ChargenPhasePriority.AbilityScores);
@@ -142,8 +104,44 @@ namespace AlternateRacialTraits.Features.Human
                 })
                 .AddOnTrigger(GeneratedGuid.DualTalentSelection, Triggers.BlueprintsCache_Init);
 
+#endregion
+            var bonusFeature =
+                InitContext.NewBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.Get("DualTalentBonus"))
+                    .Map(selection =>
+                    {
+                        selection.m_DisplayName = Localized.DisplayName;
+                        selection.m_Description = Localized.Description;
+
+                        selection.SetIcon("0465d85ec271d694f93089def152b820", 21300000);
+
+                        selection.Groups = [FeatureGroup.Racial];
+
+                        selection.ParameterType = FeatureParameterType.Skill;
+
+                        selection.AddComponent<ParamStats>(c => c.Stats = StatTypeHelper.Attributes);
+
+                        selection.AddAddParametrizedStatBonus(c =>
+                        {
+                            c.Value = 2;
+                            c.Descriptor = ModifierDescriptor.Racial;
+                        });
+
+                        selection.AddComponent<SelectionPriority>(c =>
+                        {
+                            c.PhasePriority = Kingmaker.UI.MVVM._VM.CharGen.Phases.CharGenPhaseBaseVM
+                                .ChargenPhasePriority.AbilityScores;
+
+                            //c.ActionPriority = Kingmaker.UnitLogic.Class.LevelUp.Actions.LevelUpActionPriority.RaceStat;
+                        });
+
+                        selection.AddComponent<PrerequisiteNoRaceStatBonus>(c => c.Parametrized = true);
+
+                        return selection;
+                    })
+                    .AddOnTrigger(GeneratedGuid.DualTalentBonus, Triggers.BlueprintsCache_Init);
+
             return InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.DualTalent)
-                .Combine(selection)
+                .Combine(bonusFeature)
                 .Map(bps =>
                 {
                     var (feature, selection) = bps;

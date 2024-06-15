@@ -133,11 +133,22 @@ namespace AlternateRacialTraits.Features.Human
                     return awareness;
                 });
 
+            var eyeForTalent = EyeForTalent.Create()
+                .Combine(bonusFeatDummy)
+                .Map(bps => 
+                {
+                    var (blueprint, dummy) = bps;
+
+                    blueprint.AddPrerequisiteFeature(dummy.ToMicroBlueprint(), hideInUI: true, removeOnApply: true);
+
+                    return blueprint;
+                });
+
             var comprehensiveEducation = ComprehensiveEducation.Create();
-            var giantAcestry = GiantAncestry.Create();
+            var giantAncestry = GiantAncestry.Create();
             var historyOfTerrors = HistoryOfTerrorsTrait.Create();
             var practicedHunter = PracticedHunter.Create();
-
+            
             var unstoppableMagic = UnstoppableMagic.Create()
                 .Combine(bonusFeatDummy)
                 .Map(bps =>
@@ -204,13 +215,14 @@ namespace AlternateRacialTraits.Features.Human
                 noMoreSelections,
                 awareness,
                 comprehensiveEducation,
-                giantAcestry,
+                giantAncestry,
                 historyOfTerrors,
                 practicedHunter,
                 unstoppableMagic,
                 focusedStudy,
                 dualTalent,
-                adoptiveParentage
+                adoptiveParentage,
+                eyeForTalent
             }).Collect()
             .Combine(militaryTradition)
             .Map(bps =>
