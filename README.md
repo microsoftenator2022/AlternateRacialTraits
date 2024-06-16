@@ -10,6 +10,7 @@ Saves made with the previous version will hopefully still load (no guarantees th
  * Awareness
  * Comprehensive Education
  * Dual Talent - **NEW**: Now correctly enforces the selection of 2 *different* attributes.
+ * Eye For Talent
  * Focused Study
  * Giant Ancestry
  * History Of Terrors (the base game still has this as a feat. You can only select one or the other)
@@ -19,6 +20,7 @@ Saves made with the previous version will hopefully still load (no guarantees th
 
 ### Half Elf
  * Eye For Opportunity
+ * Kindred-Raised (fixed; now unable to stack to +4 Cha)
  * Weapon Familiarity
 
 ### Oread
