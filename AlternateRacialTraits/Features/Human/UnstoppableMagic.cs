@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Kingmaker.Blueprints.Classes;
+using Kingmaker.Enums;
 
 using MicroWrath;
 //using MicroWrath.BlueprintInitializationContext;
@@ -38,7 +39,11 @@ namespace AlternateRacialTraits.Features.Human
 
                     blueprint.Groups = [FeatureGroup.Racial];
                     
-                    blueprint.AddSpellPenetrationBonus(c => c.Value = 2);
+                    blueprint.AddSpellPenetrationBonus(c => 
+                    {
+                        c.Value = 2;
+                        c.Descriptor = ModifierDescriptor.Racial;
+                    });
 
                     blueprint.SetIcon("15d11c952fdc96b45849f312f3931192", 21300000);
 
