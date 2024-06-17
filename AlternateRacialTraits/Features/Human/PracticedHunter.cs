@@ -29,9 +29,10 @@ namespace AlternateRacialTraits.Features.Human
         public static readonly string Description =
             "Members of some human cultures train from youth to find and follow the trails of vital game and " +
             "at the same time hide the evidence of their own passage. These humans gain a +2 racial " +
-            $"{new Link(Page.Bonus, "bonus")} on Stealth and Lore (Nature) " +
+            $"{new Link(Page.Bonus, "bonus")} on {new Link(Page.Stealth, "Stealth")} and " +
+            $"{new Link(Page.Lore_Nature, "Lore (Nature)")} " +
             $"{new Link(Page.Check, "checks")}, and Stealth and Lore (Nature) are always class " +
-            "skills for them. This racial trait replaces Skilled.";
+            $"skills for them. This racial {new Link(Page.Trait, "trait")} replaces Skilled.";
 
         internal static IInitContext<BlueprintFeature> Create() =>
             InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.PracticedHunter)

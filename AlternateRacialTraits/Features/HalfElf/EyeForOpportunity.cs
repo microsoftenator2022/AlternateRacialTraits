@@ -32,7 +32,7 @@ namespace AlternateRacialTraits.Features.HalfElf
             "Constantly facing the rough edges of two societies, some half-elves develop a knack for finding " +
             $"overlooked opportunities. They gain a +1 racial {new Link(Page.Bonus, "bonus")} on " +
             $"{new Link(Page.Attack_Of_Opportunity, "attacks of opportunity")}. This racial " +
-            "trait replaces adaptability and keen senses.";
+            $"{new Link(Page.Trait, "trait")} replaces adaptability and keen senses.";
 
         [Init]
         internal static void Init()

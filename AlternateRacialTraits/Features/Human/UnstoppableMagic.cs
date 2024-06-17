@@ -26,8 +26,8 @@ namespace AlternateRacialTraits.Features.Human
             "Humans from civilizations built upon advanced magic are educated in a variety of ways to " +
             $"accomplish their magical goals. They gain a +2 racial {new Link(Page.Bonus, "bonus")} " +
             $"on {new Link(Page.Caster_Level, "caster level")} {new Link(Page.Check, "checks")} " +
-            $"against {new Link(Page.Spell_Resistance, "spell resistance")}. This racial trait " +
-            $"replaces the bonus feat trait.";
+            $"against {new Link(Page.Spell_Resistance, "spell resistance")}. " +
+            $"This racial {new Link(Page.Trait, "trait")} replaces the bonus {new Link(Page.Feat, "feat")} trait.";
 
         internal static IInitContext<BlueprintFeature> Create() =>
             InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.UnstoppableMagic)

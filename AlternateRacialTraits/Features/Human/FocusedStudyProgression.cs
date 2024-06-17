@@ -27,7 +27,7 @@ namespace AlternateRacialTraits.Features.Human
             "All humans are skillful, but some, rather than being generalists, tend to specialize in a " +
             $"handful of {new Link(Page.Skills, "skills")}. At 1st, 8th, and 16th level, such humans " +
             "gain Skill Focus in a skill of their choice as a bonus feat. This racial trait replaces the " +
-            "bonus feat trait.";
+            $"bonus {new Link(Page.Feat, "feat")} trait.";
 
         internal static IInitContext<BlueprintProgression> Create() =>
             InitContext.NewBlueprint<BlueprintProgression>(GeneratedGuid.FocusedStudyProgression)

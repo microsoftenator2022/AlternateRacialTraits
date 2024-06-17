@@ -39,7 +39,8 @@ namespace AlternateRacialTraits.Features.Human
             $"{new Link(Page.Bonus, "bonus")} on {new Link(Page.Perception, "Perception")} checks. " +
             "In addition, when they acquire an animal companion, bonded mount, cohort, or familiar, that creature " +
             $"gains a +2 {new Link(Page.Bonus, "bonus")} to one ability score of the character’s choice. " +
-            $"This {new Link(Page.Trait, "racial trait")} replaces the bonus feat trait.";
+            $"This {new Link(Page.Trait, "racial trait")} replaces the bonus " +
+            $"{new Link(Page.Feat, "feat")} trait.";
 
         public static IInitContextBlueprint<BlueprintFeature> Create()
         {

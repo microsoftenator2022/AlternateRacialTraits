@@ -18,6 +18,8 @@ using MicroWrath.InitContext;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
+using static MicroWrath.Encyclopedia;
+
 namespace AlternateRacialTraits.Features.HalfElf
 {
     internal static partial class WeaponFamiliarity
@@ -26,9 +28,9 @@ namespace AlternateRacialTraits.Features.HalfElf
         internal const string DisplayName = "Weapon Familiarity";
 
         [LocalizedString]
-        internal const string Description = "Half-elves raised among elves often feel pitied and mistrusted by " +
-            "their longer-lived kin, and yet they receive training in elf weapons. They gain the elf ‘s weapon " +
-            "familiarity trait. This racial trait replaces adaptability.";
+        internal static readonly string Description = "Half-elves raised among elves often feel pitied and " +
+            "mistrusted by their longer-lived kin, and yet they receive training in elf weapons. They gain the " +
+            $"elf's weapon familiarity {new Link(Page.Trait, "trait")}. This racial trait replaces adaptability.";
 
         [Init]
         internal static void Init()

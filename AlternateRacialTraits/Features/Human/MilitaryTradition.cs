@@ -35,7 +35,8 @@ namespace AlternateRacialTraits.Features.Human
             "Several human cultures raise all children (or all children of a certain social class) to serve " +
             "in the military or defend themselves with force of arms. They gain " +
             $"{new Link(Page.Weapon_Proficiency, "proficiency")} with up to two martial or " +
-            "exotic weapons appropriate to their culture. This racial trait replaces the bonus feat trait.";
+            "exotic weapons appropriate to their culture. This racial trait replaces the bonus " +
+            $"{new Link(Page.Feat, "feat")} trait.";
 
         internal static (IInitContext<BlueprintFeatureSelection>, IInitContext<BlueprintFeatureSelection>) Create()
         {

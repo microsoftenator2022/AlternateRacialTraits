@@ -28,28 +28,6 @@ using System.Threading;
 
 namespace AlternateRacialTraits.Features.Human
 {
-    internal static partial class NoAdditionalTraits
-    {
-        [LocalizedString]
-        public static readonly string DisplayName = "None";
-        [LocalizedString]
-        public static readonly string Description = "No alternate trait";
-
-        internal static IInitContext<BlueprintFeature> Create() =>
-            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.NoAdditionaHumanTraits, nameof(NoAdditionalTraits))
-                .Map((BlueprintFeature feat) =>
-                {
-                    feat.m_DisplayName = Localized.DisplayName;
-                    feat.m_Description = Localized.Description;
-                        
-                    feat.HideInUI = true;
-                    feat.HideInCharacterSheetAndLevelUp = true;
-
-                    return feat;
-                })
-                .AddBlueprintDeferred(GeneratedGuid.NoAdditionaHumanTraits);
-    }
-
     internal static partial class HumanFeatureSelection
     {
         [LocalizedString]
@@ -106,7 +84,10 @@ namespace AlternateRacialTraits.Features.Human
                     return bonusFeat;
                 });
 
-            var noMoreSelections = NoAdditionalTraits.Create()
+            var noMoreSelections =
+                    NoAdditionalTraitsPrototype.Setup(
+                        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.NoAdditionaHumanTraits))
+                        .AddBlueprintDeferred(GeneratedGuid.NoAdditionaHumanTraits)
                 .Combine(bonusFeatDummy)
                 .Map(bps =>
                 {

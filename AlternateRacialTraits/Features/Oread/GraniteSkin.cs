@@ -26,7 +26,8 @@ namespace AlternateRacialTraits.Features.Oread
         [LocalizedString]
         public const string DisplayName = "Granite Skin";
         [LocalizedString]
-        public static readonly string Description = "Rocky growths cover the skin of oreads with this racial trait. " +
+        public static readonly string Description =
+            $"Rocky growths cover the skin of oreads with this racial {new Link(Page.Trait, "trait")}. " +
             $"They gain a +1 racial {new Link(Page.Bonus, "bonus")} to natural " +
             $"{new Link(Page.Armor_Class, "armor")}. This racial trait replaces Oread energy resistance.";
 

@@ -20,27 +20,27 @@ using MicroWrath.Util.Linq;
 
 namespace AlternateRacialTraits.Features.Oread
 {
-    internal static class NoAlternateTraits
-    {
-        [LocalizedString]
-        public const string DisplayName = "None";
-        [LocalizedString]
-        public const string Description = "No alternate trait";
+    //internal static class NoAlternateTraits
+    //{
+    //    [LocalizedString]
+    //    public const string DisplayName = "None";
+    //    [LocalizedString]
+    //    public const string Description = "No alternate trait";
 
-        internal static IInitContext<BlueprintFeature> Create() =>
-            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(GeneratedGuid.NoAlternateOreadTraits)))
-                .Map(blueprint =>
-                {
-                    blueprint.m_DisplayName = LocalizedStrings.Features_Oread_NoAlternateTraits_DisplayName;
-                    blueprint.m_Description = LocalizedStrings.Features_Oread_NoAlternateTraits_Description;
+    //    internal static IInitContext<BlueprintFeature> Create() =>
+    //        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(GeneratedGuid.NoAlternateOreadTraits)))
+    //            .Map(blueprint =>
+    //            {
+    //                blueprint.m_DisplayName = LocalizedStrings.Features_Oread_NoAlternateTraits_DisplayName;
+    //                blueprint.m_Description = LocalizedStrings.Features_Oread_NoAlternateTraits_Description;
 
-                    blueprint.HideInUI = true;
-                    blueprint.HideInCharacterSheetAndLevelUp = true;
+    //                blueprint.HideInUI = true;
+    //                blueprint.HideInCharacterSheetAndLevelUp = true;
 
-                    return blueprint;
-                })
-                .AddOnTrigger(GeneratedGuid.NoAlternateOreadTraits, Triggers.BlueprintsCache_Init);
-    }
+    //                return blueprint;
+    //            })
+    //            .AddOnTrigger(GeneratedGuid.NoAlternateOreadTraits, Triggers.BlueprintsCache_Init);
+    //}
 
     internal static class OreadFeatureSelection
     {
@@ -52,9 +52,12 @@ namespace AlternateRacialTraits.Features.Oread
         [Init]
         internal static void Init()
         {
-            //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
+            var noTraits =
+                NoAdditionalTraitsPrototype.Setup(
+                    InitContext.NewBlueprint<BlueprintFeature>(
+                        GeneratedGuid.Get("NoAlternateOreadTraits")))
+                    .AddBlueprintDeferred(GeneratedGuid.NoAlternateOreadTraits);
 
-            var noTraits = NoAlternateTraits.Create();
             var graniteSkin = GraniteSkin.Create();
             var crystallineForm = CrystallineForm.Create();
 

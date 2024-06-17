@@ -32,9 +32,9 @@ namespace AlternateRacialTraits.Features.Human
         public static readonly string Description =
             "Humans are sometimes orphaned and adopted by other races. Choose one humanoid " +
             $"{new Link(Page.Race, "race")} without the human subtype. You gain that race’s " +
-            "weapon familiarity racial trait. If the race does not have weapon familiarity, you gain " +
-            $"Skill Focus or Weapon Focus as a bonus {new Link(Page.Feat, "feat")} that " +
-            "is appropriate for that race instead. This racial trait replaces the bonus feat trait.";
+            $"weapon familiarity racial {new Link(Page.Trait, "trait")}. If the race does not have weapon " +
+            $"familiarity, you gain Skill Focus or Weapon Focus as a bonus {new Link(Page.Feat, "feat")} that " +
+            $"is appropriate for that race instead. This racial trait replaces the bonus {new Link(Page.Feat, "feat")} trait.";
 
         private record class AdoptingRace(
             GeneratedGuid Guid,
