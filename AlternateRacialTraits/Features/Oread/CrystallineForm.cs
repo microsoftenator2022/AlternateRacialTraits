@@ -227,16 +227,15 @@ namespace AlternateRacialTraits.Features.Oread
                 [HarmonyPostfix]
                 static bool UnitCombatState_CannotBeDeflected_Postfix(bool __result, TimeSpan now, Projectile projectile, UnitEntityData attacker, UnitCombatState __instance)
                 {
+#if false
                     MicroLogger.Debug(() => $"!this.Unit.Descriptor.State.Features.DeflectArrows? {!__instance.Unit.Descriptor.State.Features.DeflectArrows}");
                     MicroLogger.Debug(() => $"now - this.m_LastDeflectArrowTime < 1.Rounds().Seconds? {now - __instance.m_LastDeflectArrowTime < 1.Rounds().Seconds}");
                     MicroLogger.Debug(() => $"projectile.AttackRoll.Weapon.Blueprint.IsNatural? {projectile.AttackRoll.Weapon.Blueprint.IsNatural}");
                     MicroLogger.Debug(() => "(attacker != null && Rulebook.Trigger<RuleCheckTargetFlatFooted>(new RuleCheckTargetFlatFooted(attacker, this.Unit)).IsFlatFooted)? " +
                     $"{(attacker != null && Rulebook.Trigger<RuleCheckTargetFlatFooted>(new RuleCheckTargetFlatFooted(attacker, __instance.Unit)).IsFlatFooted)}");
-
-//#if !DEBUG
+#endif
                     if (!__result && projectile.Target.Unit.IsAlly(attacker) && projectile.AttackRoll.AutoHit)
                         __result = true;
-//#endif
 
                     MicroLogger.Debug(() => $"Can be deflected? {!__result}");
 

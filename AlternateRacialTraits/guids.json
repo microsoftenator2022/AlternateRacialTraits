@@ -49,5 +49,10 @@
   "EyeForTalentFeature": "4117de0b-fc2a-9557-a440-bfa7fcb15aeb",
   "EyeForTalentCompanionProgression": "3c5412fd-c309-4054-a3b4-db388b55366b",
   "EyeForTalentCompanionBonus": "640c92d3-feb7-bd5c-b8d2-0ae58100fc39",
-  "DualTalentBonus": "3045b5f8-c65b-f854-b530-416a7c84dcaf"
+  "DualTalentBonus": "3045b5f8-c65b-f854-b530-416a7c84dcaf",
+  "AasimarFeatureSelection": "9f2bf62b-ec29-d754-b371-76b041b6bb66",
+  "NoAdditionalAasimarTraits": "e7ae3ee2-71f0-a955-a39a-b96e08eb6bf7",
+  "ExaltedResistanceVsEvilDescriptor": "fca80ef9-d576-5d5f-93ee-0d08ad9267c5",
+  "ExaltedResistance": "fcabeca7-fb14-c457-bcc6-7149fdffc2d0",
+  "ExaltedResistanceVsEvilOutsider": "5d6f8f2f-bf1e-b953-8dc1-5bfa7f0db507"
 }
