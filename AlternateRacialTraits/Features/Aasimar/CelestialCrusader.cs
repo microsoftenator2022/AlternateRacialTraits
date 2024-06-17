@@ -85,12 +85,13 @@ namespace AlternateRacialTraits.Features.Aasimar
                             ]);
                     });
 
-                    feature.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.CelestialResistance, removeOnApply: true).Group = Prerequisite.GroupType.All;
+                    feature.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.CelestialResistance, removeOnApply: true)
+                        .Group = Prerequisite.GroupType.All;
 
                     feature.AddComponent<PrerequisiteFeaturesFromList>(c =>
                     {
                         c.Amount = 1;
-                        c.Group = Prerequisite.GroupType.Any;
+                        c.Group = Prerequisite.GroupType.All;
                         c.m_Features = skilledFeatures.Select(f => f.ToReference()).ToArray();
                     });
 

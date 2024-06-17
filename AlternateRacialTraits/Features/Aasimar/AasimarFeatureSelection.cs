@@ -9,9 +9,15 @@ using HarmonyLib;
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
 using Kingmaker.Blueprints.Classes.Selection;
+using Kingmaker.Blueprints.Facts;
 using Kingmaker.EntitySystem.Stats;
+using Kingmaker.Localization;
+using Kingmaker.UI;
+using Kingmaker.UI.Common;
+using Kingmaker.UnitLogic.Abilities.Blueprints;
 using Kingmaker.UnitLogic.Class.LevelUp.Actions;
 using Kingmaker.UnitLogic.FactLogic;
+using Kingmaker.UnitLogic.Mechanics.Components;
 
 using MicroWrath;
 using MicroWrath.BlueprintsDb;
@@ -20,6 +26,10 @@ using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
 using MicroWrath.InitContext;
 using MicroWrath.Localization;
+using MicroWrath.Util;
+using MicroWrath.Util.Linq;
+
+using UniRx;
 #if DEBUG
 namespace AlternateRacialTraits.Features.Aasimar
 {
@@ -34,7 +44,7 @@ namespace AlternateRacialTraits.Features.Aasimar
         static IInitContextBlueprint<BlueprintFeature> CreateHeritageSkillFeature(
             IMicroBlueprint<BlueprintFeature> heritageFeature, string name)
         {
-            GeneratedGuid guid = GeneratedGuid.Get(name);
+            var guid = GeneratedGuid.Get(name);
 
             var blueprints = InitContext.NewBlueprint<BlueprintFeature>(guid)
                 .Combine(InitContext.GetBlueprint(heritageFeature))
@@ -45,7 +55,13 @@ namespace AlternateRacialTraits.Features.Aasimar
                     if (heritage is null)
                         throw new NullReferenceException();
 
-                    skilledFeature.m_DisplayName = heritage.m_DisplayName;
+                    var displayNameKey = $"{Localized.DisplayName.Key}.{skilledFeature.name}";
+
+                    LocalizedStrings.DefaultStringEntries.Add(
+                            displayNameKey,
+                            $"{heritage.Name} - Skilled");
+
+                    skilledFeature.m_DisplayName = new LocalizedString { m_Key = displayNameKey };
 
                     skilledFeature.HideInUI = true;
 
@@ -55,7 +71,9 @@ namespace AlternateRacialTraits.Features.Aasimar
                         skilledFeature.AddComponent(addStatBonus);
                     }
 
-                    heritage.AddAddFacts(c => c.m_Facts = [skilledFeature.ToReference<BlueprintUnitFactReference>()]);
+                    var addFacts = heritage.EnsureComponent<AddFacts>();
+                    addFacts.m_Facts ??= [];
+                    addFacts.m_Facts = addFacts.m_Facts.Append(skilledFeature.ToReference<BlueprintUnitFactReference>());
 
                     return (skilledFeature, heritage);
                 });
@@ -67,18 +85,101 @@ namespace AlternateRacialTraits.Features.Aasimar
                 .AddBlueprintDeferred(guid);
         }
 
-        internal static readonly Lazy<IInitContext<BlueprintFeature[]>> SkilledFeatures = new(() =>
-        {
-            return InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.AasimarHeritageSelection)
+        internal static IInitContext<IEnumerable<BlueprintFeature>> HeritageFeatures =>
+            InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.AasimarHeritageSelection)
                 .Bind(selection =>
                 {
                     var features = selection.AllFeatures;
 
                     return features
-                        .Select(f => CreateHeritageSkillFeature(f.ToMicroBlueprint(), $"{f.Name}Skilled"))
+                        .Select(f => InitContext.GetBlueprint(f.ToMicroBlueprint()))
                         .Collect();
                 })
+                .Map(features => features.NotNull());
+
+        internal static readonly Lazy<IInitContext<BlueprintFeature[]>> SkilledFeatures = new(() =>
+        {
+            return HeritageFeatures
+                .Bind(features => features
+                    .Select(f => CreateHeritageSkillFeature(f.ToMicroBlueprint(), $"{f.Name}Skilled"))
+                    .Collect())
                 .Map(Enumerable.ToArray);
+        });
+
+        [HarmonyPatch]
+        static class UIUtilityUnit_Patch
+        {
+            [HarmonyPatch(typeof(UIUtilityUnit), nameof(UIUtilityUnit.ParseFeatureOnImmediatelyAbilities))]
+            [HarmonyPostfix]
+            static void ParseFeatureOnImmediatelyAbilities(BlueprintFeatureBase feature, List<IUIDataProvider> __result)
+            {
+                if (feature.AssetGuid != GeneratedGuid.Plumekith__Garuda_Blooded_Ability.Guid)
+                    return;
+
+                MicroLogger.Debug(() => $"{nameof(GeneratedGuid.Plumekith__Garuda_Blooded_Ability)} {feature}: {__result.Count}");
+            }
+        }
+
+        static IInitContext<Option<IInitContext<(BlueprintFeature, BlueprintAbility[])>>> CreateHeritageSLAFeature(
+            IMicroBlueprint<BlueprintFeature> heritageFeature,
+            string name)
+        {
+            var guid = GeneratedGuid.Get(name);
+
+            var maybeFeatures = InitContext.NewBlueprint<BlueprintFeature>(guid)
+                .Combine(InitContext.GetBlueprint(heritageFeature))
+                .Map(bps =>
+                {
+                    var (feature, heritageFeature) = bps;
+
+                    if (heritageFeature is null)
+                        throw new NullReferenceException();
+
+                    if (heritageFeature.GetComponent<AddFacts>() is not { } af)
+                        return Option<(BlueprintFeature feature, BlueprintAbility[] facts, BlueprintFeature heritageFeature)>.None;
+
+                    var displayNameKey = $"{Localized.DisplayName.Key}.{feature.name}";
+
+                    LocalizedStrings.DefaultStringEntries.Add(
+                            displayNameKey,
+                            $"{heritageFeature.Name} - Spell-like Ability");
+
+                    feature.m_DisplayName = new LocalizedString { m_Key = displayNameKey };
+
+                    feature.HideInUI = true;
+
+                    var facts = af.m_Facts.Select(f => f.Get()).OfType<BlueprintAbility>().ToArray();
+
+                    af.m_Facts = af.m_Facts.Append(feature.ToReference<BlueprintUnitFactReference>());
+
+                    return Option.Some((feature, facts, heritageFeature));
+                });
+
+            return
+                maybeFeatures.MapOption(blueprints =>
+                {
+                    new InitContext<BlueprintFeature>(() => blueprints.heritageFeature)
+                        .OnDemand(blueprints.heritageFeature.AssetGuid);
+
+                    var feature = new InitContext<BlueprintFeature>(() => blueprints.feature)
+                            .AddBlueprintDeferred(blueprints.feature.AssetGuid);
+
+                    var facts = new InitContext<BlueprintAbility[]>(() => blueprints.facts);
+
+                    return (feature.Combine(facts));
+                });
+        }
+
+        internal static readonly Lazy<IInitContext<(BlueprintFeature feature, BlueprintAbility[] facts)[]>> SLAFeatures = new(() =>
+        {
+            return HeritageFeatures
+                .Bind(features => features
+                    .Select(f => CreateHeritageSLAFeature(f.ToMicroBlueprint(), $"{f.Name}Ability"))
+                    .Collect())
+                .Map(features => features
+                    .SelectMany(f => f)
+                    .Select(f => f.Eval())
+                    .ToArray());
         });
 
         static IInitContextBlueprint<BlueprintFeatureSelection> Create()
@@ -91,7 +192,8 @@ namespace AlternateRacialTraits.Features.Aasimar
                     .AddBlueprintDeferred(GeneratedGuid.NoAdditionalAasimarTraits),
                 DeathlessSpirit.Create(),
                 ExaltedResistance.Create(),
-                CelestialCrusader.Create()
+                CelestialCrusader.Create(),
+                CrusadingMagic.Create()
             };
 
             var selection =
