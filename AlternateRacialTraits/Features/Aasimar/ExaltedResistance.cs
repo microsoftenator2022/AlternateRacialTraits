@@ -37,7 +37,7 @@ using MicroWrath.Localization;
 using MicroWrath.Util;
 
 using static MicroWrath.Encyclopedia;
-#if DEBUG
+
 namespace AlternateRacialTraits.Features.Aasimar
 {
     [AllowedOn(typeof(BlueprintUnitFact))]
@@ -343,4 +343,3 @@ namespace AlternateRacialTraits.Features.Aasimar
         }
     }
 }
-#endif

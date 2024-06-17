@@ -27,7 +27,7 @@ using MicroWrath.InitContext;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
-#if DEBUG
+
 namespace AlternateRacialTraits.Features.Aasimar
 {
     internal static partial class DeathlessSpirit
@@ -140,4 +140,3 @@ namespace AlternateRacialTraits.Features.Aasimar
         }
     }
 }
-#endif
