@@ -48,6 +48,8 @@ namespace AlternateRacialTraits.Features.Aasimar
                     feature.m_DisplayName = Localized.DisplayName;
                     feature.m_Description = Localized.Description;
 
+                    feature.SetIcon("ecb2815de750b0d4ba865e22c84b06c8", 21300000);
+
                     feature.AddSpellPenetrationBonus(c =>
                     {
                         c.Value = 2;
@@ -61,6 +63,10 @@ namespace AlternateRacialTraits.Features.Aasimar
                         c.Stat = StatType.SkillKnowledgeArcana;
                     });
 
+                    //foreach (var c in skilledPrerequisites)
+                    //    feature.AddComponent(c);
+                    //foreach (var c in slaPrerequisites)
+                    //    feature.AddComponent(c);
                     feature.AddComponents(slaPrerequisites);
                     feature.AddComponents(skilledPrerequisites);
                     

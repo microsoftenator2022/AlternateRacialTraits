@@ -88,6 +88,8 @@ namespace AlternateRacialTraits.Features.Aasimar
                     feature.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.CelestialResistance, removeOnApply: true)
                         .Group = Prerequisite.GroupType.All;
 
+                    //foreach (var c in skilledPrerequisites)
+                    //    feature.AddComponent(c);
                     feature.AddComponents(skilledPrerequisites);
 
                     return feature;

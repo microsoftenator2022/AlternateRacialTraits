@@ -32,7 +32,7 @@ using MicroWrath.Util;
 using MicroWrath.Util.Linq;
 
 using UniRx;
-#if DEBUG
+
 namespace AlternateRacialTraits.Features.Aasimar
 {
     internal static partial class AasimarFeatureSelection
@@ -113,8 +113,10 @@ namespace AlternateRacialTraits.Features.Aasimar
             return SkilledFeatures.Value
                 .Map(features =>
                 {
-                    return features
-                        .Select(f => new RemoveFeatureOnApply { m_Feature = f.ToReference<BlueprintUnitFactReference>() })
+                    var facts = features.Select(f => f.ToReference<BlueprintUnitFactReference>());
+
+                    return facts
+                        .Select(featureRef => new RemoveFeatureOnApply { m_Feature = featureRef })
                         .Append<BlueprintComponent>(new PrerequisiteFeaturesFromList
                         {
                             Amount = 1,
@@ -218,7 +220,8 @@ namespace AlternateRacialTraits.Features.Aasimar
                 DeathlessSpirit.Create(),
                 ExaltedResistance.Create(),
                 CelestialCrusader.Create(),
-                CrusadingMagic.Create()
+                CrusadingMagic.Create(),
+                Heavenborn.Create()
             };
 
             var selection =
@@ -267,4 +270,3 @@ namespace AlternateRacialTraits.Features.Aasimar
         }
     }
 }
-#endif
