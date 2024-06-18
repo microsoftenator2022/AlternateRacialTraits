@@ -44,10 +44,10 @@ namespace AlternateRacialTraits.Features.Aasimar
             var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(CelestialCrusader)))
                 .Combine(BlueprintsDb.Owlcat.BlueprintFeature.SubtypeEvil)
                 .Combine(BlueprintsDb.Owlcat.BlueprintFeature.OutsiderType)
-                .Combine(AasimarFeatureSelection.SkilledFeatures.Value)
+                .Combine(AasimarFeatureSelection.SkilledPrerequisite())
                 .Map(bps =>
                 {
-                    var (feature, evil, outsider, skilledFeatures) = bps.Flatten();
+                    var (feature, evil, outsider, skilledPrerequisites) = bps.Flatten();
 
                     feature.m_DisplayName = Localized.DisplayName;
                     feature.m_Description = Localized.Description;
@@ -88,17 +88,7 @@ namespace AlternateRacialTraits.Features.Aasimar
                     feature.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.CelestialResistance, removeOnApply: true)
                         .Group = Prerequisite.GroupType.All;
 
-                    feature.AddComponent<PrerequisiteFeaturesFromList>(c =>
-                    {
-                        c.Amount = 1;
-                        c.Group = Prerequisite.GroupType.All;
-                        c.m_Features = skilledFeatures.Select(f => f.ToReference()).ToArray();
-                    });
-
-                    foreach (var f in skilledFeatures)
-                    {
-                        feature.AddRemoveFeatureOnApply(c => c.m_Feature = f.ToReference<BlueprintUnitFactReference>());
-                    }
+                    feature.AddComponents(skilledPrerequisites);
 
                     return feature;
                 });

@@ -83,35 +83,6 @@ namespace AlternateRacialTraits.Features.Aasimar
             public int? Id;
         }
 
-        //[HarmonyPatch(typeof(UnitPartSpellResistance),
-        //    nameof(UnitPartSpellResistance.CanApply),
-        //    [
-        //        typeof(UnitPartSpellResistance.SpellResistanceValue),
-        //        typeof(BlueprintAbility),
-        //        typeof(UnitEntityData),
-        //        typeof(SpellDescriptor?),
-        //        typeof(SpellSchool?),
-        //        typeof(AbilityData),
-        //        typeof(MechanicsContext)
-        //    ])]
-        //[HarmonyPostfix]
-        //static bool UnitPartSpellResistance_CanApply_Postfix(bool __result,
-        //    UnitPartSpellResistance.SpellResistanceValue resistance,
-        //    MechanicsContext? context)
-        //{
-        //    if (!__result)
-        //        return false;
-
-        //    var fact = context?.MainTarget.Unit.Facts.List.FirstOrDefault(f => f.UniqueId == resistance.FactId);
-
-        //    if (fact is not null && fact.Blueprint.GetComponent<ContextSpellResistance>() is { } csr)
-        //    {
-        //        return csr.CanApply(context);
-        //    }
-
-        //    return false;
-        //}
-
         static bool CanApply(
             bool result,
             UnitPartSpellResistance instance,

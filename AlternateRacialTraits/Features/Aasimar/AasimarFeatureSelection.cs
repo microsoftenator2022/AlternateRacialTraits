@@ -8,8 +8,10 @@ using HarmonyLib;
 
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
+using Kingmaker.Blueprints.Classes.Prerequisites;
 using Kingmaker.Blueprints.Classes.Selection;
 using Kingmaker.Blueprints.Facts;
+using Kingmaker.Designers.Mechanics.Facts;
 using Kingmaker.EntitySystem.Stats;
 using Kingmaker.Localization;
 using Kingmaker.UI;
@@ -106,18 +108,21 @@ namespace AlternateRacialTraits.Features.Aasimar
                 .Map(Enumerable.ToArray);
         });
 
-        [HarmonyPatch]
-        static class UIUtilityUnit_Patch
+        internal static IInitContext<BlueprintComponent[]> SkilledPrerequisite()
         {
-            [HarmonyPatch(typeof(UIUtilityUnit), nameof(UIUtilityUnit.ParseFeatureOnImmediatelyAbilities))]
-            [HarmonyPostfix]
-            static void ParseFeatureOnImmediatelyAbilities(BlueprintFeatureBase feature, List<IUIDataProvider> __result)
-            {
-                if (feature.AssetGuid != GeneratedGuid.Plumekith__Garuda_Blooded_Ability.Guid)
-                    return;
-
-                MicroLogger.Debug(() => $"{nameof(GeneratedGuid.Plumekith__Garuda_Blooded_Ability)} {feature}: {__result.Count}");
-            }
+            return SkilledFeatures.Value
+                .Map(features =>
+                {
+                    return features
+                        .Select(f => new RemoveFeatureOnApply { m_Feature = f.ToReference<BlueprintUnitFactReference>() })
+                        .Append<BlueprintComponent>(new PrerequisiteFeaturesFromList
+                        {
+                            Amount = 1,
+                            Group = Prerequisite.GroupType.All,
+                            m_Features = features.Select(f => f.ToReference()).ToArray()
+                        })
+                        .ToArray();
+                });
         }
 
         static IInitContext<Option<IInitContext<(BlueprintFeature, BlueprintAbility[])>>> CreateHeritageSLAFeature(
@@ -181,6 +186,26 @@ namespace AlternateRacialTraits.Features.Aasimar
                     .Select(f => f.Eval())
                     .ToArray());
         });
+
+        internal static IInitContext<BlueprintComponent[]> SLAPrerequisite() =>
+            SLAFeatures.Value
+                .Map(heritageFeatures =>
+                {
+                    var facts = heritageFeatures
+                        .SelectMany(pair => pair.facts.Append<BlueprintUnitFact>(pair.feature))
+                        .Select(f => f.ToMicroBlueprint());
+
+                    return facts
+                        .Select(f => new RemoveFeatureOnApply { m_Feature = f.ToReference() })
+                        .Append<BlueprintComponent>(
+                            new PrerequisiteFeaturesFromList
+                            {
+                                Amount = 1,
+                                Group = Prerequisite.GroupType.All,
+                                m_Features = heritageFeatures.Select(pair => pair.feature.ToReference()).ToArray()
+                            })
+                        .ToArray();
+                });
 
         static IInitContextBlueprint<BlueprintFeatureSelection> Create()
         {

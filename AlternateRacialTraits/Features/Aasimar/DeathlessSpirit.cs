@@ -81,17 +81,6 @@ namespace AlternateRacialTraits.Features.Aasimar
                         new(OpCodes.Pop),
                         new(OpCodes.Ret)
                     ]);
-//#if DEBUG
-//                var sb = new StringBuilder();
-//                sb.Append(nameof(DeathlessSpiritComponent) + "." + nameof(DeathlessSpiritComponent.Transpiler));
-//                foreach (var i in iList)
-//                {
-//                    sb.AppendLine();
-//                    sb.Append($"  {i}");
-//                }
-
-//                MicroLogger.Debug(sb.ToString);
-//#endif
 
                 return iList;
             }
@@ -120,7 +109,7 @@ namespace AlternateRacialTraits.Features.Aasimar
                         {
                             c.Value = 2;
                             c.ModifierDescriptor = ModifierDescriptor.Racial;
-                            c.SpellDescriptor = SpellDescriptor.Death | SpellDescriptor.NegativeLevel;
+                            c.SpellDescriptor = SpellDescriptor.Death | SpellDescriptor.NegativeLevel | SpellDescriptor.ChannelNegativeHarm;
                         });
 
                         blueprint.AddSavingThrowBonusAgainstSchool(c =>

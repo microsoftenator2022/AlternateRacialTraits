@@ -39,16 +39,14 @@ namespace AlternateRacialTraits.Features.Aasimar
         internal static IInitContextBlueprint<BlueprintFeature> Create()
         {
             var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(CrusadingMagic)))
-                .Combine(AasimarFeatureSelection.SLAFeatures.Value)
-                .Combine(AasimarFeatureSelection.SkilledFeatures.Value)
+                .Combine(AasimarFeatureSelection.SLAPrerequisite())
+                .Combine(AasimarFeatureSelection.SkilledPrerequisite())
                 .Map(bps =>
                 {
-                    var (feature, slaFeatures, skilledFeatures) = bps.Flatten();
+                    var (feature, slaPrerequisites, skilledPrerequisites) = bps.Flatten();
 
                     feature.m_DisplayName = Localized.DisplayName;
                     feature.m_Description = Localized.Description;
-
-                    feature.SetIcon("869e3bc156f9f3646a6a3eff5e0c5c60", 21300000);
 
                     feature.AddSpellPenetrationBonus(c =>
                     {
@@ -63,25 +61,9 @@ namespace AlternateRacialTraits.Features.Aasimar
                         c.Stat = StatType.SkillKnowledgeArcana;
                     });
 
-                    feature.AddComponent<PrerequisiteFeaturesFromList>(c =>
-                    {
-                        c.Amount = 1;
-                        c.Group = Prerequisite.GroupType.All;
-                        c.m_Features = skilledFeatures.Select(f => f.ToReference()).ToArray();
-                    });
-
-                    feature.AddComponent<PrerequisiteFeaturesFromList>(c =>
-                    {
-                        c.Amount = 1;
-                        c.Group = Prerequisite.GroupType.All;
-                        c.m_Features = slaFeatures.Select(f => f.feature.ToReference()).ToArray();
-                    });
-
-                    foreach (var f in slaFeatures.SelectMany(sla => sla.facts.Append(sla.feature as BlueprintUnitFact)).Concat(skilledFeatures))
-                    {
-                        feature.AddRemoveFeatureOnApply(c => c.m_Feature = f.ToReference<BlueprintUnitFactReference>());
-                    }
-
+                    feature.AddComponents(slaPrerequisites);
+                    feature.AddComponents(skilledPrerequisites);
+                    
                     return feature;
                 });
 
