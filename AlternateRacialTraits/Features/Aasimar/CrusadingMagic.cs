@@ -39,8 +39,8 @@ namespace AlternateRacialTraits.Features.Aasimar
         internal static IInitContextBlueprint<BlueprintFeature> Create()
         {
             var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(CrusadingMagic)))
-                .Combine(AasimarFeatureSelection.SLAPrerequisite())
-                .Combine(AasimarFeatureSelection.SkilledPrerequisite())
+                .Combine(AasimarFeatureSelection.SLAPrerequisiteComponents())
+                .Combine(AasimarFeatureSelection.SkilledPrerequisiteComponents())
                 .Map(bps =>
                 {
                     var (feature, slaPrerequisites, skilledPrerequisites) = bps.Flatten();

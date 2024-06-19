@@ -43,51 +43,7 @@ namespace AlternateRacialTraits.Features.Aasimar
         [LocalizedString]
         internal const string Description = "The following alternate traits are available";
 
-        static IInitContextBlueprint<BlueprintFeature> CreateHeritageSkillFeature(
-            IMicroBlueprint<BlueprintFeature> heritageFeature, string name)
-        {
-            var guid = GeneratedGuid.Get(name);
-
-            var blueprints = InitContext.NewBlueprint<BlueprintFeature>(guid)
-                .Combine(InitContext.GetBlueprint(heritageFeature))
-                .Map(bps =>
-                {
-                    var (skilledFeature, heritage) = bps;
-
-                    if (heritage is null)
-                        throw new NullReferenceException();
-
-                    var displayNameKey = $"{Localized.DisplayName.Key}.{skilledFeature.name}";
-
-                    LocalizedStrings.DefaultStringEntries.Add(
-                            displayNameKey,
-                            $"{heritage.Name} - Skilled");
-
-                    skilledFeature.m_DisplayName = new LocalizedString { m_Key = displayNameKey };
-
-                    skilledFeature.HideInUI = true;
-
-                    foreach (var addStatBonus in heritage.GetComponents<AddStatBonus>().Where(asb => StatTypeHelper.Skills.Contains(asb.Stat)))
-                    {
-                        heritage.RemoveComponent(addStatBonus);
-                        skilledFeature.AddComponent(addStatBonus);
-                    }
-
-                    var addFacts = heritage.EnsureComponent<AddFacts>();
-                    addFacts.m_Facts ??= [];
-                    addFacts.m_Facts = addFacts.m_Facts.Append(skilledFeature.ToReference<BlueprintUnitFactReference>());
-
-                    return (skilledFeature, heritage);
-                });
-
-            blueprints.Map(pair => pair.heritage)
-                .OnDemand(heritageFeature.BlueprintGuid);
-
-            return blueprints.Map(pair => pair.skilledFeature)
-                .AddBlueprintDeferred(guid);
-        }
-
-        internal static IInitContext<IEnumerable<BlueprintFeature>> HeritageFeatures =>
+        internal static IInitContext<IEnumerable<BlueprintFeature>> AasimarHeritageFeatures =>
             InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.AasimarHeritageSelection)
                 .Bind(selection =>
                 {
@@ -101,87 +57,20 @@ namespace AlternateRacialTraits.Features.Aasimar
 
         internal static readonly Lazy<IInitContext<BlueprintFeature[]>> SkilledFeatures = new(() =>
         {
-            return HeritageFeatures
+            return AasimarHeritageFeatures
                 .Bind(features => features
-                    .Select(f => CreateHeritageSkillFeature(f.ToMicroBlueprint(), $"{f.Name}Skilled"))
+                    .Select(f => HeritageFeatures.CreateSkillFeature(f.ToMicroBlueprint(), $"{f.Name}Skilled", Localized.DisplayName))
                     .Collect())
                 .Map(Enumerable.ToArray);
         });
 
-        internal static IInitContext<BlueprintComponent[]> SkilledPrerequisite()
-        {
-            return SkilledFeatures.Value
-                .Map(features =>
-                {
-                    var facts = features.Select(f => f.ToReference<BlueprintUnitFactReference>());
-
-                    return facts
-                        .Select(featureRef => new RemoveFeatureOnApply { m_Feature = featureRef })
-                        .Append<BlueprintComponent>(new PrerequisiteFeaturesFromList
-                        {
-                            Amount = 1,
-                            Group = Prerequisite.GroupType.All,
-                            m_Features = features.Select(f => f.ToReference()).ToArray()
-                        })
-                        .ToArray();
-                });
-        }
-
-        static IInitContext<Option<IInitContext<(BlueprintFeature, BlueprintAbility[])>>> CreateHeritageSLAFeature(
-            IMicroBlueprint<BlueprintFeature> heritageFeature,
-            string name)
-        {
-            var guid = GeneratedGuid.Get(name);
-
-            var maybeFeatures = InitContext.NewBlueprint<BlueprintFeature>(guid)
-                .Combine(InitContext.GetBlueprint(heritageFeature))
-                .Map(bps =>
-                {
-                    var (feature, heritageFeature) = bps;
-
-                    if (heritageFeature is null)
-                        throw new NullReferenceException();
-
-                    if (heritageFeature.GetComponent<AddFacts>() is not { } af)
-                        return Option<(BlueprintFeature feature, BlueprintAbility[] facts, BlueprintFeature heritageFeature)>.None;
-
-                    var displayNameKey = $"{Localized.DisplayName.Key}.{feature.name}";
-
-                    LocalizedStrings.DefaultStringEntries.Add(
-                            displayNameKey,
-                            $"{heritageFeature.Name} - Spell-like Ability");
-
-                    feature.m_DisplayName = new LocalizedString { m_Key = displayNameKey };
-
-                    feature.HideInUI = true;
-
-                    var facts = af.m_Facts.Select(f => f.Get()).OfType<BlueprintAbility>().ToArray();
-
-                    af.m_Facts = af.m_Facts.Append(feature.ToReference<BlueprintUnitFactReference>());
-
-                    return Option.Some((feature, facts, heritageFeature));
-                });
-
-            return
-                maybeFeatures.MapOption(blueprints =>
-                {
-                    new InitContext<BlueprintFeature>(() => blueprints.heritageFeature)
-                        .OnDemand(blueprints.heritageFeature.AssetGuid);
-
-                    var feature = new InitContext<BlueprintFeature>(() => blueprints.feature)
-                            .AddBlueprintDeferred(blueprints.feature.AssetGuid);
-
-                    var facts = new InitContext<BlueprintAbility[]>(() => blueprints.facts);
-
-                    return (feature.Combine(facts));
-                });
-        }
+        internal static IInitContext<BlueprintComponent[]> SkilledPrerequisiteComponents() => HeritageFeatures.SkilledPrerequisiteComponents(SkilledFeatures.Value);
 
         internal static readonly Lazy<IInitContext<(BlueprintFeature feature, BlueprintAbility[] facts)[]>> SLAFeatures = new(() =>
         {
-            return HeritageFeatures
+            return AasimarHeritageFeatures
                 .Bind(features => features
-                    .Select(f => CreateHeritageSLAFeature(f.ToMicroBlueprint(), $"{f.Name}Ability"))
+                    .Select(f => HeritageFeatures.CreateHeritageSLAFeature(f.ToMicroBlueprint(), $"{f.Name}Ability", Localized.DisplayName))
                     .Collect())
                 .Map(features => features
                     .SelectMany(f => f)
@@ -189,26 +78,8 @@ namespace AlternateRacialTraits.Features.Aasimar
                     .ToArray());
         });
 
-        internal static IInitContext<BlueprintComponent[]> SLAPrerequisite() =>
-            SLAFeatures.Value
-                .Map(heritageFeatures =>
-                {
-                    var facts = heritageFeatures
-                        .SelectMany(pair => pair.facts.Append<BlueprintUnitFact>(pair.feature))
-                        .Select(f => f.ToMicroBlueprint());
-
-                    return facts
-                        .Select(f => new RemoveFeatureOnApply { m_Feature = f.ToReference() })
-                        .Append<BlueprintComponent>(
-                            new PrerequisiteFeaturesFromList
-                            {
-                                Amount = 1,
-                                Group = Prerequisite.GroupType.All,
-                                m_Features = heritageFeatures.Select(pair => pair.feature.ToReference()).ToArray()
-                            })
-                        .ToArray();
-                });
-
+        internal static IInitContext<BlueprintComponent[]> SLAPrerequisiteComponents() => HeritageFeatures.SLAPrerequisiteComponents(SLAFeatures.Value);
+        
         static IInitContextBlueprint<BlueprintFeatureSelection> Create()
         {
             var features = new[]

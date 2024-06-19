@@ -44,7 +44,7 @@ namespace AlternateRacialTraits.Features.Aasimar
             var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(CelestialCrusader)))
                 .Combine(BlueprintsDb.Owlcat.BlueprintFeature.SubtypeEvil)
                 .Combine(BlueprintsDb.Owlcat.BlueprintFeature.OutsiderType)
-                .Combine(AasimarFeatureSelection.SkilledPrerequisite())
+                .Combine(AasimarFeatureSelection.SkilledPrerequisiteComponents())
                 .Map(bps =>
                 {
                     var (feature, evil, outsider, skilledPrerequisites) = bps.Flatten();

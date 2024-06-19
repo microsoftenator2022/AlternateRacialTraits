@@ -8,6 +8,7 @@ using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
 using Kingmaker.Blueprints.Classes.Spells;
 using Kingmaker.EntitySystem.Entities;
+using Kingmaker.EntitySystem.Stats;
 using Kingmaker.Enums;
 using Kingmaker.PubSubSystem;
 using Kingmaker.RuleSystem.Rules.Abilities;
@@ -54,8 +55,8 @@ namespace AlternateRacialTraits.Features.Aasimar
         internal static IInitContextBlueprint<BlueprintFeature> Create()
         {
             var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(Heavenborn)))
-                .Combine(AasimarFeatureSelection.SkilledPrerequisite())
-                .Combine(AasimarFeatureSelection.SLAPrerequisite())
+                .Combine(AasimarFeatureSelection.SkilledPrerequisiteComponents())
+                .Combine(AasimarFeatureSelection.SLAPrerequisiteComponents())
                 .Map(bps =>
                 {
                     var (feature, skilledPrerequisites, slaPrerequisites) = bps.Flatten();
@@ -64,6 +65,13 @@ namespace AlternateRacialTraits.Features.Aasimar
                     feature.m_Description = Localized.Description;
 
                     feature.SetIcon("869e3bc156f9f3646a6a3eff5e0c5c60", 21300000);
+
+                    feature.AddAddStatBonus(c =>
+                    {
+                        c.Value = 2;
+                        c.Stat = StatType.SkillKnowledgeArcana;
+                        c.Descriptor = ModifierDescriptor.Racial;
+                    });
 
                     feature.AddComponent<HeavenbornComponent>(c =>
                         c.LightSpellList = LightSpells.Select(mbp => mbp.ToReference()).ToList());
