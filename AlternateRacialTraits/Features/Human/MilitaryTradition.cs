@@ -13,7 +13,6 @@ using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.FactLogic;
 
 using MicroWrath;
-//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
@@ -24,79 +23,78 @@ using MicroWrath.Util.Linq;
 
 using static MicroWrath.Encyclopedia;
 
-namespace AlternateRacialTraits.Features.Human
+namespace AlternateRacialTraits.Features.Human;
+
+internal static class MilitaryTradition
 {
-    internal static class MilitaryTradition
+    [LocalizedString]
+    public static readonly string DisplayName = "Military Tradition";
+    [LocalizedString]
+    public static readonly string Description =
+        "Several human cultures raise all children (or all children of a certain social class) to serve " +
+        "in the military or defend themselves with force of arms. They gain " +
+        $"{new Link(Page.Weapon_Proficiency, "proficiency")} with up to two martial or " +
+        "exotic weapons appropriate to their culture. This racial trait replaces the bonus " +
+        $"{new Link(Page.Feat, "feat")} trait.";
+
+    internal static (IInitContext<BlueprintFeatureSelection>, IInitContext<BlueprintFeatureSelection>) Create()
     {
-        [LocalizedString]
-        public static readonly string DisplayName = "Military Tradition";
-        [LocalizedString]
-        public static readonly string Description =
-            "Several human cultures raise all children (or all children of a certain social class) to serve " +
-            "in the military or defend themselves with force of arms. They gain " +
-            $"{new Link(Page.Weapon_Proficiency, "proficiency")} with up to two martial or " +
-            "exotic weapons appropriate to their culture. This racial trait replaces the bonus " +
-            $"{new Link(Page.Feat, "feat")} trait.";
+        var firstSelection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSelection,
+            $"{nameof(MilitaryTradition)}.FirstSelection")
+            .Map(selection =>
+            {
+                selection.m_DisplayName = LocalizedStrings.Features_Human_MilitaryTradition_DisplayName;
+                selection.m_Description = LocalizedStrings.Features_Human_MilitaryTradition_Description;
 
-        internal static (IInitContext<BlueprintFeatureSelection>, IInitContext<BlueprintFeatureSelection>) Create()
-        {
-            var firstSelection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSelection,
-                $"{nameof(MilitaryTradition)}.FirstSelection")
-                .Map(selection =>
+                selection.Groups = [FeatureGroup.Racial];
+
+                _ = selection.AddComponent<OverrideUIFeatureGroup>(c => c.Group = OverrideUIFeatureGroup.UIFeatureGroup.Trait);
+
+                return selection;
+            });
+
+        var secondSelection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSecondSelection,
+            $"{nameof(MilitaryTradition)}.SecondSelection")
+            .Map(selection =>
+            {
+                selection.m_DisplayName = LocalizedStrings.Features_Human_MilitaryTradition_DisplayName;
+                selection.m_Description = LocalizedStrings.Features_Human_MilitaryTradition_Description;
+
+                selection.Groups = [FeatureGroup.Racial];
+
+                _ = selection.AddComponent<PrerequisiteNoFeature>(c =>
                 {
-                    selection.m_DisplayName = LocalizedStrings.Features_Human_MilitaryTradition_DisplayName;
-                    selection.m_Description = LocalizedStrings.Features_Human_MilitaryTradition_Description;
-
-                    selection.Groups = new[] { FeatureGroup.Racial };
-
-                    selection.AddComponent<OverrideUIFeatureGroup>(c => c.Group = OverrideUIFeatureGroup.UIFeatureGroup.Trait);
-
-                    return selection;
+                    c.m_Feature = selection.ToReference<BlueprintFeatureReference>();
+                    c.HideInUI = true;
                 });
 
-            var secondSelection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSecondSelection,
-                $"{nameof(MilitaryTradition)}.SecondSelection")
-                .Map(selection =>
-                {
-                    selection.m_DisplayName = LocalizedStrings.Features_Human_MilitaryTradition_DisplayName;
-                    selection.m_Description = LocalizedStrings.Features_Human_MilitaryTradition_Description;
+                return selection;
+            });
 
-                    selection.Groups = new[] { FeatureGroup.Racial };
+        var selections = firstSelection
+            .Combine(secondSelection)
+            .Map(bps =>
+            {
+                var (first, second) = bps;
 
-                    selection.AddComponent<PrerequisiteNoFeature>(c =>
-                    {
-                        c.m_Feature = selection.ToReference<BlueprintFeatureReference>();
-                        c.HideInUI = true;
-                    });
+                var exotic = new MicroBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.ExoticWeaponProficiencyParametrized);
+                var martial = new MicroBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.MartialWeaponProficiencyParametrized);
 
-                    return selection;
-                });
+                first.AddFeatures(exotic, martial);
+                second.AddFeatures(exotic, martial);
 
-            var selections = firstSelection
-                .Combine(secondSelection)
-                .Map(bps =>
-                {
-                    var (first, second) = bps;
+                _ = second.AddPrerequisiteFeature(first.ToMicroBlueprint(), hideInUI: true, removeOnApply: false);
+                second.HideNotAvailibleInUI = true;
 
-                    var exotic = new MicroBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.ExoticWeaponProficiencyParametrized);
-                    var martial = new MicroBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.MartialWeaponProficiencyParametrized);
+                return (first, second);
+            });
 
-                    first.AddFeatures(exotic, martial);
-                    second.AddFeatures(exotic, martial);
-
-                    second.AddPrerequisiteFeature(first.ToMicroBlueprint(), hideInUI: true, removeOnApply: false);
-                    second.HideNotAvailibleInUI = true;
-
-                    return (first, second);
-                });
-
-            return
-                (selections.Map(pair => pair.first)
-                    .AddBlueprintDeferred(GeneratedGuid.MilitaryTraditionSelection),
-                    //.AddOnTrigger(GeneratedGuid.MilitaryTraditionSelection, Triggers.BlueprintsCache_Init),
-                selections.Map(pair => pair.second)
-                    .AddBlueprintDeferred(GeneratedGuid.MilitaryTraditionSecondSelection));
-                    //.AddOnTrigger(GeneratedGuid.MilitaryTraditionSecondSelection, Triggers.BlueprintsCache_Init));
-        }
+        return
+            (selections.Map(pair => pair.first)
+                .AddBlueprintDeferred(GeneratedGuid.MilitaryTraditionSelection),
+                //.AddOnTrigger(GeneratedGuid.MilitaryTraditionSelection, Triggers.BlueprintsCache_Init),
+            selections.Map(pair => pair.second)
+                .AddBlueprintDeferred(GeneratedGuid.MilitaryTraditionSecondSelection));
+                //.AddOnTrigger(GeneratedGuid.MilitaryTraditionSecondSelection, Triggers.BlueprintsCache_Init));
     }
 }

@@ -38,279 +38,278 @@ using MicroWrath.Util;
 
 using static MicroWrath.Encyclopedia;
 
-namespace AlternateRacialTraits.Features.Aasimar
+namespace AlternateRacialTraits.Features.Aasimar;
+
+[AllowedOn(typeof(BlueprintUnitFact))]
+[HarmonyPatch]
+internal class ContextSpellResistance : UnitFactComponentDelegate<ContextSpellResistance.Data>
 {
-    [AllowedOn(typeof(BlueprintUnitFact))]
-    [HarmonyPatch]
-    internal class ContextSpellResistance : UnitFactComponentDelegate<ContextSpellResistance.Data>
+    public ConditionsChecker Conditions = new();
+    public ContextValue Value = 0;
+
+    public bool CanApply(MechanicsContext context)
     {
-        public ConditionsChecker Conditions = new();
-        public ContextValue Value = 0;
+        var result = Conditions.Check();
 
-        public bool CanApply(MechanicsContext context)
+        MicroLogger.Debug(() => "Condition check");
+        MicroLogger.Debug(() => $"Caster: {context.MaybeCaster}");
+        MicroLogger.Debug(() => $"Owner: {context.MaybeOwner}");
+
+        MicroLogger.Debug(() => $"Check passed? {result}");
+
+        return result;
+    }
+    
+    public override void OnTurnOn()
+    {
+        var value = this.Value.Calculate(base.Fact.MaybeContext);
+
+        base.Data.Id = base.Owner.Ensure<UnitPartSpellResistance>()
+            .AddResistance(value, base.Fact.UniqueId, null, null, null);
+    }
+
+    public override void OnTurnOff()
+    {
+        if (base.Data.Id is { } id)
         {
-            var result = Conditions.Check();
+            base.Owner.Get<UnitPartSpellResistance>()?.Remove(id);
 
-            MicroLogger.Debug(() => "Condition check");
-            MicroLogger.Debug(() => $"Caster: {context.MaybeCaster}");
-            MicroLogger.Debug(() => $"Owner: {context.MaybeOwner}");
-
-            MicroLogger.Debug(() => $"Check passed? {result}");
-
-            return result;
+            base.Data.Id = null;
         }
-        
-        public override void OnTurnOn()
-        {
-            var value = this.Value.Calculate(base.Fact.MaybeContext);
+    }
 
-            base.Data.Id = base.Owner.Ensure<UnitPartSpellResistance>()
-                .AddResistance(value, base.Fact.UniqueId, null, null, null);
-        }
+    new public class Data
+    {
+        public int? Id;
+    }
 
-        public override void OnTurnOff()
-        {
-            if (base.Data.Id is { } id)
-            {
-                base.Owner.Get<UnitPartSpellResistance>()?.Remove(id);
-
-                base.Data.Id = null;
-            }
-        }
-
-        new public class Data
-        {
-            public int? Id;
-        }
-
-        static bool CanApply(
-            bool result,
-            UnitPartSpellResistance instance,
-            MechanicsContext? context,
-            //BlueprintAbility? ability,
-            UnitEntityData? caster)
-        {
+    static bool CanApply(
+        bool result,
+        UnitPartSpellResistance instance,
+        MechanicsContext? context,
+        //BlueprintAbility? ability,
+        UnitEntityData? caster)
+    {
 #if DEBUG
-            var timer = System.Diagnostics.Stopwatch.StartNew();
+        var timer = System.Diagnostics.Stopwatch.StartNew();
 #endif
-            if (result)
+        if (result)
+        {
+            foreach (var sr in instance.SRs)
             {
-                foreach (var sr in instance.SRs)
+                if (instance.Owner.Facts.FindById(sr.FactId) is { } fact &&
+                    fact.GetComponent<ContextSpellResistance>() is { } csr)
                 {
-                    if (instance.Owner.Facts.FindById(sr.FactId) is { } fact &&
-                        fact.GetComponent<ContextSpellResistance>() is { } csr)
+                    MicroLogger.Debug(() => $"Caster: {((caster ?? context?.MaybeCaster)?.ToString() ?? "NULL")}");
+
+                    context = new MechanicsContext(caster ?? context?.MaybeCaster, instance.Owner, csr.OwnerBlueprint, context);
+
+                    using (context.GetDataScope(instance.Owner.Unit))
                     {
-                        MicroLogger.Debug(() => $"Caster: {((caster ?? context?.MaybeCaster)?.ToString() ?? "NULL")}");
-
-                        context = new MechanicsContext(caster ?? context?.MaybeCaster, instance.Owner, csr.OwnerBlueprint, context);
-
-                        using (context.GetDataScope(instance.Owner.Unit))
-                        {
-                            result = csr.CanApply(context);
-                        }
-
-                        break;
+                        result = csr.CanApply(context);
                     }
+
+                    break;
                 }
             }
+        }
 #if DEBUG
-            timer.Stop();
-            MicroLogger.Debug(() => $"{nameof(ContextSpellResistance)}.{nameof(CanApply)} took {timer.ElapsedMilliseconds}ms");
+        timer.Stop();
+        MicroLogger.Debug(() => $"{nameof(ContextSpellResistance)}.{nameof(CanApply)} took {timer.ElapsedMilliseconds}ms");
 #endif
-            return result;
-        }
+        return result;
+    }
 
-        static bool CanApply(
-            bool result,
-            UnitPartSpellResistance instance,
-            MechanicsContext? context) =>
-            CanApply(result, instance, context, caster: null);
+    static bool CanApply(
+        bool result,
+        UnitPartSpellResistance instance,
+        MechanicsContext? context) =>
+        CanApply(result, instance, context, caster: null);
 
-        static bool CanApply(
-            bool result,
-            UnitPartSpellResistance instance,
-            UnitEntityData? caster = null) =>
-            CanApply(result, instance, context: null, caster);
+    static bool CanApply(
+        bool result,
+        UnitPartSpellResistance instance,
+        UnitEntityData? caster = null) =>
+        CanApply(result, instance, context: null, caster);
 
-        [HarmonyPatch(typeof(UnitPartSpellResistance), nameof(UnitPartSpellResistance.GetValue), [typeof(MechanicsContext)])]
-        [HarmonyTranspiler]
-        static IEnumerable<CodeInstruction> GetValue_MechanicsContext_Transpiler(IEnumerable<CodeInstruction> instructions)
+    [HarmonyPatch(typeof(UnitPartSpellResistance), nameof(UnitPartSpellResistance.GetValue), [typeof(MechanicsContext)])]
+    [HarmonyTranspiler]
+    static IEnumerable<CodeInstruction> GetValue_MechanicsContext_Transpiler(IEnumerable<CodeInstruction> instructions)
+    {
+        foreach (var i in instructions)
         {
-            foreach (var i in instructions)
+            yield return i;
+
+            if (i.Calls(AccessTools.Method(
+                typeof(UnitPartSpellResistance),
+                nameof(UnitPartSpellResistance.CanApply),
+                [
+                    typeof(UnitPartSpellResistance.SpellResistanceValue),
+                    typeof(MechanicsContext)
+                ])))
             {
-                yield return i;
-
-                if (i.Calls(AccessTools.Method(
-                    typeof(UnitPartSpellResistance),
-                    nameof(UnitPartSpellResistance.CanApply),
-                    [
-                        typeof(UnitPartSpellResistance.SpellResistanceValue),
-                        typeof(MechanicsContext)
-                    ])))
-                {
-                    yield return new(OpCodes.Ldarg_0);
-                    yield return new(OpCodes.Ldarg_1);
-                    yield return CodeInstruction.Call(
-                        (bool result,
-                        UnitPartSpellResistance instance,
-                        MechanicsContext context) =>
-                        CanApply(result, instance, context));
-                }
-            }
-        }
-
-        [HarmonyPatch(
-            typeof(UnitPartSpellResistance),
-            nameof(UnitPartSpellResistance.GetValue),
-            [typeof(BlueprintAbility), typeof(UnitEntityData)])]
-        [HarmonyTranspiler]
-        static IEnumerable<CodeInstruction> GetValue_BlueprintAbility_UnitEntityData_Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            foreach (var i in instructions)
-            {
-                yield return i;
-
-                if (i.Calls(AccessTools.Method(
-                    typeof(UnitPartSpellResistance),
-                    nameof(UnitPartSpellResistance.CanApply),
-                    [
-                        typeof(UnitPartSpellResistance.SpellResistanceValue),
-                        typeof(BlueprintAbility),
-                        typeof(UnitEntityData),
-                        typeof(SpellDescriptor?),
-                        typeof(SpellSchool?),
-                        typeof(AbilityData),
-                        typeof(MechanicsContext)
-                    ])))
-                {
-                    yield return new(OpCodes.Ldarg_0);
-                    yield return new(OpCodes.Ldarg_2);
-                    yield return CodeInstruction.Call(
-                        (bool result,
-                        UnitPartSpellResistance instance,
-                        UnitEntityData caster) =>
-                        CanApply(result, instance, caster));
-                }
+                yield return new(OpCodes.Ldarg_0);
+                yield return new(OpCodes.Ldarg_1);
+                yield return CodeInstruction.Call(
+                    (bool result,
+                    UnitPartSpellResistance instance,
+                    MechanicsContext context) =>
+                    CanApply(result, instance, context));
             }
         }
     }
 
-    internal static partial class ExaltedResistance
+    [HarmonyPatch(
+        typeof(UnitPartSpellResistance),
+        nameof(UnitPartSpellResistance.GetValue),
+        [typeof(BlueprintAbility), typeof(UnitEntityData)])]
+    [HarmonyTranspiler]
+    static IEnumerable<CodeInstruction> GetValue_BlueprintAbility_UnitEntityData_Transpiler(IEnumerable<CodeInstruction> instructions)
     {
-        [LocalizedString]
-        internal const string DisplayName = "Exalted Resistance";
-
-        [LocalizedString]
-        internal static readonly string Description =
-            $"An aasimar with this racial {new Link(Page.Trait, "trait")} gains " +
-            $"{new Link(Page.Spell_Resistance, "spell resistance")} equal to 5 + her " +
-            $"{new Link(Page.Character_Level, "level")} against {new Link(Page.Spell, "spells")} and " +
-            $"spell-like abilities with the {new Link(Page.Spell_Descriptor, "evil descriptor")}, " +
-            "as well as any spells and spell-like abilities cast by evil outsiders. " +
-            "This racial trait replaces celestial resistance.";
-
-        internal static IInitContextBlueprint<BlueprintFeature> Create()
+        foreach (var i in instructions)
         {
-            var srVsEvilDescriptorFeature =
-                InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ExaltedResistanceVsEvilDescriptor"))
-                    .Map(feature =>
-                    {
-                        feature.m_DisplayName = Localized.DisplayName;
+            yield return i;
 
-                        feature.HideInCharacterSheetAndLevelUp = true;
-                        //feature.HideInUI = true;
-
-                        feature.AddContextRankConfig(c =>
-                        {
-                            c.m_BaseValueType = ContextRankBaseValueType.CharacterLevel;
-                            c.m_StepLevel = 5;
-                            c.m_Type = AbilityRankType.Default;
-                            c.m_Progression = ContextRankProgression.BonusValue;
-                        });
-
-                        feature.AddSpellResistanceAgainstSpellDescriptor(c =>
-                        {
-                            c.SpellDescriptor = SpellDescriptor.Evil;
-
-                            c.Value.ValueType = ContextValueType.Rank;
-                            c.Value.ValueRank = AbilityRankType.Default;
-                            
-                        });
-
-                        return feature;
-                    })
-                    .AddBlueprintDeferred(GeneratedGuid.ExaltedResistanceVsEvilDescriptor);
-
-            var srVsEvilOutsiderFeature =
-                InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ExaltedResistanceVsEvilOutsider"))
-                    .Combine(BlueprintsDb.Owlcat.BlueprintFeature.OutsiderType)
-                    .Combine(BlueprintsDb.Owlcat.BlueprintFeature.SubtypeEvil)
-                    .Map(bps =>
-                    {
-                        var (feature, outsider, evil) = bps.Flatten();
-
-                        feature.m_DisplayName = Localized.DisplayName;
-
-                        feature.HideInCharacterSheetAndLevelUp = true;
-                        //feature.HideInUI = true;
-
-                        feature.AddContextRankConfig(c =>
-                        {
-                            c.m_BaseValueType = ContextRankBaseValueType.CharacterLevel;
-                            c.m_StepLevel = 5;
-                            c.m_Type = AbilityRankType.Default;
-                            c.m_Progression = ContextRankProgression.BonusValue;
-                        });
-
-                        feature.AddComponent<ContextSpellResistance>(c =>
-                        {
-                            c.Value.ValueType = ContextValueType.Rank;
-                            c.Value.ValueRank = AbilityRankType.Default;
-
-                            c.Conditions.Operation = Operation.And;
-                            c.Conditions.Add(
-                                new ContextConditionCasterHasFact
-                                {
-                                    m_Fact = outsider.ToReference<BlueprintUnitFactReference>()
-                                },
-                                new ContextConditionCasterHasFact
-                                {
-                                    m_Fact = evil.ToReference<BlueprintUnitFactReference>()
-                                });
-                        });
-
-                        return feature;
-                    })
-                    .AddBlueprintDeferred(GeneratedGuid.ExaltedResistanceVsEvilOutsider);
-
-            var feature =
-                InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ExaltedResistance"))
-                    .Combine(srVsEvilDescriptorFeature)
-                    .Combine(srVsEvilOutsiderFeature)
-                    .Map(bps =>
-                    {
-                        var (feature, vsEvilSpell, vsEvilOutsider) = bps.Flatten();
-
-                        feature.m_DisplayName = Localized.DisplayName;
-                        feature.m_Description = Localized.Description;
-
-                        feature.SetIcon("5895704fc09cae446b64117e3c52e06b", 21300000);
-
-                        feature.AddAddFacts(c =>
-                        {
-                            c.m_Facts =
-                            [
-                                vsEvilSpell.ToReference<BlueprintUnitFactReference>(),
-                                vsEvilOutsider.ToReference<BlueprintUnitFactReference>()
-                            ];
-                        });
-
-                        feature.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.CelestialResistance, removeOnApply: true);
-
-                        return feature;
-                    });
-            
-            return feature.AddBlueprintDeferred(GeneratedGuid.ExaltedResistance);
+            if (i.Calls(AccessTools.Method(
+                typeof(UnitPartSpellResistance),
+                nameof(UnitPartSpellResistance.CanApply),
+                [
+                    typeof(UnitPartSpellResistance.SpellResistanceValue),
+                    typeof(BlueprintAbility),
+                    typeof(UnitEntityData),
+                    typeof(SpellDescriptor?),
+                    typeof(SpellSchool?),
+                    typeof(AbilityData),
+                    typeof(MechanicsContext)
+                ])))
+            {
+                yield return new(OpCodes.Ldarg_0);
+                yield return new(OpCodes.Ldarg_2);
+                yield return CodeInstruction.Call(
+                    (bool result,
+                    UnitPartSpellResistance instance,
+                    UnitEntityData caster) =>
+                    CanApply(result, instance, caster));
+            }
         }
+    }
+}
+
+internal static partial class ExaltedResistance
+{
+    [LocalizedString]
+    internal const string DisplayName = "Exalted Resistance";
+
+    [LocalizedString]
+    internal static readonly string Description =
+        $"An aasimar with this racial {new Link(Page.Trait, "trait")} gains " +
+        $"{new Link(Page.Spell_Resistance, "spell resistance")} equal to 5 + her " +
+        $"{new Link(Page.Character_Level, "level")} against {new Link(Page.Spell, "spells")} and " +
+        $"spell-like abilities with the {new Link(Page.Spell_Descriptor, "evil descriptor")}, " +
+        "as well as any spells and spell-like abilities cast by evil outsiders. " +
+        "This racial trait replaces celestial resistance.";
+
+    internal static IInitContextBlueprint<BlueprintFeature> Create()
+    {
+        var srVsEvilDescriptorFeature =
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ExaltedResistanceVsEvilDescriptor"))
+                .Map(feature =>
+                {
+                    feature.m_DisplayName = Localized.DisplayName;
+
+                    feature.HideInCharacterSheetAndLevelUp = true;
+                    //feature.HideInUI = true;
+
+                    _ = feature.AddContextRankConfig(c =>
+                    {
+                        c.m_BaseValueType = ContextRankBaseValueType.CharacterLevel;
+                        c.m_StepLevel = 5;
+                        c.m_Type = AbilityRankType.Default;
+                        c.m_Progression = ContextRankProgression.BonusValue;
+                    });
+
+                    _ = feature.AddSpellResistanceAgainstSpellDescriptor(c =>
+                    {
+                        c.SpellDescriptor = SpellDescriptor.Evil;
+
+                        c.Value.ValueType = ContextValueType.Rank;
+                        c.Value.ValueRank = AbilityRankType.Default;
+
+                    });
+
+                    return feature;
+                })
+                .AddBlueprintDeferred(GeneratedGuid.ExaltedResistanceVsEvilDescriptor);
+
+        var srVsEvilOutsiderFeature =
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ExaltedResistanceVsEvilOutsider"))
+                .Combine(BlueprintsDb.Owlcat.BlueprintFeature.OutsiderType)
+                .Combine(BlueprintsDb.Owlcat.BlueprintFeature.SubtypeEvil)
+                .Map(bps =>
+                {
+                    var (feature, outsider, evil) = bps.Flatten();
+
+                    feature.m_DisplayName = Localized.DisplayName;
+
+                    feature.HideInCharacterSheetAndLevelUp = true;
+                    //feature.HideInUI = true;
+
+                    _ = feature.AddContextRankConfig(c =>
+                    {
+                        c.m_BaseValueType = ContextRankBaseValueType.CharacterLevel;
+                        c.m_StepLevel = 5;
+                        c.m_Type = AbilityRankType.Default;
+                        c.m_Progression = ContextRankProgression.BonusValue;
+                    });
+
+                    _ = feature.AddComponent<ContextSpellResistance>(c =>
+                    {
+                        c.Value.ValueType = ContextValueType.Rank;
+                        c.Value.ValueRank = AbilityRankType.Default;
+
+                        c.Conditions.Operation = Operation.And;
+                        _ = c.Conditions.Add(
+                            new ContextConditionCasterHasFact
+                            {
+                                m_Fact = outsider.ToReference<BlueprintUnitFactReference>()
+                            },
+                            new ContextConditionCasterHasFact
+                            {
+                                m_Fact = evil.ToReference<BlueprintUnitFactReference>()
+                            });
+                    });
+
+                    return feature;
+                })
+                .AddBlueprintDeferred(GeneratedGuid.ExaltedResistanceVsEvilOutsider);
+
+        var feature =
+            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ExaltedResistance"))
+                .Combine(srVsEvilDescriptorFeature)
+                .Combine(srVsEvilOutsiderFeature)
+                .Map(bps =>
+                {
+                    var (feature, vsEvilSpell, vsEvilOutsider) = bps.Flatten();
+
+                    feature.m_DisplayName = Localized.DisplayName;
+                    feature.m_Description = Localized.Description;
+
+                    feature.SetIcon("5895704fc09cae446b64117e3c52e06b", 21300000);
+
+                    _ = feature.AddAddFacts(c =>
+                    {
+                        c.m_Facts =
+                        [
+                            vsEvilSpell.ToReference<BlueprintUnitFactReference>(),
+                            vsEvilOutsider.ToReference<BlueprintUnitFactReference>()
+                        ];
+                    });
+
+                    _ = feature.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.CelestialResistance, removeOnApply: true);
+
+                    return feature;
+                });
+        
+        return feature.AddBlueprintDeferred(GeneratedGuid.ExaltedResistance);
     }
 }

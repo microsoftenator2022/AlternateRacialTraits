@@ -12,55 +12,54 @@ using Kingmaker.Blueprints;
 
 using Kingmaker.EntitySystem.Stats;
 
-namespace AlternateRacialTraits
+namespace AlternateRacialTraits;
+
+
+[HarmonyPatch]
+[AllowedOn(typeof(BlueprintParametrizedFeature))]
+internal class ParamStats : BlueprintComponent
 {
+    public StatType[] Stats = [];
 
-    [HarmonyPatch]
-    [AllowedOn(typeof(BlueprintParametrizedFeature))]
-    internal class ParamStats : BlueprintComponent
+    static readonly Type ExtractSkillsEnumerator =
+        typeof(BlueprintParametrizedFeature)
+            .GetNestedTypes(AccessTools.all)
+            .Single(t => t.GetFields(AccessTools.all).Any(f => f.FieldType.Equals(typeof(StatType[]))));
+
+    static readonly FieldInfo BlueprintField =
+        ExtractSkillsEnumerator.GetFields().Single(f => f.FieldType.Equals(typeof(BlueprintParametrizedFeature)));
+
+    [HarmonyTargetMethod]
+    static MethodInfo TargetMethod() =>
+        ExtractSkillsEnumerator
+            .GetInterfaceMap(typeof(System.Collections.IEnumerator))
+            .TargetMethods
+            .Single(m => m.Name == nameof(System.Collections.IEnumerator.MoveNext));
+
+    static StatType[] GetStats(object enumerator)
     {
-        public StatType[] Stats = [];
+        var blueprint = BlueprintField.GetValue(enumerator) as BlueprintParametrizedFeature;
 
-        static readonly Type ExtractSkillsEnumerator =
-            typeof(BlueprintParametrizedFeature)
-                .GetNestedTypes(AccessTools.all)
-                .Single(t => t.GetFields(AccessTools.all).Any(f => f.FieldType.Equals(typeof(StatType[]))));
-
-        static readonly FieldInfo BlueprintField =
-            ExtractSkillsEnumerator.GetFields().Single(f => f.FieldType.Equals(typeof(BlueprintParametrizedFeature)));
-
-        [HarmonyTargetMethod]
-        static MethodInfo TargetMethod() =>
-            ExtractSkillsEnumerator
-                .GetInterfaceMap(typeof(System.Collections.IEnumerator))
-                .TargetMethods
-                .Single(m => m.Name == nameof(System.Collections.IEnumerator.MoveNext));
-
-        static StatType[] GetStats(object enumerator)
+        if (blueprint?.GetComponent<ParamStats>() is { } component)
         {
-            var blueprint = BlueprintField.GetValue(enumerator) as BlueprintParametrizedFeature;
-
-            if (blueprint?.GetComponent<ParamStats>() is { } component)
-            {
-                return component.Stats;
-            }
-
-            return StatTypeHelper.Skills;
+            return component.Stats;
         }
 
-        [HarmonyTranspiler]
-        static IEnumerable<CodeInstruction> ExtractSkills_Transpiler(IEnumerable<CodeInstruction> instructions)
+        return StatTypeHelper.Skills;
+    }
+
+    [HarmonyTranspiler]
+    static IEnumerable<CodeInstruction> ExtractSkills_Transpiler(IEnumerable<CodeInstruction> instructions)
+    {
+        foreach (var i in instructions)
         {
-            foreach (var i in instructions)
+            if (i.opcode == OpCodes.Ldsfld && (FieldInfo)i.operand == AccessTools.Field(typeof(StatTypeHelper), nameof(StatTypeHelper.Skills)))
             {
-                if (i.opcode == OpCodes.Ldsfld && (FieldInfo)i.operand == AccessTools.Field(typeof(StatTypeHelper), nameof(StatTypeHelper.Skills)))
-                {
-                    yield return new(OpCodes.Ldarg_0);
-                    yield return CodeInstruction.Call((object enumerator) => GetStats(enumerator));
-                }
-                else
-                    yield return i;
+                yield return new(OpCodes.Ldarg_0);
+                yield return CodeInstruction.Call((object enumerator) => GetStats(enumerator));
             }
+            else
+                yield return i;
         }
     }
 }

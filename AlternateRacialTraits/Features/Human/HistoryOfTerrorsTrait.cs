@@ -8,43 +8,39 @@ using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
 
 using MicroWrath;
-//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
 using MicroWrath.InitContext;
 
-namespace AlternateRacialTraits.Features.Human
+namespace AlternateRacialTraits.Features.Human;
+
+internal static class HistoryOfTerrorsTrait
 {
-    internal static class HistoryOfTerrorsTrait
-    {
-        public static IInitContext<BlueprintFeature> Create() =>
-            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HistoryOfTerrorsTrait)
-                .Combine(BlueprintsDb.Owlcat.BlueprintFeature.HistoryOfTerrors)
-                .Map(bps =>
+    public static IInitContext<BlueprintFeature> Create() =>
+        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HistoryOfTerrorsTrait)
+            .Combine(BlueprintsDb.Owlcat.BlueprintFeature.HistoryOfTerrors)
+            .Map(bps =>
+            {
+                var (blueprint, feat) = bps;
+
+                blueprint.m_DisplayName = feat.m_DisplayName;
+                blueprint.m_Description = feat.m_Description;
+
+                blueprint.m_Icon = feat.Icon;
+
+                blueprint.Groups = [FeatureGroup.Racial];
+
+                blueprint.HideInCharacterSheetAndLevelUp = true;
+
+                _ = blueprint.AddAddFacts(c =>
                 {
-                    var (blueprint, feat) = bps;
+                    c.m_Facts = [feat.ToReference<BlueprintUnitFactReference>()];
+                });
 
-                    blueprint.m_DisplayName = feat.m_DisplayName;
-                    blueprint.m_Description = feat.m_Description;
+                _ = blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, hideInUI: false, removeOnApply: true);
 
-                    blueprint.m_Icon = feat.Icon;
-
-                    blueprint.Groups = new[] { FeatureGroup.Racial };
-
-                    blueprint.HideInCharacterSheetAndLevelUp = true;
-                    
-                    blueprint.AddAddFacts(c =>
-                    {
-                        c.m_Facts = [feat.ToReference<BlueprintUnitFactReference>()];
-                    });
-
-                    blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, hideInUI: false, removeOnApply: true);
-
-                    return blueprint;
-                })
-                .AddBlueprintDeferred(GeneratedGuid.HistoryOfTerrorsTrait);
-                //.AddOnTrigger(GeneratedGuid.HistoryOfTerrorsTrait, Triggers.BlueprintsCache_Init);
-    }
-
+                return blueprint;
+            })
+            .AddBlueprintDeferred(GeneratedGuid.HistoryOfTerrorsTrait);
 }

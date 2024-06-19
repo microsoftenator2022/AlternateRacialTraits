@@ -63,7 +63,7 @@ internal static class HeritageFeatures
                 return (skilledFeature, heritage);
             });
 
-        blueprints.Map(pair => pair.heritage)
+        _ = blueprints.Map(pair => pair.heritage)
             .OnDemand(heritageFeature.BlueprintGuid);
 
         return blueprints.Map(pair => pair.skilledFeature)
@@ -107,7 +107,7 @@ internal static class HeritageFeatures
     return
         maybeFeatures.MapOption(blueprints =>
         {
-            new InitContext<BlueprintFeature>(() => blueprints.heritageFeature)
+            _ = new InitContext<BlueprintFeature>(() => blueprints.heritageFeature)
                 .OnDemand(blueprints.heritageFeature.AssetGuid);
 
             var feature = new InitContext<BlueprintFeature>(() => blueprints.feature)

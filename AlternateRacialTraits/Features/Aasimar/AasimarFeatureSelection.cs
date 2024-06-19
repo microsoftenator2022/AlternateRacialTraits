@@ -33,111 +33,110 @@ using MicroWrath.Util.Linq;
 
 using UniRx;
 
-namespace AlternateRacialTraits.Features.Aasimar
+namespace AlternateRacialTraits.Features.Aasimar;
+
+internal static partial class AasimarFeatureSelection
 {
-    internal static partial class AasimarFeatureSelection
-    {
-        [LocalizedString]
-        internal const string DisplayName = "Alternate Racial Traits";
+    [LocalizedString]
+    internal const string DisplayName = "Alternate Racial Traits";
 
-        [LocalizedString]
-        internal const string Description = "The following alternate traits are available";
+    [LocalizedString]
+    internal const string Description = "The following alternate traits are available";
 
-        internal static IInitContext<IEnumerable<BlueprintFeature>> AasimarHeritageFeatures =>
-            InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.AasimarHeritageSelection)
-                .Bind(selection =>
-                {
-                    var features = selection.AllFeatures;
-
-                    return features
-                        .Select(f => InitContext.GetBlueprint(f.ToMicroBlueprint()))
-                        .Collect();
-                })
-                .Map(features => features.NotNull());
-
-        internal static readonly Lazy<IInitContext<BlueprintFeature[]>> SkilledFeatures = new(() =>
-        {
-            return AasimarHeritageFeatures
-                .Bind(features => features
-                    .Select(f => HeritageFeatures.CreateSkillFeature(f.ToMicroBlueprint(), $"{f.Name}Skilled", Localized.DisplayName))
-                    .Collect())
-                .Map(Enumerable.ToArray);
-        });
-
-        internal static IInitContext<BlueprintComponent[]> SkilledPrerequisiteComponents() => HeritageFeatures.SkilledPrerequisiteComponents(SkilledFeatures.Value);
-
-        internal static readonly Lazy<IInitContext<(BlueprintFeature feature, BlueprintAbility[] facts)[]>> SLAFeatures = new(() =>
-        {
-            return AasimarHeritageFeatures
-                .Bind(features => features
-                    .Select(f => HeritageFeatures.CreateHeritageSLAFeature(f.ToMicroBlueprint(), $"{f.Name}Ability", Localized.DisplayName))
-                    .Collect())
-                .Map(features => features
-                    .SelectMany(f => f)
-                    .Select(f => f.Eval())
-                    .ToArray());
-        });
-
-        internal static IInitContext<BlueprintComponent[]> SLAPrerequisiteComponents() => HeritageFeatures.SLAPrerequisiteComponents(SLAFeatures.Value);
-        
-        static IInitContextBlueprint<BlueprintFeatureSelection> Create()
-        {
-            var features = new[]
+    internal static IInitContext<IEnumerable<BlueprintFeature>> AasimarHeritageFeatures =>
+        InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.AasimarHeritageSelection)
+            .Bind(selection =>
             {
-                NoAdditionalTraitsPrototype.Setup(
-                    InitContext.NewBlueprint<BlueprintFeature>(
-                        GeneratedGuid.Get("NoAdditionalAasimarTraits")))
-                    .AddBlueprintDeferred(GeneratedGuid.NoAdditionalAasimarTraits),
-                DeathlessSpirit.Create(),
-                ExaltedResistance.Create(),
-                CelestialCrusader.Create(),
-                CrusadingMagic.Create(),
-                Heavenborn.Create()
-            };
+                var features = selection.AllFeatures;
 
-            var selection =
-                InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("AasimarFeatureSelection"))
-                    .Combine(features.Collect())
-                    .Map(bps =>
-                    {
-                        var (selection, features) = bps;
+                return features
+                    .Select(f => InitContext.GetBlueprint(f.ToMicroBlueprint()))
+                    .Collect();
+            })
+            .Map(features => features.NotNull());
 
-                        selection.m_DisplayName = Localized.DisplayName;
-                        selection.m_Description = Localized.Description;
+    internal static readonly Lazy<IInitContext<BlueprintFeature[]>> SkilledFeatures = new(() =>
+    {
+        return AasimarHeritageFeatures
+            .Bind(features => features
+                .Select(f => HeritageFeatures.CreateSkillFeature(f.ToMicroBlueprint(), $"{f.Name}Skilled", Localized.DisplayName))
+                .Collect())
+            .Map(Enumerable.ToArray);
+    });
 
-                        selection.Groups = [FeatureGroup.Racial];
+    internal static IInitContext<BlueprintComponent[]> SkilledPrerequisiteComponents() => HeritageFeatures.SkilledPrerequisiteComponents(SkilledFeatures.Value);
 
-                        selection.AddComponent<SelectionPriority>(c =>
-                        {
-                            c.PhasePriority = Kingmaker.UI.MVVM._VM.CharGen.Phases.
-                                CharGenPhaseBaseVM.ChargenPhasePriority.RaceFeatures;
+    internal static readonly Lazy<IInitContext<(BlueprintFeature feature, BlueprintAbility[] facts)[]>> SLAFeatures = new(() =>
+    {
+        return AasimarHeritageFeatures
+            .Bind(features => features
+                .Select(f => HeritageFeatures.CreateHeritageSLAFeature(f.ToMicroBlueprint(), $"{f.Name}Ability", Localized.DisplayName))
+                .Collect())
+            .Map(features => features
+                .SelectMany(f => f)
+                .Select(f => f.Eval())
+                .ToArray());
+    });
 
-                            c.ActionPriority = LevelUpActionPriority.Heritage;
-                        });
-
-                        selection.AddFeatures(features);
-
-                        return selection;
-                    })
-                    .AddBlueprintDeferred(GeneratedGuid.AasimarFeatureSelection);
-            
-            return selection;
-        }
-
-        [Init]
-        static void Init()
+    internal static IInitContext<BlueprintComponent[]> SLAPrerequisiteComponents() => HeritageFeatures.SLAPrerequisiteComponents(SLAFeatures.Value);
+    
+    static IInitContextBlueprint<BlueprintFeatureSelection> Create()
+    {
+        var features = new[]
         {
-            InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.AasimarRace)
-                .Combine(Create())
+            NoAdditionalTraitsPrototype.Setup(
+                InitContext.NewBlueprint<BlueprintFeature>(
+                    GeneratedGuid.Get("NoAdditionalAasimarTraits")))
+                .AddBlueprintDeferred(GeneratedGuid.NoAdditionalAasimarTraits),
+            DeathlessSpirit.Create(),
+            ExaltedResistance.Create(),
+            CelestialCrusader.Create(),
+            CrusadingMagic.Create(),
+            Heavenborn.Create()
+        };
+
+        var selection =
+            InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("AasimarFeatureSelection"))
+                .Combine(features.Collect())
                 .Map(bps =>
                 {
-                    var (race, selection) = bps;
+                    var (selection, features) = bps;
 
-                    race.m_Features = race.m_Features.Append(selection.ToReference<BlueprintFeatureBaseReference>()).ToArray();
+                    selection.m_DisplayName = Localized.DisplayName;
+                    selection.m_Description = Localized.Description;
 
-                    return race;
+                    selection.Groups = [FeatureGroup.Racial];
+
+                    _ = selection.AddComponent<SelectionPriority>(c =>
+                    {
+                        c.PhasePriority = Kingmaker.UI.MVVM._VM.CharGen.Phases.
+                            CharGenPhaseBaseVM.ChargenPhasePriority.RaceFeatures;
+
+                        c.ActionPriority = LevelUpActionPriority.Heritage;
+                    });
+
+                    selection.AddFeatures(features);
+
+                    return selection;
                 })
-                .OnDemand(BlueprintsDb.Owlcat.BlueprintRace.AasimarRace.BlueprintGuid);
-        }
+                .AddBlueprintDeferred(GeneratedGuid.AasimarFeatureSelection);
+        
+        return selection;
+    }
+
+    [Init]
+    static void Init()
+    {
+        _ = InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.AasimarRace)
+            .Combine(Create())
+            .Map(bps =>
+            {
+                var (race, selection) = bps;
+
+                race.m_Features = race.m_Features.Append(selection.ToReference<BlueprintFeatureBaseReference>()).ToArray();
+
+                return race;
+            })
+            .OnDemand(BlueprintsDb.Owlcat.BlueprintRace.AasimarRace.BlueprintGuid);
     }
 }

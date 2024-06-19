@@ -20,60 +20,59 @@ using MicroWrath.Util;
 
 using static MicroWrath.Encyclopedia;
 
-namespace AlternateRacialTraits.Features.Aasimar
+namespace AlternateRacialTraits.Features.Aasimar;
+
+internal static partial class CrusadingMagic
 {
-    internal static partial class CrusadingMagic
+    [LocalizedString]
+    internal const string DisplayName = "Crusading Magic";
+
+    [LocalizedString]
+    internal static readonly string Description =
+        "Many aasimars feel obligated to train to defend the world against fiends. These aasimars gain a " +
+        $"+2 racial {new Link(Page.Bonus, "bonus")} on " +
+        $"{new Link(Page.Caster_Level, "caster level")} checks to overcome " +
+        $"{new Link(Page.Spell_Resistance, "spell resistance")} and on " +
+        $"{new Link(Page.Knowledge_Arcana, "Knowledge (Arcana)")} checks. " +
+        $"This racial {new Link(Page.Trait, "trait")} replaces the skilled and spell-like ability racial traits.";
+
+    internal static IInitContextBlueprint<BlueprintFeature> Create()
     {
-        [LocalizedString]
-        internal const string DisplayName = "Crusading Magic";
+        var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(CrusadingMagic)))
+            .Combine(AasimarFeatureSelection.SLAPrerequisiteComponents())
+            .Combine(AasimarFeatureSelection.SkilledPrerequisiteComponents())
+            .Map(bps =>
+            {
+                var (feature, slaPrerequisites, skilledPrerequisites) = bps.Flatten();
 
-        [LocalizedString]
-        internal static readonly string Description =
-            "Many aasimars feel obligated to train to defend the world against fiends. These aasimars gain a " +
-            $"+2 racial {new Link(Page.Bonus, "bonus")} on " +
-            $"{new Link(Page.Caster_Level, "caster level")} checks to overcome " +
-            $"{new Link(Page.Spell_Resistance, "spell resistance")} and on " +
-            $"{new Link(Page.Knowledge_Arcana, "Knowledge (Arcana)")} checks. " +
-            $"This racial {new Link(Page.Trait, "trait")} replaces the skilled and spell-like ability racial traits.";
+                feature.m_DisplayName = Localized.DisplayName;
+                feature.m_Description = Localized.Description;
 
-        internal static IInitContextBlueprint<BlueprintFeature> Create()
-        {
-            var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(CrusadingMagic)))
-                .Combine(AasimarFeatureSelection.SLAPrerequisiteComponents())
-                .Combine(AasimarFeatureSelection.SkilledPrerequisiteComponents())
-                .Map(bps =>
+                feature.SetIcon("ecb2815de750b0d4ba865e22c84b06c8", 21300000);
+
+                _ = feature.AddSpellPenetrationBonus(c =>
                 {
-                    var (feature, slaPrerequisites, skilledPrerequisites) = bps.Flatten();
-
-                    feature.m_DisplayName = Localized.DisplayName;
-                    feature.m_Description = Localized.Description;
-
-                    feature.SetIcon("ecb2815de750b0d4ba865e22c84b06c8", 21300000);
-
-                    feature.AddSpellPenetrationBonus(c =>
-                    {
-                        c.Value = 2;
-                        c.Descriptor = ModifierDescriptor.Racial;
-                    });
-
-                    feature.AddAddStatBonus(c =>
-                    {
-                        c.Value = 2;
-                        c.Descriptor = ModifierDescriptor.Racial;
-                        c.Stat = StatType.SkillKnowledgeArcana;
-                    });
-
-                    //foreach (var c in skilledPrerequisites)
-                    //    feature.AddComponent(c);
-                    //foreach (var c in slaPrerequisites)
-                    //    feature.AddComponent(c);
-                    feature.AddComponents(slaPrerequisites);
-                    feature.AddComponents(skilledPrerequisites);
-                    
-                    return feature;
+                    c.Value = 2;
+                    c.Descriptor = ModifierDescriptor.Racial;
                 });
 
-            return feature.AddBlueprintDeferred(GeneratedGuid.CrusadingMagic);
-        }
+                _ = feature.AddAddStatBonus(c =>
+                {
+                    c.Value = 2;
+                    c.Descriptor = ModifierDescriptor.Racial;
+                    c.Stat = StatType.SkillKnowledgeArcana;
+                });
+
+                //foreach (var c in skilledPrerequisites)
+                //    feature.AddComponent(c);
+                //foreach (var c in slaPrerequisites)
+                //    feature.AddComponent(c);
+                _ = feature.AddComponents(slaPrerequisites);
+                _ = feature.AddComponents(skilledPrerequisites);
+                
+                return feature;
+            });
+
+        return feature.AddBlueprintDeferred(GeneratedGuid.CrusadingMagic);
     }
 }

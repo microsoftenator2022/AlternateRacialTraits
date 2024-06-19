@@ -12,26 +12,25 @@ using MicroWrath;
 using MicroWrath.InitContext;
 using MicroWrath.Localization;
 
-namespace AlternateRacialTraits.Features
+namespace AlternateRacialTraits.Features;
+
+internal static partial class NoAdditionalTraitsPrototype
 {
-    internal static partial class NoAdditionalTraitsPrototype
-    {
-        [LocalizedString]
-        public static readonly string DisplayName = "None";
-        [LocalizedString]
-        public static readonly string Description = "No alternate trait";
+    [LocalizedString]
+    public static readonly string DisplayName = "None";
+    [LocalizedString]
+    public static readonly string Description = "No alternate trait";
 
-        internal static IInitContext<BlueprintFeature> Setup(IInitContext<BlueprintFeature> blueprint) =>
-            blueprint
-                .Map((BlueprintFeature feat) =>
-                {
-                    feat.m_DisplayName = Localized.DisplayName;
-                    feat.m_Description = Localized.Description;
+    internal static IInitContext<BlueprintFeature> Setup(IInitContext<BlueprintFeature> blueprint) =>
+        blueprint
+            .Map((BlueprintFeature feat) =>
+            {
+                feat.m_DisplayName = Localized.DisplayName;
+                feat.m_Description = Localized.Description;
 
-                    feat.HideInUI = true;
-                    feat.HideInCharacterSheetAndLevelUp = true;
+                feat.HideInUI = true;
+                feat.HideInCharacterSheetAndLevelUp = true;
 
-                    return feat;
-                });
+                return feat;
+            });
     }
-}

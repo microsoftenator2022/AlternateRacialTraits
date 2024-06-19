@@ -9,7 +9,6 @@ using Kingmaker.Blueprints.Classes;
 using Kingmaker.Blueprints.Classes.Selection;
 
 using MicroWrath;
-//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
@@ -18,83 +17,59 @@ using MicroWrath.Localization;
 using MicroWrath.Util;
 using MicroWrath.Util.Linq;
 
-namespace AlternateRacialTraits.Features.Oread
+namespace AlternateRacialTraits.Features.Oread;
+
+internal static class OreadFeatureSelection
 {
-    //internal static class NoAlternateTraits
-    //{
-    //    [LocalizedString]
-    //    public const string DisplayName = "None";
-    //    [LocalizedString]
-    //    public const string Description = "No alternate trait";
+    [LocalizedString]
+    public const string DisplayName = "Alternate Racial Traits";
+    [LocalizedString]
+    public const string Description = "The following alternate traits are available";
 
-    //    internal static IInitContext<BlueprintFeature> Create() =>
-    //        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(GeneratedGuid.NoAlternateOreadTraits)))
-    //            .Map(blueprint =>
-    //            {
-    //                blueprint.m_DisplayName = LocalizedStrings.Features_Oread_NoAlternateTraits_DisplayName;
-    //                blueprint.m_Description = LocalizedStrings.Features_Oread_NoAlternateTraits_Description;
-
-    //                blueprint.HideInUI = true;
-    //                blueprint.HideInCharacterSheetAndLevelUp = true;
-
-    //                return blueprint;
-    //            })
-    //            .AddOnTrigger(GeneratedGuid.NoAlternateOreadTraits, Triggers.BlueprintsCache_Init);
-    //}
-
-    internal static class OreadFeatureSelection
+    [Init]
+    internal static void Init()
     {
-        [LocalizedString]
-        public const string DisplayName = "Alternate Racial Traits";
-        [LocalizedString]
-        public const string Description = "The following alternate traits are available";
+        var noTraits =
+            NoAdditionalTraitsPrototype.Setup(
+                InitContext.NewBlueprint<BlueprintFeature>(
+                    GeneratedGuid.Get("NoAlternateOreadTraits")))
+                .AddBlueprintDeferred(GeneratedGuid.NoAlternateOreadTraits);
 
-        [Init]
-        internal static void Init()
-        {
-            var noTraits =
-                NoAdditionalTraitsPrototype.Setup(
-                    InitContext.NewBlueprint<BlueprintFeature>(
-                        GeneratedGuid.Get("NoAlternateOreadTraits")))
-                    .AddBlueprintDeferred(GeneratedGuid.NoAlternateOreadTraits);
+        var graniteSkin = GraniteSkin.Create();
+        var crystallineForm = CrystallineForm.Create();
 
-            var graniteSkin = GraniteSkin.Create();
-            var crystallineForm = CrystallineForm.Create();
+        var context = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get(nameof(OreadFeatureSelection)))
+            .Combine(BlueprintsDb.Owlcat.BlueprintRace.OreadRace)
+            .Map(bps =>
+            {
+                var (selection, race) = bps;
 
-            var context = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get(nameof(OreadFeatureSelection)))
-                .Combine(BlueprintsDb.Owlcat.BlueprintRace.OreadRace)
-                .Map(bps =>
-                {
-                    var (selection, race) = bps;
+                selection.m_DisplayName = LocalizedStrings.Features_Oread_OreadFeatureSelection_DisplayName;
+                selection.m_Description = LocalizedStrings.Features_Oread_OreadFeatureSelection_Description;
 
-                    selection.m_DisplayName = LocalizedStrings.Features_Oread_OreadFeatureSelection_DisplayName;
-                    selection.m_Description = LocalizedStrings.Features_Oread_OreadFeatureSelection_Description;
+                selection.Groups = [FeatureGroup.Racial];
 
-                    selection.Groups = [FeatureGroup.Racial];
+                race.m_Features = race.m_Features.Append(selection.ToReference<BlueprintFeatureBaseReference>());
 
-                    race.m_Features = race.m_Features.Append(selection.ToReference<BlueprintFeatureBaseReference>());
+                return (selection, race);
+            });
 
-                    return (selection, race);
-                });
+        _ = context.Map(pair => pair.race).AddOnTrigger(BlueprintsDb.Owlcat.BlueprintRace.OreadRace.BlueprintGuid, Triggers.BlueprintsCache_Init);
 
-            //var selection = context.AddOnTrigger(GeneratedGuid.OreadFeatureSelection, pair => pair.selection);
-            context.Map(pair => pair.race).AddOnTrigger(BlueprintsDb.Owlcat.BlueprintRace.OreadRace.BlueprintGuid, Triggers.BlueprintsCache_Init);
+        _ = context.Map(pair => pair.selection)
+            .Combine(noTraits)
+            .Combine(graniteSkin)
+            .Combine(crystallineForm)
+            .Map(bps =>
+            {
+                var (selection, noTraits, graniteSkin, crystallineForm) = bps.Flatten();
 
-            context.Map(pair => pair.selection) 
-                .Combine(noTraits)
-                .Combine(graniteSkin)
-                .Combine(crystallineForm)
-                .Map(bps =>
-                {
-                    var (selection, noTraits, graniteSkin, crystallineForm) = bps.Flatten();
+                selection.AddFeatures(noTraits.ToMicroBlueprint());
+                selection.AddFeatures(graniteSkin.ToMicroBlueprint());
+                selection.AddFeatures(crystallineForm.ToMicroBlueprint());
 
-                    selection.AddFeatures(noTraits.ToMicroBlueprint());
-                    selection.AddFeatures(graniteSkin.ToMicroBlueprint());
-                    selection.AddFeatures(crystallineForm.ToMicroBlueprint());
-
-                    return selection;
-                })
-                .AddOnTrigger(GeneratedGuid.OreadFeatureSelection, Triggers.BlueprintsCache_Init);
-        }
+                return selection;
+            })
+            .AddOnTrigger(GeneratedGuid.OreadFeatureSelection, Triggers.BlueprintsCache_Init);
     }
 }

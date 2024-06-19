@@ -20,68 +20,67 @@ using MicroWrath.Util;
 
 using static MicroWrath.Encyclopedia;
 
-namespace AlternateRacialTraits.Features.HalfElf
+namespace AlternateRacialTraits.Features.HalfElf;
+
+internal static partial class WeaponFamiliarity
 {
-    internal static partial class WeaponFamiliarity
+    [LocalizedString]
+    internal const string DisplayName = "Weapon Familiarity";
+
+    [LocalizedString]
+    internal static readonly string Description = "Half-elves raised among elves often feel pitied and " +
+        "mistrusted by their longer-lived kin, and yet they receive training in elf weapons. They gain the " +
+        $"elf's weapon familiarity {new Link(Page.Trait, "trait")}. This racial trait replaces adaptability.";
+
+    [Init]
+    internal static void Init()
     {
-        [LocalizedString]
-        internal const string DisplayName = "Weapon Familiarity";
+        //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
+        var context = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("HalfElfWeaponFamiliarity"))
+            .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection)
+            .Combine(BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity)
+            .Map(bps =>
+            {
+                var (blueprint, halfElfHeritageSelection, elvenWeaponFamiliarity) = bps.Expand();
 
-        [LocalizedString]
-        internal static readonly string Description = "Half-elves raised among elves often feel pitied and " +
-            "mistrusted by their longer-lived kin, and yet they receive training in elf weapons. They gain the " +
-            $"elf's weapon familiarity {new Link(Page.Trait, "trait")}. This racial trait replaces adaptability.";
+                blueprint.m_DisplayName = Localized.DisplayName;
+                blueprint.m_Description = Localized.Description;
 
-        [Init]
-        internal static void Init()
-        {
-            //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
-            var context = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("HalfElfWeaponFamiliarity"))
-                .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection)
-                .Combine(BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity)
-                .Map(bps =>
-                {
-                    var (blueprint, halfElfHeritageSelection, elvenWeaponFamiliarity) = bps.Expand();
+                blueprint.Groups = [FeatureGroup.Racial];
 
-                    blueprint.m_DisplayName = Localized.DisplayName;
-                    blueprint.m_Description = Localized.Description;
+                blueprint.m_Icon = elvenWeaponFamiliarity.Icon;
 
-                    blueprint.Groups = [FeatureGroup.Racial];
+                _ = blueprint.AddAddFacts(c => c.m_Facts =
+                    [elvenWeaponFamiliarity.ToReference<BlueprintUnitFactReference>()]);
 
-                    blueprint.m_Icon = elvenWeaponFamiliarity.Icon;
+                // TODO: rework to allow for multiple selections (if TTT doesn't already)
+                //blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeatureSelection.Adaptability, false, true)
+                //    .Group = Prerequisite.GroupType.Any;
 
-                    blueprint.AddAddFacts(c => c.m_Facts =
-                        [elvenWeaponFamiliarity.ToReference<BlueprintUnitFactReference>()]);
+                //blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeatureSelection.BaseRaseHalfElfSelection, false, true)
+                //    .Group = Prerequisite.GroupType.Any;
 
-                    // TODO: rework to allow for multiple selections (if TTT doesn't already)
-                    //blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeatureSelection.Adaptability, false, true)
-                    //    .Group = Prerequisite.GroupType.Any;
+                _ = blueprint.AddComponent<PrerequisiteNoFeature>(
+                    c =>
+                    {
+                        c.m_Feature = BlueprintsDb.Owlcat.BlueprintFeatureSelection.Adaptability
+                            .ToReference<BlueprintFeature, BlueprintFeatureReference>();
 
-                    //blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeatureSelection.BaseRaseHalfElfSelection, false, true)
-                    //    .Group = Prerequisite.GroupType.Any;
+                        c.Group = Prerequisite.GroupType.Any;
+                    });
 
-                    blueprint.AddComponent<PrerequisiteNoFeature>(
-                        c =>
-                        {
-                            c.m_Feature = BlueprintsDb.Owlcat.BlueprintFeatureSelection.Adaptability
-                                .ToReference<BlueprintFeature, BlueprintFeatureReference>();
+                //BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection.GetBlueprint()!.AddFeatures(blueprint.ToMicroBlueprint());
 
-                            c.Group = Prerequisite.GroupType.Any;
-                        });
+                halfElfHeritageSelection.AddFeatures(blueprint);
 
-                    //BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection.GetBlueprint()!.AddFeatures(blueprint.ToMicroBlueprint());
+                return (blueprint, halfElfHeritageSelection);
+            });
 
-                    halfElfHeritageSelection.AddFeatures(blueprint);
-
-                    return (blueprint, halfElfHeritageSelection);
-                });
-
-            context.Map(pair => pair.blueprint)
-                .AddOnTrigger(GeneratedGuid.HalfElfWeaponFamiliarity, Triggers.BlueprintsCache_Init);
-            context.Map(pair => pair.halfElfHeritageSelection)
-                .AddOnTrigger(
-                    BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection.BlueprintGuid,
-                    Triggers.BlueprintsCache_Init);
-        }
+        _ = context.Map(pair => pair.blueprint)
+            .AddOnTrigger(GeneratedGuid.HalfElfWeaponFamiliarity, Triggers.BlueprintsCache_Init);
+        _ = context.Map(pair => pair.halfElfHeritageSelection)
+            .AddOnTrigger(
+                BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection.BlueprintGuid,
+                Triggers.BlueprintsCache_Init);
     }
 }

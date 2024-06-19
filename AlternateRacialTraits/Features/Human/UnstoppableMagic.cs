@@ -8,7 +8,6 @@ using Kingmaker.Blueprints.Classes;
 using Kingmaker.Enums;
 
 using MicroWrath;
-//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
 using MicroWrath.InitContext;
@@ -16,40 +15,38 @@ using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
 
-namespace AlternateRacialTraits.Features.Human
+namespace AlternateRacialTraits.Features.Human;
+
+internal static class UnstoppableMagic
 {
-    internal static class UnstoppableMagic
-    {
-        [LocalizedString]
-        public static readonly string DisplayName = "Unstoppable Magic";
-        [LocalizedString]
-        public static readonly string Description =
-            "Humans from civilizations built upon advanced magic are educated in a variety of ways to " +
-            $"accomplish their magical goals. They gain a +2 racial {new Link(Page.Bonus, "bonus")} " +
-            $"on {new Link(Page.Caster_Level, "caster level")} {new Link(Page.Check, "checks")} " +
-            $"against {new Link(Page.Spell_Resistance, "spell resistance")}. " +
-            $"This racial {new Link(Page.Trait, "trait")} replaces the bonus {new Link(Page.Feat, "feat")} trait.";
+    [LocalizedString]
+    public static readonly string DisplayName = "Unstoppable Magic";
+    [LocalizedString]
+    public static readonly string Description =
+        "Humans from civilizations built upon advanced magic are educated in a variety of ways to " +
+        $"accomplish their magical goals. They gain a +2 racial {new Link(Page.Bonus, "bonus")} " +
+        $"on {new Link(Page.Caster_Level, "caster level")} {new Link(Page.Check, "checks")} " +
+        $"against {new Link(Page.Spell_Resistance, "spell resistance")}. " +
+        $"This racial {new Link(Page.Trait, "trait")} replaces the bonus {new Link(Page.Feat, "feat")} trait.";
 
-        internal static IInitContext<BlueprintFeature> Create() =>
-            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.UnstoppableMagic)
-                .Map((BlueprintFeature blueprint) =>
+    internal static IInitContext<BlueprintFeature> Create() =>
+        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.UnstoppableMagic)
+            .Map((BlueprintFeature blueprint) =>
+            {
+                blueprint.m_DisplayName = LocalizedStrings.Features_Human_UnstoppableMagic_DisplayName;
+                blueprint.m_Description = LocalizedStrings.Features_Human_UnstoppableMagic_Description;
+
+                blueprint.Groups = [FeatureGroup.Racial];
+                
+                _ = blueprint.AddSpellPenetrationBonus(c => 
                 {
-                    blueprint.m_DisplayName = LocalizedStrings.Features_Human_UnstoppableMagic_DisplayName;
-                    blueprint.m_Description = LocalizedStrings.Features_Human_UnstoppableMagic_Description;
+                    c.Value = 2;
+                    c.Descriptor = ModifierDescriptor.Racial;
+                });
 
-                    blueprint.Groups = [FeatureGroup.Racial];
-                    
-                    blueprint.AddSpellPenetrationBonus(c => 
-                    {
-                        c.Value = 2;
-                        c.Descriptor = ModifierDescriptor.Racial;
-                    });
+                blueprint.SetIcon("15d11c952fdc96b45849f312f3931192", 21300000);
 
-                    blueprint.SetIcon("15d11c952fdc96b45849f312f3931192", 21300000);
-
-                    return blueprint;
-                })
-                .AddBlueprintDeferred(GeneratedGuid.UnstoppableMagic);
-                //.AddOnTrigger(GeneratedGuid.UnstoppableMagic, Triggers.BlueprintsCache_Init);
-    }
+                return blueprint;
+            })
+            .AddBlueprintDeferred(GeneratedGuid.UnstoppableMagic);
 }

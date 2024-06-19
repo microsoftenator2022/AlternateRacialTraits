@@ -10,7 +10,6 @@ using Kingmaker.Enums;
 using Kingmaker.UnitLogic.FactLogic;
 
 using MicroWrath;
-//using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
@@ -19,61 +18,60 @@ using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
 
-namespace AlternateRacialTraits.Features.Human
+namespace AlternateRacialTraits.Features.Human;
+
+internal static class PracticedHunter
 {
-    internal static class PracticedHunter
-    {
-        [LocalizedString]
-        public static readonly string DisplayName = "Practiced Hunter";
-        [LocalizedString]
-        public static readonly string Description =
-            "Members of some human cultures train from youth to find and follow the trails of vital game and " +
-            "at the same time hide the evidence of their own passage. These humans gain a +2 racial " +
-            $"{new Link(Page.Bonus, "bonus")} on {new Link(Page.Stealth, "Stealth")} and " +
-            $"{new Link(Page.Lore_Nature, "Lore (Nature)")} " +
-            $"{new Link(Page.Check, "checks")}, and Stealth and Lore (Nature) are always class " +
-            $"skills for them. This racial {new Link(Page.Trait, "trait")} replaces Skilled.";
+    [LocalizedString]
+    public static readonly string DisplayName = "Practiced Hunter";
+    [LocalizedString]
+    public static readonly string Description =
+        "Members of some human cultures train from youth to find and follow the trails of vital game and " +
+        "at the same time hide the evidence of their own passage. These humans gain a +2 racial " +
+        $"{new Link(Page.Bonus, "bonus")} on {new Link(Page.Stealth, "Stealth")} and " +
+        $"{new Link(Page.Lore_Nature, "Lore (Nature)")} " +
+        $"{new Link(Page.Check, "checks")}, and Stealth and Lore (Nature) are always class " +
+        $"skills for them. This racial {new Link(Page.Trait, "trait")} replaces Skilled.";
 
-        internal static IInitContext<BlueprintFeature> Create() =>
-            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.PracticedHunter)
-                .Map((BlueprintFeature blueprint) =>
+    internal static IInitContext<BlueprintFeature> Create() =>
+        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.PracticedHunter)
+            .Map((BlueprintFeature blueprint) =>
+            {
+                blueprint.m_DisplayName = LocalizedStrings.Features_Human_PracticedHunter_DisplayName;
+                blueprint.m_Description = LocalizedStrings.Features_Human_PracticedHunter_Description;
+
+                blueprint.Groups = [FeatureGroup.Racial];
+
+                blueprint.SetIcon("3482eb9c0d448524ab950213b3866301", 21300000);
+
+                _ = blueprint.AddAddStatBonus(c =>
                 {
-                    blueprint.m_DisplayName = LocalizedStrings.Features_Human_PracticedHunter_DisplayName;
-                    blueprint.m_Description = LocalizedStrings.Features_Human_PracticedHunter_Description;
+                    c.Stat = StatType.SkillStealth;
+                    c.Value = 2;
+                    c.Descriptor = ModifierDescriptor.Racial;
+                });
 
-                    blueprint.Groups = new[] { FeatureGroup.Racial };
+                _ = blueprint.AddAddStatBonus(c =>
+                {
+                    c.Stat = StatType.SkillLoreNature;
+                    c.Value = 2;
+                    c.Descriptor = ModifierDescriptor.Racial;
+                });
 
-                    blueprint.SetIcon("3482eb9c0d448524ab950213b3866301", 21300000);
+                _ = blueprint.AddComponent<AddClassSkill>(c =>
+                {
+                    c.Skill = StatType.SkillStealth;
+                });
 
-                    blueprint.AddAddStatBonus(c =>
-                    {
-                        c.Stat = StatType.SkillStealth;
-                        c.Value = 2;
-                        c.Descriptor = ModifierDescriptor.Racial;
-                    });
+                _ = blueprint.AddComponent<AddClassSkill>(c =>
+                {
+                    c.Skill = StatType.SkillLoreNature;
+                });
 
-                    blueprint.AddAddStatBonus(c =>
-                    {
-                        c.Stat = StatType.SkillLoreNature;
-                        c.Value = 2;
-                        c.Descriptor = ModifierDescriptor.Racial;
-                    });
+                _ = blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, hideInUI: false, removeOnApply: true);
 
-                    blueprint.AddComponent<AddClassSkill>(c =>
-                    {
-                        c.Skill = StatType.SkillStealth;
-                    });
-
-                    blueprint.AddComponent<AddClassSkill>(c =>
-                    {
-                        c.Skill = StatType.SkillLoreNature;
-                    });
-
-                    blueprint.AddPrerequisiteFeature(BlueprintsDb.Owlcat.BlueprintFeature.HumanSkilled, hideInUI: false, removeOnApply: true);
-
-                    return blueprint;
-                })
-                .AddBlueprintDeferred(GeneratedGuid.PracticedHunter);
-                //.AddOnTrigger(GeneratedGuid.PracticedHunter, Triggers.BlueprintsCache_Init);
-    }
+                return blueprint;
+            })
+            .AddBlueprintDeferred(GeneratedGuid.PracticedHunter);
+            //.AddOnTrigger(GeneratedGuid.PracticedHunter, Triggers.BlueprintsCache_Init);
 }

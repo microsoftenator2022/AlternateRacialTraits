@@ -22,80 +22,79 @@ using Kingmaker.Utility;
 
 using MicroWrath;
 
-namespace AlternateRacialTraits
+namespace AlternateRacialTraits;
+
+internal static class Util
 {
-    internal static class Util
+    internal static void AddLevelUpSelection(UnitEntityData unit, IEnumerable<BlueprintFeatureBaseReference> features, FeatureSource source)
     {
-        internal static void AddLevelUpSelection(UnitEntityData unit, IEnumerable<BlueprintFeatureBaseReference> features, FeatureSource source)
-        {
-            LevelUpController? controller = Kingmaker.Game.Instance?.LevelUpController;
-            if (controller == null) { return; }
-            if (controller.State.Mode == LevelUpState.CharBuildMode.Mythic) { return; }
-            //if (unit.Descriptor.Progression.CharacterLevel > 1) { return; }
+        LevelUpController? controller = Kingmaker.Game.Instance?.LevelUpController;
+        if (controller == null) { return; }
+        if (controller.State.Mode == LevelUpState.CharBuildMode.Mythic) { return; }
+        //if (unit.Descriptor.Progression.CharacterLevel > 1) { return; }
 
-            var featureBps = features.Select(r => r.Get()).ToArray();
-            
-            LevelUpHelper.AddFeaturesFromProgression(
-                controller.State,
-                unit,
-                featureBps,
-                source,
-                0);
-        }
-
+        var featureBps = features.Select(r => r.Get()).ToArray();
+        
+        LevelUpHelper.AddFeaturesFromProgression(
+            controller.State,
+            unit,
+            featureBps,
+            source,
+            0);
     }
 
-    [HarmonyPatch(
-        typeof(CharGenFeatureSelectorPhaseVM),
-        nameof(CharGenFeatureSelectorPhaseVM.OrderPriority),
-        MethodType.Getter)]
-    static class Background_OrderPriority_Patch
-    {
-        static int Postfix(int __result, CharGenFeatureSelectorPhaseVM __instance)
-        {
-            FeatureGroup featureGroup = UIUtilityUnit.GetFeatureGroup(__instance.FeatureSelectorStateVM?.Feature);
-            if (featureGroup == FeatureGroup.BackgroundSelection)
-            {
-                if (__result < (((int)CharGenPhaseBaseVM.ChargenPhasePriority.AbilityScores * 1000) - 100))
-                    return __result + 100;
-            }
+}
 
-            return __result;
+[HarmonyPatch(
+    typeof(CharGenFeatureSelectorPhaseVM),
+    nameof(CharGenFeatureSelectorPhaseVM.OrderPriority),
+    MethodType.Getter)]
+static class Background_OrderPriority_Patch
+{
+    static int Postfix(int __result, CharGenFeatureSelectorPhaseVM __instance)
+    {
+        FeatureGroup featureGroup = UIUtilityUnit.GetFeatureGroup(__instance.FeatureSelectorStateVM?.Feature);
+        if (featureGroup == FeatureGroup.BackgroundSelection)
+        {
+            if (__result < (((int)CharGenPhaseBaseVM.ChargenPhasePriority.AbilityScores * 1000) - 100))
+                return __result + 100;
         }
+
+        return __result;
+    }
+}
+
+// Don't yell at me about missing feature param when I haven't even finished level up
+[HarmonyPatch]
+static class ShutUpShutUpShutUpShutUp
+{
+    static bool IsCurrentlyLevelingUp()
+    {
+        if (Game.Instance.LevelUpController is not { } controller)
+            return false;
+
+        return !controller.Committed;
     }
 
-    // Don't yell at me about missing feature param when I haven't even finished level up
-    [HarmonyPatch]
-    static class ShutUpShutUpShutUpShutUp
+    [HarmonyPatch(typeof(Feature), nameof(Feature.OnActivate))]
+    [HarmonyTranspiler]
+    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
-        static bool IsCurrentlyLevelingUp()
-        {
-            if (Game.Instance.LevelUpController is not { } controller)
-                return false;
+        var index = instructions.FindIndex(ci => ci.Calls(AccessTools.Method(typeof(FeatureParam), "op_Equality")));
 
-            return !controller.Committed;
-        }
+        if (index < 0)
+            throw new Exception("Could not find target instruction");
 
-        [HarmonyPatch(typeof(Feature), nameof(Feature.OnActivate))]
-        [HarmonyTranspiler]
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            var index = instructions.FindIndex(ci => ci.Calls(AccessTools.Method(typeof(FeatureParam), "op_Equality")));
+        var iList = instructions.ToList();
 
-            if (index < 0)
-                throw new Exception("Could not find target instruction");
+        var ifFalse = iList[index + 1];
+        
+        iList.InsertRange(index + 2,
+        [
+            CodeInstruction.Call(() => IsCurrentlyLevelingUp()),
+            new(OpCodes.Brtrue_S, ifFalse.operand)
+        ]);
 
-            var iList = instructions.ToList();
-
-            var ifFalse = iList[index + 1];
-            
-            iList.InsertRange(index + 2,
-            [
-                CodeInstruction.Call(() => IsCurrentlyLevelingUp()),
-                new(OpCodes.Brtrue_S, ifFalse.operand)
-            ]);
-
-            return iList;
-        }
+        return iList;
     }
 }
