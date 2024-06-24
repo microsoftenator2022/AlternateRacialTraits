@@ -134,38 +134,5 @@ internal static partial class ScaledSkin
 
         return selection.AddBlueprintDeferred(GeneratedGuid.ScaledSkinResistanceSelection);
     }
-
-    //internal static IInitContextBlueprint<BlueprintFeature> Create()
-    //{
-    //    var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(ScaledSkin)))
-    //        .Combine(CreateResistanceSelection())
-    //        .Map(bps =>
-    //        {
-    //            var (feature, selection) = bps;
-
-    //            feature.m_DisplayName = Localized.DisplayName;
-    //            feature.m_Description = Localized.Description;
-
-    //            feature.Groups = [FeatureGroup.Racial];
-
-    //            _ = feature.AddAddStatBonus(c =>
-    //            {
-    //                c.Value = 1;
-    //                c.Stat = StatType.AC;
-    //                c.Descriptor = ModifierDescriptor.NaturalArmor;
-    //            });
-                
-    //            //_ = feature.AddAddFacts(c => c.m_Facts = [selection.ToReference<BlueprintUnitFactReference>()]);
-
-    //            feature.AddComponent(new UnitFactActivateEvent(e =>
-    //            {
-    //                Util.AddLevelUpSelection(e.Owner, [selection.ToReference<BlueprintFeatureBaseReference>()], e.Owner.Progression.Race);
-    //            }));
-
-    //            return feature;
-    //        });
-
-    //    return feature.AddBlueprintDeferred(GeneratedGuid.ScaledSkin);
-    //}
 }
 #endif

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
 using Kingmaker.Blueprints.Classes.Selection;
+using Kingmaker.UnitLogic.Abilities.Blueprints;
 using Kingmaker.UnitLogic.Class.LevelUp.Actions;
 
 using MicroWrath;
@@ -30,6 +31,41 @@ internal static partial class TieflingFeatureSelection
     [LocalizedString]
     internal const string Description = "The following alternate traits are available";
 
+    internal static IInitContext<IEnumerable<BlueprintFeature>> TieflingHeritageFeatures =>
+        InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.TieflingHeritageSelection)
+            .Bind(selection =>
+            {
+                var features = selection.AllFeatures;
+
+                return features
+                    .Select(f => InitContext.GetBlueprint(f.ToMicroBlueprint()))
+                    .Collect();
+            })
+            .Map(features => features.NotNull());
+
+    internal static readonly Lazy<IInitContext<BlueprintFeature[]>> SkilledFeatures = new(() =>
+    {
+        return TieflingHeritageFeatures
+            .Bind(features => features
+                .Select(f => HeritageFeatures.CreateSkillFeature(f.ToMicroBlueprint(), $"{f.Name}Skilled", f.m_DisplayName))
+                .Collect())
+            .Map(Enumerable.ToArray);
+    });
+
+    internal static IInitContext<BlueprintComponent[]> SkilledPrerequisiteComponents() => HeritageFeatures.SkilledPrerequisiteComponents(SkilledFeatures.Value);
+
+    internal static readonly Lazy<IInitContext<(BlueprintFeature feature, BlueprintAbility[] facts)[]>> SLAFeatures = new(() =>
+    {
+        return TieflingHeritageFeatures
+            .Bind(features => features
+                .Select(f => HeritageFeatures.CreateHeritageSLAFeature(f.ToMicroBlueprint(), $"{f.Name}Ability", f.m_DisplayName))
+                .Collect(f => f))
+            .Bind(fs => fs.Collect())
+            .Map(Enumerable.ToArray);
+    });
+
+    internal static IInitContext<BlueprintComponent[]> SLAPrerequisiteComponents() => HeritageFeatures.SLAPrerequisiteComponents(SLAFeatures.Value);
+
     internal static IInitContextBlueprint<BlueprintFeatureSelection> Create()
     {
         var noTraits =
@@ -41,7 +77,7 @@ internal static partial class TieflingFeatureSelection
         IEnumerable<IInitContextBlueprint<BlueprintFeature>> features =
         [
             noTraits,
-            //BeguilingLiar.Create(),
+            BeguilingLiar.Create(),
             ScaledSkin.CreateResistanceSelection()
         ];
 

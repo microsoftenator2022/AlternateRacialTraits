@@ -75,14 +75,6 @@ internal static partial class AasimarFeatureSelection
                 .Collect(f => f))
             .Bind(fs => fs.Collect())
             .Map(Enumerable.ToArray);
-        
-        //return 
-        //    //.Bind(features => features
-        //    //    .SelectMany(f => f)
-        //    //    .Collect())
-        //    .Map(fs => fs.ToArray());
-        //        //.Select(f => f.Eval())
-        //        //.ToArray());
     });
 
     internal static IInitContext<BlueprintComponent[]> SLAPrerequisiteComponents() => HeritageFeatures.SLAPrerequisiteComponents(SLAFeatures.Value);
