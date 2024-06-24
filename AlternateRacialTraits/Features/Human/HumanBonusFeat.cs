@@ -30,7 +30,7 @@ internal static partial class HumanBonusFeat
     public static readonly string Description = $"Humans select one extra {new Link(Page.Feat, "feat")} at 1st level.";
 
     internal static IInitContext<BlueprintFeature> Create() =>
-        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HumanBonusFeat)
+        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("HumanBonusFeat"))
             .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection)
             .Map(bps =>
             {
