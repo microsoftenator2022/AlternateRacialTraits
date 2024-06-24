@@ -45,18 +45,18 @@ internal class ContextSpellResistance : UnitFactComponentDelegate<ContextSpellRe
     public ConditionsChecker Conditions = new();
     public ContextValue Value = 0;
 
-    public bool CanApply(MechanicsContext context)
-    {
-        var result = Conditions.Check();
+    //public bool CanApply(MechanicsContext context)
+    //{
+    //    var result = Conditions.Check();
 
-        MicroLogger.Debug(() => "Condition check");
-        MicroLogger.Debug(() => $"Caster: {context.MaybeCaster}");
-        MicroLogger.Debug(() => $"Owner: {context.MaybeOwner}");
+    //    MicroLogger.Debug(() => "Condition check");
+    //    MicroLogger.Debug(() => $"Caster: {context.MaybeCaster}");
+    //    MicroLogger.Debug(() => $"Owner: {context.MaybeOwner}");
 
-        MicroLogger.Debug(() => $"Check passed? {result}");
+    //    MicroLogger.Debug(() => $"Check passed? {result}");
 
-        return result;
-    }
+    //    return result;
+    //}
     
     public override void OnTurnOn()
     {
@@ -104,7 +104,14 @@ internal class ContextSpellResistance : UnitFactComponentDelegate<ContextSpellRe
 
                     using (context.GetDataScope(instance.Owner.Unit))
                     {
-                        result = csr.CanApply(context);
+                        //result = csr.CanApply(context);
+                        result = csr.Conditions.Check();
+
+                        MicroLogger.Debug(() => "Condition check");
+                        MicroLogger.Debug(() => $"Caster: {context.MaybeCaster}");
+                        MicroLogger.Debug(() => $"Owner: {context.MaybeOwner}");
+
+                        MicroLogger.Debug(() => $"Check passed? {result}");
                     }
 
                     break;
