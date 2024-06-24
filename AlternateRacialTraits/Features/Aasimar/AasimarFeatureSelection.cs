@@ -35,6 +35,7 @@ using UniRx;
 
 namespace AlternateRacialTraits.Features.Aasimar;
 
+// TODO: Multiple selections
 internal static partial class AasimarFeatureSelection
 {
     [LocalizedString]
@@ -59,7 +60,7 @@ internal static partial class AasimarFeatureSelection
     {
         return AasimarHeritageFeatures
             .Bind(features => features
-                .Select(f => HeritageFeatures.CreateSkillFeature(f.ToMicroBlueprint(), $"{f.Name}Skilled", Localized.DisplayName))
+                .Select(f => HeritageFeatures.CreateSkillFeature(f.ToMicroBlueprint(), $"{f.Name}Skilled", f.m_DisplayName))
                 .Collect())
             .Map(Enumerable.ToArray);
     });
@@ -70,12 +71,18 @@ internal static partial class AasimarFeatureSelection
     {
         return AasimarHeritageFeatures
             .Bind(features => features
-                .Select(f => HeritageFeatures.CreateHeritageSLAFeature(f.ToMicroBlueprint(), $"{f.Name}Ability", Localized.DisplayName))
-                .Collect())
-            .Map(features => features
-                .SelectMany(f => f)
-                .Select(f => f.Eval())
-                .ToArray());
+                .Select(f => HeritageFeatures.CreateHeritageSLAFeature(f.ToMicroBlueprint(), $"{f.Name}Ability", f.m_DisplayName))
+                .Collect(f => f))
+            .Bind(fs => fs.Collect())
+            .Map(Enumerable.ToArray);
+        
+        //return 
+        //    //.Bind(features => features
+        //    //    .SelectMany(f => f)
+        //    //    .Collect())
+        //    .Map(fs => fs.ToArray());
+        //        //.Select(f => f.Eval())
+        //        //.ToArray());
     });
 
     internal static IInitContext<BlueprintComponent[]> SLAPrerequisiteComponents() => HeritageFeatures.SLAPrerequisiteComponents(SLAFeatures.Value);

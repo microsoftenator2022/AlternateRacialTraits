@@ -6,8 +6,6 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
-using Epic.OnlineServices;
-
 using HarmonyLib;
 
 using Kingmaker.Blueprints;
@@ -295,6 +293,8 @@ internal static partial class ExaltedResistance
                     feature.m_Description = Localized.Description;
 
                     feature.SetIcon("5895704fc09cae446b64117e3c52e06b", 21300000);
+                   
+                    feature.Groups = [FeatureGroup.Racial];
 
                     _ = feature.AddAddFacts(c =>
                     {

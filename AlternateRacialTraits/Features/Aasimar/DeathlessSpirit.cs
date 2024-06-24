@@ -99,6 +99,8 @@ internal static partial class DeathlessSpirit
 
                     blueprint.SetIcon("de12a23036a3a954793c106c9062b9f9", 21300000);
 
+                    blueprint.Groups = [FeatureGroup.Racial];
+
                     _ = blueprint.AddAddDamageResistanceEnergy(c =>
                     {
                         c.Type = DamageEnergyType.NegativeEnergy;
@@ -111,7 +113,7 @@ internal static partial class DeathlessSpirit
                         c.ModifierDescriptor = ModifierDescriptor.Racial;
                         c.SpellDescriptor = SpellDescriptor.Death | SpellDescriptor.NegativeLevel | SpellDescriptor.ChannelNegativeHarm;
                     });
-
+                    
                     _ = blueprint.AddSavingThrowBonusAgainstSchool(c =>
                     {
                         c.Value = 2;

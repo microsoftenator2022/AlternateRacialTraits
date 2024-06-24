@@ -50,6 +50,8 @@ internal static partial class CrusadingMagic
 
                 feature.SetIcon("ecb2815de750b0d4ba865e22c84b06c8", 21300000);
 
+                feature.Groups = [FeatureGroup.Racial];
+
                 _ = feature.AddSpellPenetrationBonus(c =>
                 {
                     c.Value = 2;

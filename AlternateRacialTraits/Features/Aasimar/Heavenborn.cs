@@ -65,6 +65,8 @@ internal static partial class Heavenborn
                 feature.m_Description = Localized.Description;
 
                 feature.SetIcon("869e3bc156f9f3646a6a3eff5e0c5c60", 21300000);
+                
+                feature.Groups = [FeatureGroup.Racial];
 
                 _ = feature.AddAddStatBonus(c =>
                 {

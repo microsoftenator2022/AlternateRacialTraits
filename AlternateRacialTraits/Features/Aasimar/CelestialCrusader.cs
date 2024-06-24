@@ -54,6 +54,8 @@ internal static partial class CelestialCrusader
 
                 feature.SetIcon("ab2e9bc2629773d4f9080c596d6feb4f", 21300000);
 
+                feature.Groups = [FeatureGroup.Racial];
+
                 _ = feature.AddACBonusAgainstFactOwnerMultiple(c =>
                 {
                     c.m_Facts =
