@@ -62,7 +62,6 @@ internal static partial class EyeForTalent
                     return selection;
                 })
                 .AddBlueprintDeferred(GeneratedGuid.EyeForTalentCompanionBonus);
-                //.AddOnTrigger(GeneratedGuid.EyeForTalentCompanionBonus, Triggers.BlueprintsCache_Init);
 
         var companionProgression = 
             InitContext.NewBlueprint<BlueprintProgression>(GeneratedGuid.Get("EyeForTalentCompanionProgression"))
@@ -78,7 +77,6 @@ internal static partial class EyeForTalent
                     return progression;
                 })
                 .AddBlueprintDeferred(GeneratedGuid.EyeForTalentCompanionProgression);
-                //.AddOnTrigger(GeneratedGuid.EyeForTalentCompanionProgression, Triggers.BlueprintsCache_Init);
 
         var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("EyeForTalentFeature"))
             .Combine(companionProgression)
@@ -105,7 +103,6 @@ internal static partial class EyeForTalent
                 return feature;
             })
             .AddBlueprintDeferred(GeneratedGuid.EyeForTalentFeature);
-            //.AddOnTrigger(GeneratedGuid.EyeForTalentFeature, Triggers.BlueprintsCache_Init);
 
         return feature;
     }
