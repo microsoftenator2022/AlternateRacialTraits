@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using AlternateRacialTraits.Features.Human;
-
+using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
 
 using MicroWrath;
+using MicroWrath.Extensions;
 using MicroWrath.InitContext;
 using MicroWrath.Localization;
 
@@ -31,6 +31,10 @@ internal static partial class NoAdditionalTraitsPrototype
                 feat.HideInUI = true;
                 feat.HideInCharacterSheetAndLevelUp = true;
 
+                _ = feat.AddComponent<NoTraitsComponent>();
+
                 return feat;
             });
-    }
+}
+
+internal class NoTraitsComponent() : BlueprintComponent { }

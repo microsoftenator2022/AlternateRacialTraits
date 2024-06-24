@@ -35,7 +35,6 @@ using UniRx;
 
 namespace AlternateRacialTraits.Features.Aasimar;
 
-// TODO: Multiple selections
 internal static partial class AasimarFeatureSelection
 {
     [LocalizedString]
@@ -60,7 +59,7 @@ internal static partial class AasimarFeatureSelection
     {
         return AasimarHeritageFeatures
             .Bind(features => features
-                .Select(f => HeritageFeatures.CreateSkillFeature(f.ToMicroBlueprint(), $"{f.Name}Skilled", f.m_DisplayName))
+                .Select(f => HeritageFeatures.CreateSkillFeature(f.ToMicroBlueprint(), $"{f.name}Skilled", f.m_DisplayName))
                 .Collect())
             .Map(Enumerable.ToArray);
     });
@@ -71,7 +70,7 @@ internal static partial class AasimarFeatureSelection
     {
         return AasimarHeritageFeatures
             .Bind(features => features
-                .Select(f => HeritageFeatures.CreateHeritageSLAFeature(f.ToMicroBlueprint(), $"{f.Name}Ability", f.m_DisplayName))
+                .Select(f => HeritageFeatures.CreateHeritageSLAFeature(f.ToMicroBlueprint(), $"{f.name}Ability", f.m_DisplayName))
                 .Collect(f => f))
             .Bind(fs => fs.Collect())
             .Map(Enumerable.ToArray);
@@ -83,10 +82,6 @@ internal static partial class AasimarFeatureSelection
     {
         var features = new[]
         {
-            NoAdditionalTraitsPrototype.Setup(
-                InitContext.NewBlueprint<BlueprintFeature>(
-                    GeneratedGuid.Get("NoAdditionalAasimarTraits")))
-                .AddBlueprintDeferred(GeneratedGuid.NoAdditionalAasimarTraits),
             DeathlessSpirit.Create(),
             ExaltedResistance.Create(),
             CelestialCrusader.Create(),
@@ -96,10 +91,14 @@ internal static partial class AasimarFeatureSelection
 
         var selection =
             InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("AasimarFeatureSelection"))
+                .Combine(NoAdditionalTraitsPrototype.Setup(
+                    InitContext.NewBlueprint<BlueprintFeature>(
+                        GeneratedGuid.Get("NoAdditionalAasimarTraits")))
+                .AddBlueprintDeferred(GeneratedGuid.NoAdditionalAasimarTraits))
                 .Combine(features.Collect())
                 .Map(bps =>
                 {
-                    var (selection, features) = bps;
+                    var (selection, noTraits, features) = bps.Flatten();
 
                     selection.m_DisplayName = Localized.DisplayName;
                     selection.m_Description = Localized.Description;
@@ -113,6 +112,16 @@ internal static partial class AasimarFeatureSelection
 
                         c.ActionPriority = LevelUpActionPriority.Heritage;
                     });
+
+                    foreach (var feature in features)
+                    {
+                        feature.AddComponent(new UnitFactActivateEvent(e =>
+                        {
+                            Util.AddLevelUpSelection(e.Owner, [selection.ToReference<BlueprintFeatureBaseReference>()], e.Owner.Progression.Race);
+                        }));
+                    }
+
+                    selection.AddFeatures(noTraits);
 
                     selection.AddFeatures(features);
 

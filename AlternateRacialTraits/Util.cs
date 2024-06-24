@@ -5,6 +5,8 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
+using AlternateRacialTraits.Features;
+
 using HarmonyLib;
 
 using Kingmaker;
@@ -33,8 +35,24 @@ internal static class Util
         if (controller.State.Mode == LevelUpState.CharBuildMode.Mythic) { return; }
         //if (unit.Descriptor.Progression.CharacterLevel > 1) { return; }
 
-        var featureBps = features.Select(r => r.Get()).ToArray();
-        
+        var featureBps = features.Select(r => r.Get())
+            .Where(feature =>
+            {
+                if (feature is not IFeatureSelection selection)
+                    return true;
+
+                if (!selection.Items
+                    .Where(item => item is not BlueprintScriptableObject blueprint || blueprint.GetComponent<NoTraitsComponent>() is null)
+                    .Any(item => selection.CanSelect(unit, controller.State, new(null, source, selection, 0, 0), item)))
+                {
+                    MicroLogger.Debug(() => $"Selection {selection} has no available selections. Ignoring.");
+                    return false;
+                }
+
+                return true;
+            })
+            .ToArray();
+
         LevelUpHelper.AddFeaturesFromProgression(
             controller.State,
             unit,

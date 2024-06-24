@@ -20,7 +20,6 @@ using MicroWrath.Localization;
 using MicroWrath.Util;
 using MicroWrath.Util.Linq;
 
-#if DEBUG
 namespace AlternateRacialTraits.Features.Tiefling;
 
 internal static partial class TieflingFeatureSelection
@@ -47,7 +46,7 @@ internal static partial class TieflingFeatureSelection
     {
         return TieflingHeritageFeatures
             .Bind(features => features
-                .Select(f => HeritageFeatures.CreateSkillFeature(f.ToMicroBlueprint(), $"{f.Name}Skilled", f.m_DisplayName))
+                .Select(f => HeritageFeatures.CreateSkillFeature(f.ToMicroBlueprint(), $"{f.name}Skilled", f.m_DisplayName))
                 .Collect())
             .Map(Enumerable.ToArray);
     });
@@ -58,7 +57,7 @@ internal static partial class TieflingFeatureSelection
     {
         return TieflingHeritageFeatures
             .Bind(features => features
-                .Select(f => HeritageFeatures.CreateHeritageSLAFeature(f.ToMicroBlueprint(), $"{f.Name}Ability", f.m_DisplayName))
+                .Select(f => HeritageFeatures.CreateHeritageSLAFeature(f.ToMicroBlueprint(), $"{f.name}Ability", f.m_DisplayName))
                 .Collect(f => f))
             .Bind(fs => fs.Collect())
             .Map(Enumerable.ToArray);
@@ -76,19 +75,29 @@ internal static partial class TieflingFeatureSelection
 
         IEnumerable<IInitContextBlueprint<BlueprintFeature>> features =
         [
-            noTraits,
             BeguilingLiar.Create(),
             ScaledSkin.CreateResistanceSelection()
         ];
 
         var selection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("TieflingFeatureSelection"))
+            .Combine(noTraits)
             .Combine(features.Collect())
             .Map(bps =>
             {
-                var (selection, features) = bps;
+                var (selection, noTraits, features) = bps.Flatten();
 
                 selection.m_DisplayName = Localized.DisplayName;
                 selection.m_Description = Localized.Description;
+
+                selection.AddFeatures(noTraits);
+
+                foreach (var feature in features)
+                {
+                    feature.AddComponent(new UnitFactActivateEvent(e =>
+                    {
+                        Util.AddLevelUpSelection(e.Owner, [selection.ToReference<BlueprintFeatureBaseReference>()], e.Owner.Progression.Race);
+                    }));
+                }
 
                 selection.AddFeatures(features);
 
@@ -124,4 +133,3 @@ internal static partial class TieflingFeatureSelection
     [Init]
     static void Init() => _ = Create();
 }
-#endif

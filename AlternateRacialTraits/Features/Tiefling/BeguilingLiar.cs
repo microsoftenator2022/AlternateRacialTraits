@@ -15,7 +15,7 @@ using MicroWrath.InitContext;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
-#if DEBUG
+
 namespace AlternateRacialTraits.Features.Tiefling;
 
 internal static partial class BeguilingLiar
@@ -59,4 +59,3 @@ internal static partial class BeguilingLiar
         return feature.AddBlueprintDeferred(GeneratedGuid.BeguilingLiar);
     }
 }
-#endif

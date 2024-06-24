@@ -23,7 +23,7 @@ using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
 using MicroWrath.InitContext;
 using MicroWrath.Localization;
-#if DEBUG
+
 namespace AlternateRacialTraits.Features.Tiefling;
 
 internal static partial class ScaledSkin
@@ -135,4 +135,3 @@ internal static partial class ScaledSkin
         return selection.AddBlueprintDeferred(GeneratedGuid.ScaledSkinResistanceSelection);
     }
 }
-#endif
