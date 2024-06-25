@@ -59,7 +59,7 @@ internal static partial class DualTalent
                         var statName = LocalizedTexts.Instance.Stats.GetText(stat);
 
                         var displayNameKey = $"{Localized.DisplayName.Key}.{blueprint.name}";
-                        LocalizedStrings.DefaultStringEntries.Add(displayNameKey, $"{DisplayName} - {statName}");
+                        LocalizedStrings.DefaultStringEntries.Add(displayNameKey, $"{DisplayName} - {statName} (Obsolete)");
 
                         blueprint.m_DisplayName = new LocalizedString { m_Key = displayNameKey };
                         blueprint.m_Description = Localized.Description;

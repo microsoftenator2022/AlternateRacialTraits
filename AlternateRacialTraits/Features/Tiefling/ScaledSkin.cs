@@ -24,6 +24,8 @@ using MicroWrath.Extensions.Components;
 using MicroWrath.InitContext;
 using MicroWrath.Localization;
 
+using static MicroWrath.Encyclopedia;
+
 namespace AlternateRacialTraits.Features.Tiefling;
 
 internal static partial class ScaledSkin
@@ -34,9 +36,10 @@ internal static partial class ScaledSkin
     [LocalizedString]
     internal static readonly string Description =
         "The skin of these tieflings provides some energy resistance, but is also as hard as armor. " +
-        "Choose one of the following energy types: cold, electricity, or fire. " +
-        "A tiefling with this trait gains resistance 5 in the chosen energy type and also gains a " +
-        "+1 natural armor bonus to AC. " +
+        $"Choose one of the following {new Link(Page.Energy_Damage, "energy")} types: " +
+        $"cold, electricity, or fire. A tiefling with this {new Link(Page.Trait, "trait")} gains " +
+        $"{new Link(Page.Energy_Resistance, "resistance")} 5 in the chosen energy type and also gains a " +
+        $"+1 natural armor {new Link(Page.Bonus, "bonus")} to {new Link(Page.Armor_Class, "AC")}. " +
         "This racial trait replaces fiendish resistance.";
 
     static IInitContextBlueprint<BlueprintFeature>[] CreateResistanceFeatures()
@@ -81,15 +84,19 @@ internal static partial class ScaledSkin
             .Select(pair =>
                 pair.Item1.Map(f =>
                 {
+                    var displayNameKey = $"{Localized.DisplayName.Key}.{f.GetComponent<AddDamageResistanceEnergy>().Type}";
+
+                    var energyText = LocalizedTexts.Instance.DamageEnergy.Entries
+                        .First(e => e.Value == f.GetComponent<AddDamageResistanceEnergy>().Type)
+                        .Text;
+
+                    LocalizedStrings.DefaultStringEntries.Add(displayNameKey, $"{DisplayName} - {energyText}");
+
+                    f.m_DisplayName = new() { Key = displayNameKey };
+
                     f.m_Description = Localized.Description;
-                    f.m_DisplayName =
-                        LocalizedTexts.Instance.DamageEnergy.Entries
-                            .First(e => e.Value == f.GetComponent<AddDamageResistanceEnergy>().Type)
-                            .Text;
 
                     f.Groups = [FeatureGroup.Racial];
-
-                    f.HideInUI = true;
 
                     return f;
                 })

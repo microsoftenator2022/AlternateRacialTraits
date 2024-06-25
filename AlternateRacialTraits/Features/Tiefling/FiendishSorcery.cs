@@ -66,6 +66,8 @@ internal static partial class FiendishSorcery
                 feature.m_DisplayName = Localized.DisplayName;
                 feature.HideInUI = true;
 
+                feature.Groups = [FeatureGroup.Racial];
+
                 var component = feature.AddComponent<AddConditionalFact>();
 
                 component.Feature = effectFeature.ToReference<BlueprintUnitFactReference>();

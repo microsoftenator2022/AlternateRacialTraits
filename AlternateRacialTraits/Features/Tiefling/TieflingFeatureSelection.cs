@@ -76,7 +76,8 @@ internal static partial class TieflingFeatureSelection
         IEnumerable<IInitContextBlueprint<BlueprintFeature>> features =
         [
             BeguilingLiar.Create(),
-            ScaledSkin.CreateResistanceSelection()
+            ScaledSkin.CreateResistanceSelection(),
+            MawOrClaw.Create()
         ];
 
         var selection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("TieflingFeatureSelection"))
