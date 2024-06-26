@@ -17,6 +17,8 @@ using MicroWrath.Localization;
 using MicroWrath.Util;
 
 using static MicroWrath.Encyclopedia;
+using UnityEngine;
+using Kingmaker.Blueprints.JsonSystem.Converters;
 
 namespace AlternateRacialTraits.Features.Tiefling;
 
@@ -60,6 +62,8 @@ internal static partial class MawOrClaw
             {
                 blueprint.m_AlwaysPrimary = true;
 
+                blueprint.m_Icon = (Sprite)UnityObjectConverter.AssetList.Get("9100e5f2e80631d47822697ae833a4b6", 21300000);
+
                 return blueprint;
             })
             .AddBlueprintDeferred(GeneratedGuid.MawOrClawClawWeapon);
@@ -72,6 +76,8 @@ internal static partial class MawOrClaw
 
                 feature.m_DisplayName = Localized.MawDisplayName;
                 feature.m_Description = Localized.Description;
+
+                feature.m_Icon = weapon.m_Icon;
 
                 feature.Groups = [FeatureGroup.Racial];
 
@@ -89,6 +95,8 @@ internal static partial class MawOrClaw
 
                 feature.m_DisplayName = Localized.ClawDisplayName;
                 feature.m_Description = Localized.Description;
+
+                feature.m_Icon = weapon.m_Icon;
 
                 feature.Groups = [FeatureGroup.Racial];
 
@@ -112,6 +120,10 @@ internal static partial class MawOrClaw
 
                 selection.m_DisplayName = Localized.DisplayName;
                 selection.m_Description = Localized.Description;
+
+                var texture = AssetUtils.DiagonalCutBlend(maw.m_Icon.texture, claw.m_Icon.texture, invertX: true);
+
+                selection.m_Icon = Sprite.Create(texture, new Rect { width = texture.width, height = texture.height}, new(0.5f, 0.5f));
 
                 selection.Groups = [FeatureGroup.Racial];
 
