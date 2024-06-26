@@ -48,7 +48,7 @@ internal static partial class CrusadingMagic
                 feature.m_DisplayName = Localized.DisplayName;
                 feature.m_Description = Localized.Description;
 
-                feature.SetIcon("ecb2815de750b0d4ba865e22c84b06c8", 21300000);
+                feature.SetIcon("17c661a03537c8a438bd5783a9a9c2e0", 21300000);
 
                 feature.Groups = [FeatureGroup.Racial];
 

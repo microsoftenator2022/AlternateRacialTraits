@@ -86,7 +86,8 @@ internal static partial class AasimarFeatureSelection
             ExaltedResistance.Create(),
             CelestialCrusader.Create(),
             CrusadingMagic.Create(),
-            Heavenborn.Create()
+            Heavenborn.Create(),
+            LostPromise.Create()
         };
 
         var selection =

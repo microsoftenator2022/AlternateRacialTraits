@@ -42,7 +42,7 @@ internal static partial class MawOrClaw
         $"These attacks are {new Link(Page.NaturalAttack, "primary natural attacks")}. " +
         $"This racial {new Link(Page.Trait, "trait")} replaces the spell-like ability racial trait.";
 
-    internal static IDeferredBlueprint<BlueprintFeature> Create()
+    internal static readonly Lazy<IDeferredBlueprint<BlueprintFeature>> MawFeature = new(() =>
     {
         var mawWeapon = Deferred.CloneBlueprint(
             BlueprintsDb.Owlcat.BlueprintItemWeapon.Bite1d6,
@@ -55,20 +55,7 @@ internal static partial class MawOrClaw
             })
             .AddBlueprintDeferred(GeneratedGuid.MawOrClawMawWeapon);
 
-        var clawWeapon = Deferred.CloneBlueprint(
-            BlueprintsDb.Owlcat.BlueprintItemWeapon.Claw1d4,
-            GeneratedGuid.Get("MawOrClawClawWeapon"))
-            .Map(blueprint =>
-            {
-                blueprint.m_AlwaysPrimary = true;
-
-                blueprint.m_Icon = (Sprite)UnityObjectConverter.AssetList.Get("9100e5f2e80631d47822697ae833a4b6", 21300000);
-
-                return blueprint;
-            })
-            .AddBlueprintDeferred(GeneratedGuid.MawOrClawClawWeapon);
-
-        var mawFeature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("MawOrClawMaw"))
+        return Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("MawOrClawMaw"))
             .Combine(mawWeapon)
             .Map(bps =>
             {
@@ -86,8 +73,24 @@ internal static partial class MawOrClaw
                 return feature;
             })
             .AddBlueprintDeferred(GeneratedGuid.MawOrClawMaw);
+    });
 
-        var clawFeature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("MawOrClawClaw"))
+    internal static readonly Lazy<IDeferredBlueprint<BlueprintFeature>> ClawFeature = new(() =>
+    {
+        var clawWeapon = Deferred.CloneBlueprint(
+            BlueprintsDb.Owlcat.BlueprintItemWeapon.Claw1d4,
+            GeneratedGuid.Get("MawOrClawClawWeapon"))
+            .Map(blueprint =>
+            {
+                blueprint.m_AlwaysPrimary = true;
+
+                blueprint.m_Icon = (Sprite)UnityObjectConverter.AssetList.Get("9100e5f2e80631d47822697ae833a4b6", 21300000);
+
+                return blueprint;
+            })
+            .AddBlueprintDeferred(GeneratedGuid.MawOrClawClawWeapon);
+
+        return Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("MawOrClawClaw"))
             .Combine(clawWeapon)
             .Map(bps =>
             {
@@ -109,11 +112,14 @@ internal static partial class MawOrClaw
                 return feature;
             })
             .AddBlueprintDeferred(GeneratedGuid.MawOrClawClaw);
+    });
 
+    internal static IDeferredBlueprint<BlueprintFeature> Create()
+    {
         var feature = Deferred.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get(nameof(MawOrClaw)))
             .Combine(TieflingFeatureSelection.SLAPrerequisiteComponents())
-            .Combine(mawFeature)
-            .Combine(clawFeature)
+            .Combine(MawFeature.Value)
+            .Combine(ClawFeature.Value)
             .Map(things =>
             {
                 var (selection, slaPrerequisites, maw, claw) = things.Expand();
