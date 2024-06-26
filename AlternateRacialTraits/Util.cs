@@ -12,7 +12,9 @@ using HarmonyLib;
 using Kingmaker;
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
+using Kingmaker.Blueprints.Classes.Prerequisites;
 using Kingmaker.Blueprints.Classes.Selection;
+using Kingmaker.Blueprints.Facts;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UI.Common;
 using Kingmaker.UI.MVVM._VM.CharGen.Phases;
@@ -23,6 +25,8 @@ using Kingmaker.UnitLogic.Class.LevelUp.Actions;
 using Kingmaker.Utility;
 
 using MicroWrath;
+using MicroWrath.Util;
+using MicroWrath.Util.Linq;
 
 namespace AlternateRacialTraits;
 
@@ -60,7 +64,6 @@ internal static class Util
             source,
             0);
     }
-
 }
 
 [HarmonyPatch(
@@ -116,3 +119,46 @@ static class ShutUpShutUpShutUpShutUp
         return iList;
     }
 }
+
+//[HarmonyPatch(typeof(PrerequisiteFeaturesFromList))]
+//static class PrerequisiteFeaturesFromList_HideEmptyFeatureNames_Patch
+//{
+//    [HarmonyPatch(nameof(PrerequisiteFeaturesFromList.GetUITextInternal))]
+//    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator ilGen)
+//    {
+//        var getNameIndex = instructions.FindIndex(ci => ci.Calls(AccessTools.PropertyGetter(typeof(BlueprintUnitFact), nameof(BlueprintUnitFact.Name))));
+
+//        var iPlusPlus = instructions.FindInstructionsIndexed(
+//        [
+//            ci => ci.opcode == OpCodes.Ldloc_2,
+//            ci => ci.opcode == OpCodes.Ldc_I4_1,
+//            ci => ci.opcode == OpCodes.Add,
+//            ci => ci.opcode == OpCodes.Stloc_2
+//        ]);
+
+//        if (getNameIndex < 0 || iPlusPlus.Count() != 4)
+//            return instructions;
+
+//        var @continue = ilGen.DefineLabel();
+
+//        var pop = iPlusPlus.First().index - 1;
+
+//        var iList = instructions.ToList();
+
+//        iList[pop].labels.Add(@continue);
+        
+//        var notEmpty = ilGen.DefineLabel();
+
+//        iList.InsertRange(getNameIndex + 1,
+//        [
+//            new(OpCodes.Dup),
+//            new(CodeInstruction.Call((string s) => String.IsNullOrEmpty(s))),
+//            new(OpCodes.Brfalse_S, notEmpty),
+//            new(OpCodes.Pop),
+//            new(OpCodes.Br, @continue),
+//            new(OpCodes.Nop) { labels = [notEmpty] }
+//        ]);
+
+//        return iList;
+//    }
+//}

@@ -110,5 +110,8 @@
   "MawOrClawMawWeapon": "54733ede-0e1a-1e52-82dd-6a94725553e1",
   "MawOrClawMaw": "7ce5a45d-67ba-1d5a-9653-a953c37ff3fc",
   "MawOrClawClaw": "1805c184-6f2f-465d-bed7-6d438db55374",
-  "MawOrClawClawWeapon": "c5b2ed46-2493-9e5a-818b-5a207e337fb2"
+  "MawOrClawClawWeapon": "c5b2ed46-2493-9e5a-818b-5a207e337fb2",
+  "TieflingSmiteGoodResource": "8442bcde-43ff-f65c-9425-784e1fc6a2cd",
+  "TieflingSmiteGoodAbility": "0d2e8f69-6b9a-7a59-8ea2-1a069b985854",
+  "TieflingSmiteGoodFeature": "460c49fa-5a08-045b-846e-08677da0d20b"
 }

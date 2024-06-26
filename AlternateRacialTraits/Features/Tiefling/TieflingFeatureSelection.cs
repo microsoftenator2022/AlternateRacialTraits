@@ -77,7 +77,8 @@ internal static partial class TieflingFeatureSelection
         [
             BeguilingLiar.Create(),
             ScaledSkin.CreateResistanceSelection(),
-            MawOrClaw.Create()
+            MawOrClaw.Create(),
+            SmiteGood.Create()
         ];
 
         var selection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("TieflingFeatureSelection"))
