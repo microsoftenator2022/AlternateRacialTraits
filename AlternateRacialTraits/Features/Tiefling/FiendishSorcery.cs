@@ -34,13 +34,6 @@ internal static partial class FiendishSorcery
     [LocalizedString]
     internal const string DisplayName = "Fiendish Sorcery";
 
-    private static HasFact OwnerHasFact(BlueprintUnitFact blueprint) =>
-        Conditions.HasFact(c =>
-        {
-            c.Unit = new FactOwner();
-            c.m_Fact = blueprint.ToReference();
-        });
-
     internal static readonly Lazy<IInitContextBlueprint<BlueprintFeature>> FiendishSorceryFeature = new(() =>
     {
         var effectFeature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("FiendishSorceryEffect"))
@@ -72,9 +65,16 @@ internal static partial class FiendishSorcery
 
                 component.Feature = effectFeature.ToReference<BlueprintUnitFactReference>();
 
+                static HasFact ownerHasFact(BlueprintUnitFact blueprint) =>
+                    Conditions.HasFact(c =>
+                    {
+                        c.Unit = new FactOwner();
+                        c.m_Fact = blueprint.ToReference();
+                    });
+
                 _ = component.Conditions.Add(
-                    OwnerHasFact(classic).And(OwnerHasFact(abyssal).Or(OwnerHasFact(infernal))),
-                    OwnerHasFact(devil).And(OwnerHasFact(infernal)));
+                    ownerHasFact(classic).And(ownerHasFact(abyssal).Or(ownerHasFact(infernal))),
+                    ownerHasFact(devil).And(ownerHasFact(infernal)));
 
                 component.Conditions.Operation = Operation.Or;
 

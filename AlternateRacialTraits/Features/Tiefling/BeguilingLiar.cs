@@ -42,6 +42,8 @@ internal static partial class BeguilingLiar
                 feature.m_DisplayName = Localized.DisplayName;
                 feature.m_Description = Localized.Description;
 
+                feature.SetIcon("494cc3f31fcb2a24cb7e69ec5df0055c", 21300000);
+
                 feature.Groups = [FeatureGroup.Racial];
 
                 _ = feature.AddAddStatBonus(c =>

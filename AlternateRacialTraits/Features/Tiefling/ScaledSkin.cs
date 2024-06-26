@@ -53,6 +53,8 @@ internal static partial class ScaledSkin
                      c.Value = 5;
                  });
 
+                 feature.SetIcon("0a56f5c485ff37c4a9b16d3b1c8dc2af", 21300000);
+
                  return feature;
              });
 
@@ -65,6 +67,8 @@ internal static partial class ScaledSkin
                     c.Value = 5;
                 });
 
+                feature.SetIcon("f1bf7b65016fc5749937299fd46d911a", 21300000);
+
                 return feature;
             });
 
@@ -76,6 +80,8 @@ internal static partial class ScaledSkin
                     c.Type = DamageEnergyType.Fire;
                     c.Value = 5;
                 });
+
+                feature.SetIcon("5663e219b27fa6e4aa6b0e80d384476e", 21300000);
 
                 return feature;
             });
@@ -93,7 +99,6 @@ internal static partial class ScaledSkin
                     LocalizedStrings.DefaultStringEntries.Add(displayNameKey, $"{DisplayName} - {energyText}");
 
                     f.m_DisplayName = new() { Key = displayNameKey };
-
                     f.m_Description = Localized.Description;
 
                     f.Groups = [FeatureGroup.Racial];
@@ -115,9 +120,11 @@ internal static partial class ScaledSkin
                 selection.m_DisplayName = Localized.DisplayName;
                 selection.m_Description = Localized.Description;
 
-                selection.AddFeatures(features);
+                selection.SetIcon("0262acc2a1f20cb47aa9f9a6cdcef0b7", 21300000);
 
                 selection.Groups = [FeatureGroup.Racial];
+
+                selection.AddFeatures(features);
 
                 _ = selection.AddAddStatBonus(c =>
                 {
