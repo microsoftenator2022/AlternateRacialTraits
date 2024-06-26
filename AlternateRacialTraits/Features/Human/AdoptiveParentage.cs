@@ -15,7 +15,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -100,14 +100,14 @@ internal static partial class AdoptiveParentage
                 BlueprintsDb.Owlcat.BlueprintFeature.SkillFocusStealth })
     };
 
-    internal static IInitContext<BlueprintFeatureSelection> Create()
+    internal static IDeferred<BlueprintFeatureSelection> Create()
     {
         var apFeatures = AdoptingRaces
             .Select(ar =>
             {
                 if (ar.Features.Count() == 1)
                 {
-                    return (ar, InitContext.NewBlueprint<BlueprintFeature>(ar.Guid, ar.BlueprintName)
+                    return (ar, Deferred.NewBlueprint<BlueprintFeature>(ar.Guid, ar.BlueprintName)
                         .Map((BlueprintFeature bp) =>
                         {
                             _ = bp.AddComponent<AddFacts>(c =>
@@ -118,7 +118,7 @@ internal static partial class AdoptiveParentage
                 }
                 else
                 {
-                    return (ar, InitContext.NewBlueprint<BlueprintFeatureSelection>(ar.Guid, ar.BlueprintName)
+                    return (ar, Deferred.NewBlueprint<BlueprintFeatureSelection>(ar.Guid, ar.BlueprintName)
                         .Map((BlueprintFeatureSelection selection) =>
                         {
                             selection.AddFeatures(ar.Features);
@@ -146,7 +146,7 @@ internal static partial class AdoptiveParentage
                     .AddBlueprintDeferred(ar.Guid);
             });
 
-        var selection = InitContext.NewBlueprint<BlueprintFeatureSelection>(
+        var selection = Deferred.NewBlueprint<BlueprintFeatureSelection>(
             GeneratedGuid.AdoptiveParentageSelection,
             nameof(AdoptiveParentage))
             .Map(selection =>

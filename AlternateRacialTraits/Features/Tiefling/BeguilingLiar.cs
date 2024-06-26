@@ -11,7 +11,7 @@ using Kingmaker.Enums;
 using MicroWrath;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -31,9 +31,9 @@ internal static partial class BeguilingLiar
         //"to convince an opponent that what they are saying is true when they tell a lie. " +
         $"This racial {new Link(Page.Trait, "trait")} replaces skilled.";
 
-    internal static IInitContextBlueprint<BlueprintFeature> Create()
+    internal static IDeferredBlueprint<BlueprintFeature> Create()
     {
-        var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(BeguilingLiar)))
+        var feature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(BeguilingLiar)))
             .Combine(TieflingFeatureSelection.SkilledPrerequisiteComponents())
             .Map(things =>
             {

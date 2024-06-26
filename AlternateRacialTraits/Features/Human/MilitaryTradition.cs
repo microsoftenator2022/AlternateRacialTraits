@@ -17,7 +17,7 @@ using MicroWrath.BlueprintsDb;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util.Linq;
 
@@ -37,9 +37,9 @@ internal static class MilitaryTradition
         "exotic weapons appropriate to their culture. This racial trait replaces the bonus " +
         $"{new Link(Page.Feat, "feat")} trait.";
 
-    internal static (IInitContext<BlueprintFeatureSelection>, IInitContext<BlueprintFeatureSelection>) Create()
+    internal static (IDeferred<BlueprintFeatureSelection>, IDeferred<BlueprintFeatureSelection>) Create()
     {
-        var firstSelection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSelection,
+        var firstSelection = Deferred.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSelection,
             $"{nameof(MilitaryTradition)}.FirstSelection")
             .Map(selection =>
             {
@@ -53,7 +53,7 @@ internal static class MilitaryTradition
                 return selection;
             });
 
-        var secondSelection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSecondSelection,
+        var secondSelection = Deferred.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.MilitaryTraditionSecondSelection,
             $"{nameof(MilitaryTradition)}.SecondSelection")
             .Map(selection =>
             {

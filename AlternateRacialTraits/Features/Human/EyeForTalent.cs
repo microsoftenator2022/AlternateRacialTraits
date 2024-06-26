@@ -20,7 +20,7 @@ using MicroWrath.BlueprintsDb;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -42,10 +42,10 @@ internal static partial class EyeForTalent
         $"This {new Link(Page.Trait, "racial trait")} replaces the bonus " +
         $"{new Link(Page.Feat, "feat")} trait.";
 
-    public static IInitContextBlueprint<BlueprintFeature> Create()
+    public static IDeferredBlueprint<BlueprintFeature> Create()
     {
         var bonusSelection =
-            InitContext.NewBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.Get("EyeForTalentCompanionBonus"))
+            Deferred.NewBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.Get("EyeForTalentCompanionBonus"))
                 .Map(selection =>
                 {
                     selection.m_DisplayName = Localized.DisplayName;
@@ -64,7 +64,7 @@ internal static partial class EyeForTalent
                 .AddBlueprintDeferred(GeneratedGuid.EyeForTalentCompanionBonus);
 
         var companionProgression = 
-            InitContext.NewBlueprint<BlueprintProgression>(GeneratedGuid.Get("EyeForTalentCompanionProgression"))
+            Deferred.NewBlueprint<BlueprintProgression>(GeneratedGuid.Get("EyeForTalentCompanionProgression"))
                 .Combine(bonusSelection)
                 .Map(bps =>
                 {
@@ -78,7 +78,7 @@ internal static partial class EyeForTalent
                 })
                 .AddBlueprintDeferred(GeneratedGuid.EyeForTalentCompanionProgression);
 
-        var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("EyeForTalentFeature"))
+        var feature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("EyeForTalentFeature"))
             .Combine(companionProgression)
             .Map(bps =>
             {

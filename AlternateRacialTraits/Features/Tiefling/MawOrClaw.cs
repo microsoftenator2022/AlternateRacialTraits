@@ -12,7 +12,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -40,9 +40,9 @@ internal static partial class MawOrClaw
         $"These attacks are {new Link(Page.NaturalAttack, "primary natural attacks")}. " +
         $"This racial {new Link(Page.Trait, "trait")} replaces the spell-like ability racial trait.";
 
-    internal static IInitContextBlueprint<BlueprintFeature> Create()
+    internal static IDeferredBlueprint<BlueprintFeature> Create()
     {
-        var mawWeapon = InitContext.CloneBlueprint(
+        var mawWeapon = Deferred.CloneBlueprint(
             BlueprintsDb.Owlcat.BlueprintItemWeapon.Bite1d6,
             GeneratedGuid.Get("MawOrClawMawWeapon"))
             .Map(blueprint =>
@@ -53,7 +53,7 @@ internal static partial class MawOrClaw
             })
             .AddBlueprintDeferred(GeneratedGuid.MawOrClawMawWeapon);
 
-        var clawWeapon = InitContext.CloneBlueprint(
+        var clawWeapon = Deferred.CloneBlueprint(
             BlueprintsDb.Owlcat.BlueprintItemWeapon.Claw1d4,
             GeneratedGuid.Get("MawOrClawClawWeapon"))
             .Map(blueprint =>
@@ -64,7 +64,7 @@ internal static partial class MawOrClaw
             })
             .AddBlueprintDeferred(GeneratedGuid.MawOrClawClawWeapon);
 
-        var mawFeature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("MawOrClawMaw"))
+        var mawFeature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("MawOrClawMaw"))
             .Combine(mawWeapon)
             .Map(bps =>
             {
@@ -81,7 +81,7 @@ internal static partial class MawOrClaw
             })
             .AddBlueprintDeferred(GeneratedGuid.MawOrClawMaw);
 
-        var clawFeature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("MawOrClawClaw"))
+        var clawFeature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("MawOrClawClaw"))
             .Combine(clawWeapon)
             .Map(bps =>
             {
@@ -102,7 +102,7 @@ internal static partial class MawOrClaw
             })
             .AddBlueprintDeferred(GeneratedGuid.MawOrClawClaw);
 
-        var feature = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get(nameof(MawOrClaw)))
+        var feature = Deferred.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get(nameof(MawOrClaw)))
             .Combine(TieflingFeatureSelection.SLAPrerequisiteComponents())
             .Combine(mawFeature)
             .Combine(clawFeature)

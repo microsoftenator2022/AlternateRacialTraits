@@ -24,9 +24,9 @@ using Kingmaker.UnitLogic.Mechanics.Components;
 using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Components;
+using MicroWrath.Deferred;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 using MicroWrath.Util.Linq;
@@ -43,19 +43,19 @@ internal static partial class AasimarFeatureSelection
     [LocalizedString]
     internal const string Description = "The following alternate traits are available";
 
-    internal static IInitContext<IEnumerable<BlueprintFeature>> AasimarHeritageFeatures =>
-        InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.AasimarHeritageSelection)
+    internal static IDeferred<IEnumerable<BlueprintFeature>> AasimarHeritageFeatures =>
+        Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.AasimarHeritageSelection)
             .Bind(selection =>
             {
                 var features = selection.AllFeatures;
 
                 return features
-                    .Select(f => InitContext.GetBlueprint(f.ToMicroBlueprint()))
+                    .Select(f => Deferred.GetBlueprint(f.ToMicroBlueprint()))
                     .Collect();
             })
             .Map(features => features.NotNull());
 
-    internal static readonly Lazy<IInitContext<BlueprintFeature[]>> SkilledFeatures = new(() =>
+    internal static readonly Lazy<IDeferred<BlueprintFeature[]>> SkilledFeatures = new(() =>
     {
         return AasimarHeritageFeatures
             .Bind(features => features
@@ -64,9 +64,9 @@ internal static partial class AasimarFeatureSelection
             .Map(Enumerable.ToArray);
     });
 
-    internal static IInitContext<BlueprintComponent[]> SkilledPrerequisiteComponents() => HeritageFeatures.SkilledPrerequisiteComponents(SkilledFeatures.Value);
+    internal static IDeferred<BlueprintComponent[]> SkilledPrerequisiteComponents() => HeritageFeatures.SkilledPrerequisiteComponents(SkilledFeatures.Value);
 
-    internal static readonly Lazy<IInitContext<(BlueprintFeature feature, BlueprintAbility[] facts)[]>> SLAFeatures = new(() =>
+    internal static readonly Lazy<IDeferred<(BlueprintFeature feature, BlueprintAbility[] facts)[]>> SLAFeatures = new(() =>
     {
         return AasimarHeritageFeatures
             .Bind(features => features
@@ -76,9 +76,9 @@ internal static partial class AasimarFeatureSelection
             .Map(Enumerable.ToArray);
     });
 
-    internal static IInitContext<BlueprintComponent[]> SLAPrerequisiteComponents() => HeritageFeatures.SLAPrerequisiteComponents(SLAFeatures.Value);
+    internal static IDeferred<BlueprintComponent[]> SLAPrerequisiteComponents() => HeritageFeatures.SLAPrerequisiteComponents(SLAFeatures.Value);
     
-    static IInitContextBlueprint<BlueprintFeatureSelection> Create()
+    static IDeferredBlueprint<BlueprintFeatureSelection> Create()
     {
         var features = new[]
         {
@@ -90,9 +90,9 @@ internal static partial class AasimarFeatureSelection
         };
 
         var selection =
-            InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("AasimarFeatureSelection"))
+            Deferred.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("AasimarFeatureSelection"))
                 .Combine(NoAdditionalTraitsPrototype.Setup(
-                    InitContext.NewBlueprint<BlueprintFeature>(
+                    Deferred.NewBlueprint<BlueprintFeature>(
                         GeneratedGuid.Get("NoAdditionalAasimarTraits")))
                 .AddBlueprintDeferred(GeneratedGuid.NoAdditionalAasimarTraits))
                 .Combine(features.Collect())
@@ -135,7 +135,7 @@ internal static partial class AasimarFeatureSelection
     [Init]
     static void Init()
     {
-        _ = InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.AasimarRace)
+        _ = Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.AasimarRace)
             .Combine(Create())
             .Map(bps =>
             {

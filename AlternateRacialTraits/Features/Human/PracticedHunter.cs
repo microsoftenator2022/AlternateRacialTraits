@@ -13,7 +13,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -33,8 +33,8 @@ internal static class PracticedHunter
         $"{new Link(Page.Check, "checks")}, and Stealth and Lore (Nature) are always class " +
         $"skills for them. This racial {new Link(Page.Trait, "trait")} replaces Skilled.";
 
-    internal static IInitContext<BlueprintFeature> Create() =>
-        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.PracticedHunter)
+    internal static IDeferred<BlueprintFeature> Create() =>
+        Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.PracticedHunter)
             .Map((BlueprintFeature blueprint) =>
             {
                 blueprint.m_DisplayName = LocalizedStrings.Features_Human_PracticedHunter_DisplayName;

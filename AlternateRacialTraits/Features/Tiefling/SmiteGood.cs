@@ -14,7 +14,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -39,9 +39,9 @@ internal static partial class SmiteGood
         "hits her designated target. " +
         "This racial trait replaces fiendish sorcery and the tiefling’s spell-like ability.";
 
-    internal static IInitContextBlueprint<BlueprintFeature> Create()
+    internal static IDeferredBlueprint<BlueprintFeature> Create()
     {
-        var resource = InitContext.NewBlueprint<BlueprintAbilityResource>(GeneratedGuid.Get("TieflingSmiteGoodResource"))
+        var resource = Deferred.NewBlueprint<BlueprintAbilityResource>(GeneratedGuid.Get("TieflingSmiteGoodResource"))
             .Map(resource =>
             {
                 resource.m_MaxAmount = new() { BaseValue = 1 };
@@ -50,7 +50,7 @@ internal static partial class SmiteGood
             })
             .AddBlueprintDeferred(GeneratedGuid.TieflingSmiteGoodResource);
 
-        var ability = InitContext.CloneBlueprint(BlueprintsDb.Owlcat.BlueprintAbility.FiendishSmiteGoodAbility, GeneratedGuid.Get("TieflingSmiteGoodAbility"))
+        var ability = Deferred.CloneBlueprint(BlueprintsDb.Owlcat.BlueprintAbility.FiendishSmiteGoodAbility, GeneratedGuid.Get("TieflingSmiteGoodAbility"))
             .Combine(resource)
             .Map(bps =>
             {
@@ -69,7 +69,7 @@ internal static partial class SmiteGood
             })
             .AddBlueprintDeferred(GeneratedGuid.TieflingSmiteGoodAbility);
 
-        var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("TieflingSmiteGoodFeature"))
+        var feature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("TieflingSmiteGoodFeature"))
             .Combine(ability)
             .Combine(FiendishSorcery.FiendishSorceryFeature.Value)
             .Combine(TieflingFeatureSelection.SLAPrerequisiteComponents())

@@ -15,7 +15,7 @@ using MicroWrath.BlueprintsDb;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 using MicroWrath.Util.Linq;
@@ -30,19 +30,19 @@ internal static partial class TieflingFeatureSelection
     [LocalizedString]
     internal const string Description = "The following alternate traits are available";
 
-    internal static IInitContext<IEnumerable<BlueprintFeature>> TieflingHeritageFeatures =>
-        InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.TieflingHeritageSelection)
+    internal static IDeferred<IEnumerable<BlueprintFeature>> TieflingHeritageFeatures =>
+        Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.TieflingHeritageSelection)
             .Bind(selection =>
             {
                 var features = selection.AllFeatures;
 
                 return features
-                    .Select(f => InitContext.GetBlueprint(f.ToMicroBlueprint()))
+                    .Select(f => Deferred.GetBlueprint(f.ToMicroBlueprint()))
                     .Collect();
             })
             .Map(features => features.NotNull());
 
-    internal static readonly Lazy<IInitContext<BlueprintFeature[]>> SkilledFeatures = new(() =>
+    internal static readonly Lazy<IDeferred<BlueprintFeature[]>> SkilledFeatures = new(() =>
     {
         return TieflingHeritageFeatures
             .Bind(features => features
@@ -51,9 +51,9 @@ internal static partial class TieflingFeatureSelection
             .Map(Enumerable.ToArray);
     });
 
-    internal static IInitContext<BlueprintComponent[]> SkilledPrerequisiteComponents() => HeritageFeatures.SkilledPrerequisiteComponents(SkilledFeatures.Value);
+    internal static IDeferred<BlueprintComponent[]> SkilledPrerequisiteComponents() => HeritageFeatures.SkilledPrerequisiteComponents(SkilledFeatures.Value);
 
-    internal static readonly Lazy<IInitContext<(BlueprintFeature feature, BlueprintAbility[] facts)[]>> SLAFeatures = new(() =>
+    internal static readonly Lazy<IDeferred<(BlueprintFeature feature, BlueprintAbility[] facts)[]>> SLAFeatures = new(() =>
     {
         return TieflingHeritageFeatures
             .Bind(features => features
@@ -63,17 +63,17 @@ internal static partial class TieflingFeatureSelection
             .Map(Enumerable.ToArray);
     });
 
-    internal static IInitContext<BlueprintComponent[]> SLAPrerequisiteComponents() => HeritageFeatures.SLAPrerequisiteComponents(SLAFeatures.Value);
+    internal static IDeferred<BlueprintComponent[]> SLAPrerequisiteComponents() => HeritageFeatures.SLAPrerequisiteComponents(SLAFeatures.Value);
 
-    internal static IInitContextBlueprint<BlueprintFeatureSelection> Create()
+    internal static IDeferredBlueprint<BlueprintFeatureSelection> Create()
     {
         var noTraits =
             NoAdditionalTraitsPrototype.Setup(
-                InitContext.NewBlueprint<BlueprintFeature>(
+                Deferred.NewBlueprint<BlueprintFeature>(
                     GeneratedGuid.Get("NoAlternateTieflingTraits")))
                 .AddBlueprintDeferred(GeneratedGuid.NoAlternateTieflingTraits);
 
-        IEnumerable<IInitContextBlueprint<BlueprintFeature>> features =
+        IEnumerable<IDeferredBlueprint<BlueprintFeature>> features =
         [
             BeguilingLiar.Create(),
             ScaledSkin.CreateResistanceSelection(),
@@ -81,7 +81,7 @@ internal static partial class TieflingFeatureSelection
             SmiteGood.Create()
         ];
 
-        var selection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("TieflingFeatureSelection"))
+        var selection = Deferred.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("TieflingFeatureSelection"))
             .Combine(noTraits)
             .Combine(features.Collect())
             .Map(bps =>
@@ -117,7 +117,7 @@ internal static partial class TieflingFeatureSelection
             })
             .AddBlueprintDeferred(GeneratedGuid.TieflingFeatureSelection);
 
-        _ = InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.TieflingRace)
+        _ = Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.TieflingRace)
             .Combine(selection)
             .Map(bps =>
             {

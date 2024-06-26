@@ -11,14 +11,14 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 
 namespace AlternateRacialTraits.Features.Human;
 
 internal static class HistoryOfTerrorsTrait
 {
-    public static IInitContext<BlueprintFeature> Create() =>
-        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HistoryOfTerrorsTrait)
+    public static IDeferred<BlueprintFeature> Create() =>
+        Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.HistoryOfTerrorsTrait)
             .Combine(BlueprintsDb.Owlcat.BlueprintFeature.HistoryOfTerrors)
             .Map(bps =>
             {

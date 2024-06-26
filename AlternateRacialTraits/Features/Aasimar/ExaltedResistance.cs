@@ -30,7 +30,7 @@ using MicroWrath.BlueprintsDb;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -214,10 +214,10 @@ internal static partial class ExaltedResistance
         "as well as any spells and spell-like abilities cast by evil outsiders. " +
         "This racial trait replaces celestial resistance.";
 
-    internal static IInitContextBlueprint<BlueprintFeature> Create()
+    internal static IDeferredBlueprint<BlueprintFeature> Create()
     {
         var srVsEvilDescriptorFeature =
-            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ExaltedResistanceVsEvilDescriptor"))
+            Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ExaltedResistanceVsEvilDescriptor"))
                 .Map(feature =>
                 {
                     feature.m_DisplayName = Localized.DisplayName;
@@ -247,7 +247,7 @@ internal static partial class ExaltedResistance
                 .AddBlueprintDeferred(GeneratedGuid.ExaltedResistanceVsEvilDescriptor);
 
         var srVsEvilOutsiderFeature =
-            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ExaltedResistanceVsEvilOutsider"))
+            Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ExaltedResistanceVsEvilOutsider"))
                 .Combine(BlueprintsDb.Owlcat.BlueprintFeature.OutsiderType)
                 .Combine(BlueprintsDb.Owlcat.BlueprintFeature.SubtypeEvil)
                 .Map(bps =>
@@ -289,7 +289,7 @@ internal static partial class ExaltedResistance
                 .AddBlueprintDeferred(GeneratedGuid.ExaltedResistanceVsEvilOutsider);
 
         var feature =
-            InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ExaltedResistance"))
+            Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ExaltedResistance"))
                 .Combine(srVsEvilDescriptorFeature)
                 .Combine(srVsEvilOutsiderFeature)
                 .Map(bps =>

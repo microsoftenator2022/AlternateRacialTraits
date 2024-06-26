@@ -10,7 +10,7 @@ using Kingmaker.Blueprints.Classes.Selection;
 using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -29,8 +29,8 @@ internal static partial class FocusedStudyProgression
         "gain Skill Focus in a skill of their choice as a bonus feat. This racial trait replaces the " +
         $"bonus {new Link(Page.Feat, "feat")} trait.";
 
-    internal static IInitContext<BlueprintProgression> Create() =>
-        InitContext.NewBlueprint<BlueprintProgression>(GeneratedGuid.FocusedStudyProgression)
+    internal static IDeferred<BlueprintProgression> Create() =>
+        Deferred.NewBlueprint<BlueprintProgression>(GeneratedGuid.FocusedStudyProgression)
             .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.SkillFocusSelection)
             .Map(bps =>
             {

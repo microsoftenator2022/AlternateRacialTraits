@@ -14,7 +14,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -35,8 +35,8 @@ internal static partial class WeaponFamiliarity
     [Init]
     internal static void Init()
     {
-        //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
-        var context = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("HalfElfWeaponFamiliarity"))
+        //var Deferred = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
+        var context = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("HalfElfWeaponFamiliarity"))
             .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection)
             .Combine(BlueprintsDb.Owlcat.BlueprintFeature.ElvenWeaponFamiliarity)
             .Map(bps =>

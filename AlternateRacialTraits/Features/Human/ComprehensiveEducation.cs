@@ -14,7 +14,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -35,8 +35,8 @@ internal static partial class ComprehensiveEducation
         "each Knowledge or Lore skill that they gain as a class skill from their class levels. This " +
         "racial trait replaces the Skilled trait.";
 
-    internal static IInitContext<BlueprintFeature> Create() =>
-        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.ComprehensiveEducation)
+    internal static IDeferred<BlueprintFeature> Create() =>
+        Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.ComprehensiveEducation)
             .Map((BlueprintFeature blueprint) =>
             {
                 blueprint.m_DisplayName = Localized.DisplayName;

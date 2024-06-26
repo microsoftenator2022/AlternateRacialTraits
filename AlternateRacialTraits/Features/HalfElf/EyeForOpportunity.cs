@@ -15,7 +15,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -37,8 +37,8 @@ internal static partial class EyeForOpportunity
     [Init]
     internal static void Init()
     {
-        //var initContext = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
-        var context = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("EyeForOpportunity"))
+        //var Deferred = new BlueprintInitializationContext(Triggers.BlueprintsCache_Init);
+        var context = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("EyeForOpportunity"))
             .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.HalfElfHeritageSelection)
             .Map(bps =>
             {

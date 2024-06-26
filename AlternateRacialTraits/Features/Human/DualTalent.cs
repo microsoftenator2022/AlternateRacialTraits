@@ -15,7 +15,7 @@ using MicroWrath;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -36,7 +36,7 @@ internal static partial class DualTalent
         $"bonus to any one ability score, the bonus {new Link(Page.Feat, "feat")} trait " +
         "and the Skilled trait.";
 
-    internal static IInitContext<BlueprintFeature> Create()
+    internal static IDeferred<BlueprintFeature> Create()
     {
 #region Obsolete
         var stats = StatTypeHelper.Attributes
@@ -53,7 +53,7 @@ internal static partial class DualTalent
             {
                 var (guid, name, stat) = items;
 
-                return InitContext.NewBlueprint<BlueprintFeature>(guid, name)
+                return Deferred.NewBlueprint<BlueprintFeature>(guid, name)
                     .Map(blueprint =>
                     {
                         var statName = LocalizedTexts.Instance.Stats.GetText(stat);
@@ -83,7 +83,7 @@ internal static partial class DualTalent
                     //.AddOnTrigger(guid, Triggers.BlueprintsCache_Init);
             });
 
-        var selection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.DualTalentSelection, $"{nameof(DualTalent)}Selection")
+        var selection = Deferred.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.DualTalentSelection, $"{nameof(DualTalent)}Selection")
             .Combine(dualTalentFeatures.Collect())
             .Map(bps =>
             {
@@ -109,7 +109,7 @@ internal static partial class DualTalent
 
 #endregion
         var bonusFeature =
-            InitContext.NewBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.Get("DualTalentBonus"))
+            Deferred.NewBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.Get("DualTalentBonus"))
                 .Map(selection =>
                 {
                     selection.m_DisplayName = Localized.DisplayName;
@@ -144,7 +144,7 @@ internal static partial class DualTalent
                 .AddBlueprintDeferred(GeneratedGuid.DualTalentBonus);
                 //.AddOnTrigger(GeneratedGuid.DualTalentBonus, Triggers.BlueprintsCache_Init);
 
-        return InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.DualTalent)
+        return Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.DualTalent)
             .Combine(bonusFeature)
             .Map(bps =>
             {

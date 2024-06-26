@@ -9,7 +9,7 @@ using Kingmaker.Blueprints.Classes.Selection;
 
 using MicroWrath;
 
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 
 using Newtonsoft.Json.Linq;
 
@@ -20,13 +20,13 @@ internal static class OldBlueprints
     [Init]
     internal static void Init()
     {
-        _ = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Removed1)
+        _ = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Removed1)
             .AddOnTrigger(GeneratedGuid.Removed1, Triggers.BlueprintsCache_Init);
 
-        _ = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Removed2)
+        _ = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Removed2)
             .AddOnTrigger(GeneratedGuid.Removed2, Triggers.BlueprintsCache_Init);
         
-        _ = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("RemovedHumanBonusFeatSelection"))
+        _ = Deferred.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("RemovedHumanBonusFeatSelection"))
             .AddOnTrigger(GeneratedGuid.RemovedHumanBonusFeatSelection, Triggers.BlueprintsCache_Init);
     }
 }

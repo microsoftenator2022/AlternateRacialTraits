@@ -13,7 +13,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -33,8 +33,8 @@ internal static partial class GiantAncestry
         $"{new Link(Page.CMD, "CMD")}, but a –2 {new Link(Page.Penalty, "penalty")} on " +
         "Stealth checks. This racial trait replaces Skilled.";
 
-    internal static IInitContext<BlueprintFeature> Create() =>
-        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.GiantAncestry)
+    internal static IDeferred<BlueprintFeature> Create() =>
+        Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.GiantAncestry)
             .Map((BlueprintFeature blueprint) =>
             {
                 blueprint.m_DisplayName = Localized.DisplayName;

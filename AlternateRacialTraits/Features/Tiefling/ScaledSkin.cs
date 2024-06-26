@@ -21,7 +21,7 @@ using MicroWrath.BlueprintsDb;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -42,9 +42,9 @@ internal static partial class ScaledSkin
         $"+1 natural armor {new Link(Page.Bonus, "bonus")} to {new Link(Page.Armor_Class, "AC")}. " +
         "This racial trait replaces fiendish resistance.";
 
-    static IInitContextBlueprint<BlueprintFeature>[] CreateResistanceFeatures()
+    static IDeferredBlueprint<BlueprintFeature>[] CreateResistanceFeatures()
     {
-        var cold = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ScaledSkinCold"))
+        var cold = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ScaledSkinCold"))
             .Map(feature =>
              {
                  _ = feature.AddAddDamageResistanceEnergy(c =>
@@ -58,7 +58,7 @@ internal static partial class ScaledSkin
                  return feature;
              });
 
-        var electricity = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ScaledSkinElectricity"))
+        var electricity = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ScaledSkinElectricity"))
             .Map(feature =>
             {
                 _ = feature.AddAddDamageResistanceEnergy(c =>
@@ -72,7 +72,7 @@ internal static partial class ScaledSkin
                 return feature;
             });
 
-        var fire = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ScaledSkinFire"))
+        var fire = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("ScaledSkinFire"))
             .Map(feature =>
             {
                 _ = feature.AddAddDamageResistanceEnergy(c =>
@@ -109,9 +109,9 @@ internal static partial class ScaledSkin
             .ToArray();
     }
 
-    internal static IInitContextBlueprint<BlueprintFeatureSelection> CreateResistanceSelection()
+    internal static IDeferredBlueprint<BlueprintFeatureSelection> CreateResistanceSelection()
     {
-        var selection = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("ScaledSkinResistanceSelection"))
+        var selection = Deferred.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get("ScaledSkinResistanceSelection"))
             .Combine(CreateResistanceFeatures().Collect())
             .Map(bps =>
             {

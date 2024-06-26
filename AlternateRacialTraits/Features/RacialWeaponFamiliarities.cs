@@ -14,7 +14,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -91,12 +91,12 @@ internal static class RacialWeaponFamiliarities
             $"{new Link(Page.Weapon_Proficiency, "martial weapon")}.";
     }
         
-    internal static IEnumerable<(IInitContext<BlueprintFeature>, BlueprintGuid)> Create()
+    internal static IEnumerable<(IDeferred<BlueprintFeature>, BlueprintGuid)> Create()
     {
         //var gnome = BlueprintsDb.Owlcat.BlueprintRace.GnomeRace;
         //var halfling = BlueprintsDb.Owlcat.BlueprintRace.HalflingRace;
 
-        var gnomeWF = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.GnomishWeaponFamiliarity)
+        var gnomeWF = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.GnomishWeaponFamiliarity)
             .Map(blueprint =>
             {
                 blueprint.m_DisplayName = LocalizedStrings.Features_RacialWeaponFamiliarities_Gnome_DisplayName;
@@ -108,7 +108,7 @@ internal static class RacialWeaponFamiliarities
             })
             .AddOnTrigger(GeneratedGuid.GnomishWeaponFamiliarity, Triggers.BlueprintsCache_Init);
 
-        var halflingWF = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.HalflingWeaponFamiliarity)
+        var halflingWF = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.HalflingWeaponFamiliarity)
             .Map(blueprint =>
             {
                 blueprint.m_DisplayName = LocalizedStrings.Features_RacialWeaponFamiliarities_Halfling_DisplayName;
@@ -127,9 +127,9 @@ internal static class RacialWeaponFamiliarities
                 (BlueprintsDb.Owlcat.BlueprintRace.HalfOrcRace, BlueprintsDb.Owlcat.BlueprintFeature.OrcWeaponFamiliarity),
                 (BlueprintsDb.Owlcat.BlueprintRace.DwarfRace, BlueprintsDb.Owlcat.BlueprintFeature.DwarvenWeaponFamiliarity)
             }
-            .Select(pair => (InitContext.GetBlueprint(pair.race).Combine(pair.wf), pair.wf.BlueprintGuid))
-            .Append((InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.GnomeRace).Combine(gnomeWF), GeneratedGuid.GnomishWeaponFamiliarity))
-            .Append((InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HalflingRace).Combine(halflingWF), GeneratedGuid.HalfElfWeaponFamiliarity))
+            .Select(pair => (Deferred.GetBlueprint(pair.race).Combine(pair.wf), pair.wf.BlueprintGuid))
+            .Append((Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.GnomeRace).Combine(gnomeWF), GeneratedGuid.GnomishWeaponFamiliarity))
+            .Append((Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HalflingRace).Combine(halflingWF), GeneratedGuid.HalfElfWeaponFamiliarity))
             .Select(pair =>
             {
                 var (context, guid) = pair;

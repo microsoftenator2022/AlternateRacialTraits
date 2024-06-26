@@ -22,7 +22,7 @@ using Kingmaker.UnitLogic.FactLogic;
 using MicroWrath;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 using MicroWrath.Util.Linq;
@@ -31,14 +31,14 @@ namespace AlternateRacialTraits.Features;
 
 internal static partial class HeritageFeatures
 {
-    internal static IInitContextBlueprint<BlueprintFeature> CreateSkillFeature(
+    internal static IDeferredBlueprint<BlueprintFeature> CreateSkillFeature(
         IMicroBlueprint<BlueprintFeature> heritageFeature, string name,
         LocalizedString baseDisplayName)
     {
         var guid = GeneratedGuid.Get(name);
 
-        var blueprints = InitContext.NewBlueprint<BlueprintFeature>(guid)
-            .Combine(InitContext.GetBlueprint(heritageFeature))
+        var blueprints = Deferred.NewBlueprint<BlueprintFeature>(guid)
+            .Combine(Deferred.GetBlueprint(heritageFeature))
             .Map(bps =>
             {
                 var (skilledFeature, heritageFeature) = bps;
@@ -79,13 +79,13 @@ internal static partial class HeritageFeatures
             .AddBlueprintDeferred(guid);
     }
 
-    internal static IInitContext<Option<IInitContext<(BlueprintFeature, BlueprintAbility[])>>> CreateHeritageSLAFeature(
+    internal static IDeferred<Option<IDeferred<(BlueprintFeature, BlueprintAbility[])>>> CreateHeritageSLAFeature(
         IMicroBlueprint<BlueprintFeature> heritageFeature, string name, LocalizedString baseDisplayName)
     {
         var guid = GeneratedGuid.Get(name);
         
-        var maybeFeatures = InitContext.NewBlueprint<BlueprintFeature>(guid)
-            .Combine(InitContext.GetBlueprint(heritageFeature))
+        var maybeFeatures = Deferred.NewBlueprint<BlueprintFeature>(guid)
+            .Combine(Deferred.GetBlueprint(heritageFeature))
             .Map(bps =>
             {
                 var (feature, heritageFeature) = bps;
@@ -119,13 +119,13 @@ internal static partial class HeritageFeatures
         return
             maybeFeatures.MapOption(blueprints =>
             {
-                _ = new InitContext<BlueprintFeature>(() => blueprints.heritageFeature)
+                _ = new Deferred<BlueprintFeature>(() => blueprints.heritageFeature)
                     .OnDemand(blueprints.heritageFeature.AssetGuid);
 
-                var feature = new InitContext<BlueprintFeature>(() => blueprints.feature)
+                var feature = new Deferred<BlueprintFeature>(() => blueprints.feature)
                         .AddBlueprintDeferred(blueprints.feature.AssetGuid);
 
-                var facts = new InitContext<BlueprintAbility[]>(() => blueprints.facts);
+                var facts = new Deferred<BlueprintAbility[]>(() => blueprints.facts);
 
                 return (feature.Combine(facts));
             });
@@ -134,8 +134,8 @@ internal static partial class HeritageFeatures
     [LocalizedString]
     internal const string SkilledPrerequisiteDisplayName = "Skilled";
 
-    internal static IInitContext<BlueprintComponent[]> SkilledPrerequisiteComponents(
-        IInitContext<BlueprintFeature[]> skilledFeatures)
+    internal static IDeferred<BlueprintComponent[]> SkilledPrerequisiteComponents(
+        IDeferred<BlueprintFeature[]> skilledFeatures)
     {
         return skilledFeatures
             .Map(features =>
@@ -157,8 +157,8 @@ internal static partial class HeritageFeatures
     [LocalizedString]
     internal const string SLAPrerequisiteDisplayName = "Spell-like Ability";
 
-    internal static IInitContext<BlueprintComponent[]> SLAPrerequisiteComponents(
-        IInitContext<(BlueprintFeature feature, BlueprintAbility[] facts)[]> slaFeatures) =>
+    internal static IDeferred<BlueprintComponent[]> SLAPrerequisiteComponents(
+        IDeferred<(BlueprintFeature feature, BlueprintAbility[] facts)[]> slaFeatures) =>
         slaFeatures.Map(heritageFeatures =>
         {
             var facts = heritageFeatures

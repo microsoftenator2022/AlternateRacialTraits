@@ -13,7 +13,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -30,8 +30,8 @@ internal static class GraniteSkin
         $"They gain a +1 racial {new Link(Page.Bonus, "bonus")} to natural " +
         $"{new Link(Page.Armor_Class, "armor")}. This racial trait replaces Oread energy resistance.";
 
-    internal static IInitContext<BlueprintFeature> Create() =>
-        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(GraniteSkin)))
+    internal static IDeferred<BlueprintFeature> Create() =>
+        Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(GraniteSkin)))
             .Map(blueprint =>
             {
                 blueprint.m_DisplayName = LocalizedStrings.Features_Oread_GraniteSkin_DisplayName;

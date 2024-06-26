@@ -16,7 +16,7 @@ using MicroWrath;
 //using MicroWrath.BlueprintInitializationContext;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using static MicroWrath.Encyclopedia;
 
@@ -36,8 +36,8 @@ internal static partial class AwarenessFeature
         $"{new Link(Page.Concentration, "concentration checks")}. This racial trait replaces " +
         "humans’ bonus feat.";
 
-    internal static IInitContext<BlueprintFeature> Create() =>
-        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Awareness, "AwarenessFeature")
+    internal static IDeferred<BlueprintFeature> Create() =>
+        Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Awareness, "AwarenessFeature")
             .Map((BlueprintFeature blueprint) =>
             {
                 blueprint.m_DisplayName = Localized.DisplayName;

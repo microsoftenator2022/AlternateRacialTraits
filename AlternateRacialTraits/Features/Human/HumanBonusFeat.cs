@@ -14,7 +14,7 @@ using MicroWrath.BlueprintsDb;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -29,8 +29,8 @@ internal static partial class HumanBonusFeat
     [LocalizedString]
     public static readonly string Description = $"Humans select one extra {new Link(Page.Feat, "feat")} at 1st level.";
 
-    internal static IInitContext<BlueprintFeature> Create() =>
-        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("HumanBonusFeat"))
+    internal static IDeferred<BlueprintFeature> Create() =>
+        Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("HumanBonusFeat"))
             .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.BasicFeatSelection)
             .Map(bps =>
             {

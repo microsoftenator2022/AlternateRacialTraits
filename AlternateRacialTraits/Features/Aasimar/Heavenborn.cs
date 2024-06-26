@@ -20,7 +20,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -52,9 +52,9 @@ internal static partial class Heavenborn
         BlueprintsDb.Owlcat.BlueprintAbility.Sunburst
     ];
 
-    internal static IInitContextBlueprint<BlueprintFeature> Create()
+    internal static IDeferredBlueprint<BlueprintFeature> Create()
     {
-        var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(Heavenborn)))
+        var feature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(Heavenborn)))
             .Combine(AasimarFeatureSelection.SkilledPrerequisiteComponents())
             .Combine(AasimarFeatureSelection.SLAPrerequisiteComponents())
             .Map(bps =>

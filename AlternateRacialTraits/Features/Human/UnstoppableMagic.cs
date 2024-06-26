@@ -10,7 +10,7 @@ using Kingmaker.Enums;
 using MicroWrath;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -29,8 +29,8 @@ internal static class UnstoppableMagic
         $"against {new Link(Page.Spell_Resistance, "spell resistance")}. " +
         $"This racial {new Link(Page.Trait, "trait")} replaces the bonus {new Link(Page.Feat, "feat")} trait.";
 
-    internal static IInitContext<BlueprintFeature> Create() =>
-        InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.UnstoppableMagic)
+    internal static IDeferred<BlueprintFeature> Create() =>
+        Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.UnstoppableMagic)
             .Map((BlueprintFeature blueprint) =>
             {
                 blueprint.m_DisplayName = LocalizedStrings.Features_Human_UnstoppableMagic_DisplayName;

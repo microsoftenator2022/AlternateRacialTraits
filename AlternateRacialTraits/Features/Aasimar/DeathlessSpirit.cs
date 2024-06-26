@@ -23,7 +23,7 @@ using MicroWrath.BlueprintsDb;
 using MicroWrath.Components;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 
 using static MicroWrath.Encyclopedia;
@@ -86,12 +86,12 @@ internal static partial class DeathlessSpirit
         }
     }
 
-    internal static IInitContextBlueprint<BlueprintFeature> Create()
+    internal static IDeferredBlueprint<BlueprintFeature> Create()
     {
         var guid = new BlueprintGuid(Guid.NewGuid());
 
         return
-            InitContext.NewBlueprint<BlueprintFeature>(guid, nameof(DeathlessSpirit))
+            Deferred.NewBlueprint<BlueprintFeature>(guid, nameof(DeathlessSpirit))
                 .Map(blueprint =>
                 {
                     blueprint.m_DisplayName = Localized.DisplayName;

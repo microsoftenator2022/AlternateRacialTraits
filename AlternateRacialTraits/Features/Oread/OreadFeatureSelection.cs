@@ -12,7 +12,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 using MicroWrath.Util.Linq;
@@ -31,14 +31,14 @@ internal static class OreadFeatureSelection
     {
         var noTraits =
             NoAdditionalTraitsPrototype.Setup(
-                InitContext.NewBlueprint<BlueprintFeature>(
+                Deferred.NewBlueprint<BlueprintFeature>(
                     GeneratedGuid.Get("NoAlternateOreadTraits")))
                 .AddBlueprintDeferred(GeneratedGuid.NoAlternateOreadTraits);
 
         var graniteSkin = GraniteSkin.Create();
         var crystallineForm = CrystallineForm.Create();
 
-        var context = InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get(nameof(OreadFeatureSelection)))
+        var context = Deferred.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.Get(nameof(OreadFeatureSelection)))
             .Combine(BlueprintsDb.Owlcat.BlueprintRace.OreadRace)
             .Map(bps =>
             {

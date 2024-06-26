@@ -21,7 +21,7 @@ using MicroWrath.Components;
 using MicroWrath.Constructors;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 using MicroWrath.Util.Linq;
@@ -35,13 +35,13 @@ internal static partial class HumanFeatureSelection
     [LocalizedString]
     public static readonly string Description = "The following alternate traits are available";
 
-    internal static IInitContext<BlueprintFeatureSelection> Create()
+    internal static IDeferred<BlueprintFeatureSelection> Create()
     {
-        var bonusFeatDummy = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.BasicFeatSelectionDummy)
+        var bonusFeatDummy = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.BasicFeatSelectionDummy)
             .AddBlueprintDeferred(GeneratedGuid.BasicFeatSelectionDummy);
 
         var selection =
-            InitContext.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.HumanFeatureSelection)
+            Deferred.NewBlueprint<BlueprintFeatureSelection>(GeneratedGuid.HumanFeatureSelection)
                 .Map((BlueprintFeatureSelection selection) =>
                 {
                     MicroLogger.Debug(() => $"Setting up {nameof(HumanFeatureSelection)}");
@@ -80,7 +80,7 @@ internal static partial class HumanFeatureSelection
 
         var noMoreSelections =
                 NoAdditionalTraitsPrototype.Setup(
-                    InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.NoAdditionaHumanTraits))
+                    Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.NoAdditionaHumanTraits))
                     .AddBlueprintDeferred(GeneratedGuid.NoAdditionaHumanTraits)
             .Combine(bonusFeatDummy)
             .Map(bps =>

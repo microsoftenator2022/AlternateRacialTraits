@@ -28,7 +28,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -252,9 +252,9 @@ internal static partial class CrystallineForm
         }
     }
 
-    internal static IInitContext<BlueprintFeature> Create()
+    internal static IDeferred<BlueprintFeature> Create()
     {
-        var resource = InitContext.NewBlueprint<BlueprintAbilityResource>(GeneratedGuid.Get("CrystallineFormResource"))
+        var resource = Deferred.NewBlueprint<BlueprintAbilityResource>(GeneratedGuid.Get("CrystallineFormResource"))
             .Map(resource =>
             {
                 resource.m_MaxAmount = new() { BaseValue = 1 };
@@ -263,7 +263,7 @@ internal static partial class CrystallineForm
             })
             .AddOnTrigger(GeneratedGuid.CrystallineFormResource, Triggers.BlueprintsCache_Init);
 
-        var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("CrystallineForm"))
+        var feature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("CrystallineForm"))
             .Combine(resource)
             .Combine(BlueprintsDb.Owlcat.BlueprintItemWeapon.RayItem)
             .Map(bps =>

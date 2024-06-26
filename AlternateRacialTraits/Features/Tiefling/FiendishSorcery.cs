@@ -21,7 +21,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 using MicroWrath.Util.Linq;
@@ -34,9 +34,9 @@ internal static partial class FiendishSorcery
     [LocalizedString]
     internal const string DisplayName = "Fiendish Sorcery";
 
-    internal static readonly Lazy<IInitContextBlueprint<BlueprintFeature>> FiendishSorceryFeature = new(() =>
+    internal static readonly Lazy<IDeferredBlueprint<BlueprintFeature>> FiendishSorceryFeature = new(() =>
     {
-        var effectFeature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("FiendishSorceryEffect"))
+        var effectFeature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("FiendishSorceryEffect"))
             .Map(bp =>
             {
                 bp.HideInUI = true;
@@ -45,13 +45,13 @@ internal static partial class FiendishSorcery
             })
             .AddBlueprintDeferred(GeneratedGuid.FiendishSorceryEffect);
 
-        var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("FiendishSorcery"))
+        var feature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get("FiendishSorcery"))
             .Combine(effectFeature)
-            .Combine(InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.TieflingHeritageClassic))
-            .Combine(InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.TieflingHeritageDevil))
-            .Combine(InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.AbyssalBloodlineRequisiteFeature))
-            .Combine(InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.InfernalBloodlineRequisiteFeature))
-            .Combine(InitContext.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.TieflingHeritageSelection))
+            .Combine(Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.TieflingHeritageClassic))
+            .Combine(Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.TieflingHeritageDevil))
+            .Combine(Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.AbyssalBloodlineRequisiteFeature))
+            .Combine(Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.InfernalBloodlineRequisiteFeature))
+            .Combine(Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeatureSelection.TieflingHeritageSelection))
             .Map(bps =>
             {
                 var (feature, effectFeature, classic, devil, abyssal, infernal, heritageSelection) = bps.Expand();

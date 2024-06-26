@@ -23,7 +23,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 using MicroWrath.Util.Linq;
@@ -57,8 +57,8 @@ public class AddWeaponProficiencyParametrized : AddProficiencies
 
 internal static class WeaponProficiencySelections
 {
-    private static IInitContext<BlueprintParametrizedFeature> ExoticWeaponProficiencyParametrized() =>
-        InitContext
+    private static IDeferred<BlueprintParametrizedFeature> ExoticWeaponProficiencyParametrized() =>
+        Deferred
             .NewBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.ExoticWeaponProficiencyParametrized)
             .Combine(BlueprintsDb.Owlcat.BlueprintFeatureSelection.ExoticWeaponProficiencySelection)
             .Map(bps =>
@@ -85,9 +85,9 @@ internal static class WeaponProficiencySelections
     [LocalizedString]
     internal const string MartialWeaponProficiencyDescription = "You become proficient with a single martial weapon";
 
-    private static IInitContext<BlueprintParametrizedFeature>
+    private static IDeferred<BlueprintParametrizedFeature>
         MartialWeaponProficiencyParametrized() =>
-            InitContext.NewBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.MartialWeaponProficiencyParametrized)
+            Deferred.NewBlueprint<BlueprintParametrizedFeature>(GeneratedGuid.MartialWeaponProficiencyParametrized)
             .Map((BlueprintParametrizedFeature blueprint) =>
             {
                 blueprint.m_DisplayName = LocalizedStrings.Features_WeaponProficiencySelections_MartialWeaponProficiencyDisplayName;

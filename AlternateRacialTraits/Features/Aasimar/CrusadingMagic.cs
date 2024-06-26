@@ -14,7 +14,7 @@ using Kingmaker.Enums;
 using MicroWrath;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -36,9 +36,9 @@ internal static partial class CrusadingMagic
         $"{new Link(Page.Knowledge_Arcana, "Knowledge (Arcana)")} checks. " +
         $"This racial {new Link(Page.Trait, "trait")} replaces the skilled and spell-like ability racial traits.";
 
-    internal static IInitContextBlueprint<BlueprintFeature> Create()
+    internal static IDeferredBlueprint<BlueprintFeature> Create()
     {
-        var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(CrusadingMagic)))
+        var feature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(CrusadingMagic)))
             .Combine(AasimarFeatureSelection.SLAPrerequisiteComponents())
             .Combine(AasimarFeatureSelection.SkilledPrerequisiteComponents())
             .Map(bps =>

@@ -17,7 +17,7 @@ using MicroWrath;
 using MicroWrath.BlueprintsDb;
 using MicroWrath.Extensions;
 using MicroWrath.Extensions.Components;
-using MicroWrath.InitContext;
+using MicroWrath.Deferred;
 using MicroWrath.Localization;
 using MicroWrath.Util;
 
@@ -39,9 +39,9 @@ internal static partial class CelestialCrusader
         //"or effects created by evil outsiders;" +
         $"This racial {new Link(Page.Trait, "trait")} replaces celestial resistance and heritage skill bonuses.";
 
-    internal static IInitContextBlueprint<BlueprintFeature> Create()
+    internal static IDeferredBlueprint<BlueprintFeature> Create()
     {
-        var feature = InitContext.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(CelestialCrusader)))
+        var feature = Deferred.NewBlueprint<BlueprintFeature>(GeneratedGuid.Get(nameof(CelestialCrusader)))
             .Combine(BlueprintsDb.Owlcat.BlueprintFeature.SubtypeEvil)
             .Combine(BlueprintsDb.Owlcat.BlueprintFeature.OutsiderType)
             .Combine(AasimarFeatureSelection.SkilledPrerequisiteComponents())
