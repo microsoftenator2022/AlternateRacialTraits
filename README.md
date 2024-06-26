@@ -41,8 +41,6 @@ Saves made with the previous version will hopefully still load (no guarantees th
 * Scaled Skin
 * Smite Good
 
-More to come.
-
 ## Install Instructions
  1. Download the mod from the releases page
  2. Using [Unity Mod Manager](https://github.com/newman55/unity-mod-manager) - on the mods tab, drag the zip onto the window
