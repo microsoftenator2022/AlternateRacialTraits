@@ -162,7 +162,6 @@ internal static partial class DeathlessSpirit
                     MicroLogger.Debug(() => $"Found matching guid at {value.Path}");
 
                     valuesToFix.Add(value);
-
                 }
             }
 

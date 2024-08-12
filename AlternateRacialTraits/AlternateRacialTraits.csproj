@@ -1,16 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenerateCustomPropsFile">
+  <Import Project="$(SolutionDir)GamePath.props" Condition="Exists('$(SolutionDir)GamePath.props')" />
+  
   <PropertyGroup>
     <TargetFramework>net481</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <RestoreAdditionalProjectSources>https://api.nuget.org/v3/index.json</RestoreAdditionalProjectSources>
+    <WrathData>$(LocalAppData)Low\Owlcat Games\Pathfinder Wrath Of The Righteous</WrathData>
     <OutDir>$(SolutionDir)\bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)</OutDir>
   </PropertyGroup>
 
   <PropertyGroup>
-    <VersionPrefix>1.5.2</VersionPrefix>
+    <VersionPrefix>1.5.3</VersionPrefix>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -18,33 +21,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="0Harmony" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityModManager\0Harmony.dll" Private="False" />
-    <Reference Include="Assembly-CSharp-firstpass" HintPath="$(WrathPath)\Wrath_Data\Managed\Assembly-CSharp-firstpass.dll" Private="False" />
-    <Reference Include="Newtonsoft.Json" HintPath="$(WrathPath)\Wrath_Data\Managed\Newtonsoft.Json.dll" Private="False" />
-    <Reference Include="Owlcat.Runtime.Core" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Core.dll" Private="False" />
-    <Reference Include="Owlcat.Runtime.Visual" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Visual.dll" Private="False" />
-    <Reference Include="Owlcat.Runtime.UniRx" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.UniRx.dll" Private="False" />
-    <Reference Include="Owlcat.Runtime.Validation" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Validation.dll" Private="False" />
-    <Reference Include="Owlcat.SharedTypes" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.SharedTypes.dll" Private="False" />
-    <Reference Include="Unity.TextMeshPro" HintPath="$(WrathPath)\Wrath_Data\Managed\Unity.TextMeshPro.dll" Private="False" />
-    <Reference Include="UnityEngine" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.dll" Private="False" />
-    <Reference Include="UnityEngine.AssetBundleModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.AssetBundleModule.dll" Private="False" />
-    <Reference Include="UnityEngine.CoreModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.CoreModule.dll" Private="False" />
-    <Reference Include="UnityEngine.IMGUIModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.IMGUIModule.dll" Private="False" />
-    <Reference Include="UnityEngine.ParticleSystemModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.ParticleSystemModule.dll" Private="False" />
-    <Reference Include="UnityEngine.UI" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.UI.dll" Private="False" />
-    <Reference Include="UnityEngine.UIModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.UIModule.dll" Private="False" />
-    <Reference Include="Unity.RenderPipelines.Core.Runtime" HintPath="$(WrathPath)\Wrath_Data\Managed\Unity.RenderPipelines.Core.Runtime.dll" Private="False" />
-    <Reference Include="UniRx" HintPath="$(WrathPath)\Wrath_Data\Managed\UniRx.dll" Private="False" />
-    <Reference Include="UnityModManager" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityModManager\UnityModManager.dll" Private="False" />
+    <Reference Include="$(WrathInstallDir)\Wrath_Data\Managed\Unity*.dll" Private="false" />
+    <Reference Include="$(WrathInstallDir)\Wrath_Data\Managed\Core*.dll" Private="false" />
+    <Reference Include="$(WrathInstallDir)\Wrath_Data\Managed\Owlcat*.dll" Publicize="true" Private="false" />
+    <Reference Include="$(WrathInstallDir)\Wrath_Data\Managed\Assembly-CSharp.dll*" Publicize="true" Private="false" />
+    <Reference Include="$(WrathInstallDir)\Wrath_Data\Managed\UnityModManager\UnityModManager.dll*" Publicize="true" Private="false" />
+    <Reference Include="$(WrathInstallDir)\Wrath_Data\Managed\Newtonsoft.Json.dll*" Private="false" />
+    <Reference Include="$(WrathInstallDir)\Wrath_Data\Managed\UnityModManager\0Harmony.dll*" Private="false" />
+    <Reference Include="$(WrathInstallDir)\Wrath_Data\Managed\UniRx.dll*" Private="False" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AssemblyPublicizer" Version="1.0.2">
-      <PrivateAssets>none</PrivateAssets>
-      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="MicroWrath" Version="0.8.6-*" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" IncludeAssets="build; contentfiles" Version="0.4.2" PrivateAssets="all" />
+    <PackageReference Include="MicroWrath" Version="0.10.0-*" />
   </ItemGroup>
 
   <Target Name="GenerateJson" AfterTargets="Build">
@@ -71,6 +61,35 @@
 
   <Target Name="ZipRelease" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
     <ZipDirectory SourceDirectory="$(OutDir)" DestinationFile="$(SolutionDir)\bin\$(MSBuildProjectName)-$(Version).zip" Overwrite="true" />
+  </Target>
+
+  <Target Name="GenerateCustomPropsFile" BeforeTargets="ResolveReferences;Restore" Condition="$(WrathInstallDir) == ''">
+    <Exec Command="findstr /C:&quot;Mono path[0]&quot; &quot;$(WrathData)\Player.log&quot;" IgnoreExitCode="true" ConsoleToMSBuild="true">
+      <Output TaskParameter="ExitCode" PropertyName="ExitCode" />
+      <Output TaskParameter="ConsoleOutput" PropertyName="MonoPathLine" />
+    </Exec>
+
+    <PropertyGroup>
+      <MonoPathRegex>^Mono path\[0\] = '(.*?)/Wrath_Data/Managed'$</MonoPathRegex>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <WrathInstallDir>$([System.Text.RegularExpressions.Regex]::Match($(MonoPathLine), $(MonoPathRegex)).Groups[1].Value)</WrathInstallDir>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(SolutionDir)GamePath.props" Lines="&lt;Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'&gt;
+  &lt;PropertyGroup&gt;
+    &lt;WrathInstallDir&gt;$(WrathInstallDir)&lt;/WrathInstallDir&gt;
+  &lt;/PropertyGroup&gt;
+  &lt;ItemGroup&gt;
+    &lt;None Include=&quot;GamePath.props&quot; &gt;
+      &lt;Visible&gt;False&lt;/Visible&gt;
+    &lt;/None&gt;
+  &lt;/ItemGroup&gt;
+&lt;/Project&gt;" Overwrite="true" Encoding="utf-8" />
+  </Target>
+  <Target Name="DeleteCustomPropsFile" BeforeTargets="Clean">
+    <Delete Files="GamePath.props" />
   </Target>
 
 </Project>

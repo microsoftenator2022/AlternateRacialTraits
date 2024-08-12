@@ -45,19 +45,6 @@ internal class ContextSpellResistance : UnitFactComponentDelegate<ContextSpellRe
     public ConditionsChecker Conditions = new();
     public ContextValue Value = 0;
 
-    //public bool CanApply(MechanicsContext context)
-    //{
-    //    var result = Conditions.Check();
-
-    //    MicroLogger.Debug(() => "Condition check");
-    //    MicroLogger.Debug(() => $"Caster: {context.MaybeCaster}");
-    //    MicroLogger.Debug(() => $"Owner: {context.MaybeOwner}");
-
-    //    MicroLogger.Debug(() => $"Check passed? {result}");
-
-    //    return result;
-    //}
-    
     public override void OnTurnOn()
     {
         var value = this.Value.Calculate(base.Fact.MaybeContext);
