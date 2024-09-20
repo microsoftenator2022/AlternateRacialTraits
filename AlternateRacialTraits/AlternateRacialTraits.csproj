@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <VersionPrefix>1.5.4</VersionPrefix>
+    <VersionPrefix>1.5.5</VersionPrefix>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -39,16 +39,15 @@
 
   <Target Name="GenerateJson" AfterTargets="Build">
     <GenerateGuidsFile WrathPath="$(WrathPath)" Assembly="$(OutDir)\$(MSBuildProjectName).dll" GuidsFile="guids.json" />
-    <InfoJson
-      OutputPath="$(OutDir)"
-      Id="$(MSBuildProjectName)"
-      Version="$(VersionPrefix)"
-      DisplayName="Alternate Racial Traits"
-      Author="microsoftenator"
-      GameVersion="2.3.0"
-      ManagerVersion="0.27.11"
-      HomePage="https://github.com/microsoftenator2022/AlternateRacialTraits"
-      Repository="https://raw.githubusercontent.com/microsoftenator2022/AlternateRacialTraits/master/Repository.json" />
+    <InfoJson OutputPath="$(OutDir)"
+              Id="$(MSBuildProjectName)"
+              Version="$(VersionPrefix)"
+              DisplayName="Alternate Racial Traits"
+              Author="microsoftenator"
+              GameVersion="2.3.0"
+              ManagerVersion="0.27.11"
+              HomePage="https://github.com/microsoftenator2022/AlternateRacialTraits"
+              Repository="https://raw.githubusercontent.com/microsoftenator2022/AlternateRacialTraits/master/Repository.json" />
   </Target>
 
   <Target Name="Deploy" AfterTargets="Build">
@@ -77,16 +76,7 @@
       <WrathInstallDir>$([System.Text.RegularExpressions.Regex]::Match($(MonoPathLine), $(MonoPathRegex)).Groups[1].Value)</WrathInstallDir>
     </PropertyGroup>
 
-    <WriteLinesToFile File="$(SolutionDir)GamePath.props" Lines="&lt;Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'&gt;
-  &lt;PropertyGroup&gt;
-    &lt;WrathInstallDir&gt;$(WrathInstallDir)&lt;/WrathInstallDir&gt;
-  &lt;/PropertyGroup&gt;
-  &lt;ItemGroup&gt;
-    &lt;None Include=&quot;GamePath.props&quot; &gt;
-      &lt;Visible&gt;False&lt;/Visible&gt;
-    &lt;/None&gt;
-  &lt;/ItemGroup&gt;
-&lt;/Project&gt;" Overwrite="true" Encoding="utf-8" />
+    <WriteLinesToFile File="$(SolutionDir)GamePath.props" Lines="&lt;Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'&gt;&#xD;&#xA;  &lt;PropertyGroup&gt;&#xD;&#xA;    &lt;WrathInstallDir&gt;$(WrathInstallDir)&lt;/WrathInstallDir&gt;&#xD;&#xA;  &lt;/PropertyGroup&gt;&#xD;&#xA;  &lt;ItemGroup&gt;&#xD;&#xA;    &lt;None Include=&quot;GamePath.props&quot; &gt;&#xD;&#xA;      &lt;Visible&gt;False&lt;/Visible&gt;&#xD;&#xA;    &lt;/None&gt;&#xD;&#xA;  &lt;/ItemGroup&gt;&#xD;&#xA;&lt;/Project&gt;" Overwrite="true" Encoding="utf-8" />
   </Target>
   <Target Name="DeleteCustomPropsFile" BeforeTargets="Clean">
     <Delete Files="GamePath.props" />

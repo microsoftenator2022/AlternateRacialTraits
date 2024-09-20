@@ -75,7 +75,7 @@ internal static partial class DualTalent
                             c.Descriptor = ModifierDescriptor.Racial;
                         });
 
-                        _ = blueprint.AddComponent<PrerequisiteNoRaceStatBonus>(c => c.Stat = stat);
+                        _ = blueprint.AddComponent<PrerequisiteRacialStatBonus>(c => { c.Stat = stat; c.Not = true; });
 
                         return blueprint;
                     })
@@ -137,7 +137,7 @@ internal static partial class DualTalent
                         //c.ActionPriority = Kingmaker.UnitLogic.Class.LevelUp.Actions.LevelUpActionPriority.RaceStat;
                     });
 
-                    _ = selection.AddComponent<PrerequisiteNoRaceStatBonus>(c => c.Parametrized = true);
+                    _ = selection.AddComponent<PrerequisiteRacialStatBonus>(c => { c.Parametrized = true; c.Not = true; });
 
                     return selection;
                 })

@@ -33,6 +33,7 @@ using MicroWrath.Localization;
 using MicroWrath.Util;
 
 using static MicroWrath.Encyclopedia;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AlternateRacialTraits.Features.Oread;
 
@@ -218,15 +219,16 @@ internal static partial class CrystallineForm
 
             [HarmonyPatch(typeof(UnitCombatState), nameof(UnitCombatState.CannotBeDeflected))]
             [HarmonyPostfix]
+            [SuppressMessage("PatchMethod", "MHA008:Assignment to non-ref patch method argument", Justification = "No")]
             static bool UnitCombatState_CannotBeDeflected_Postfix(bool __result, TimeSpan now, Projectile projectile, UnitEntityData attacker, UnitCombatState __instance)
             {
-#if false
+                #if false
                 MicroLogger.Debug(() => $"!this.Unit.Descriptor.State.Features.DeflectArrows? {!__instance.Unit.Descriptor.State.Features.DeflectArrows}");
                 MicroLogger.Debug(() => $"now - this.m_LastDeflectArrowTime < 1.Rounds().Seconds? {now - __instance.m_LastDeflectArrowTime < 1.Rounds().Seconds}");
                 MicroLogger.Debug(() => $"projectile.AttackRoll.Weapon.Blueprint.IsNatural? {projectile.AttackRoll.Weapon.Blueprint.IsNatural}");
                 MicroLogger.Debug(() => "(attacker != null && Rulebook.Trigger<RuleCheckTargetFlatFooted>(new RuleCheckTargetFlatFooted(attacker, this.Unit)).IsFlatFooted)? " +
                 $"{(attacker != null && Rulebook.Trigger<RuleCheckTargetFlatFooted>(new RuleCheckTargetFlatFooted(attacker, __instance.Unit)).IsFlatFooted)}");
-#endif
+                #endif
                 if (!__result && projectile.Target.Unit.IsAlly(attacker) && projectile.AttackRoll.AutoHit)
                     __result = true;
 

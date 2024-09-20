@@ -17,12 +17,12 @@ namespace AlternateRacialTraits.Features.HalfElf;
 internal static class KindredRaisedFix
 {
     [Init]
-    static void Init()
+    internal static void Init()
     {
         _ = Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintFeature.KindredRaisedHalfElf)
             .Map(blueprint =>
             {
-                _ = blueprint.AddComponent<PrerequisiteNoRaceStatBonus>(c => c.Stat = StatType.Charisma);
+                _ = blueprint.AddComponent<PrerequisiteRacialStatBonus>(c => { c.Stat = StatType.Charisma; c.Not = true; });
 
                 return blueprint;
             })

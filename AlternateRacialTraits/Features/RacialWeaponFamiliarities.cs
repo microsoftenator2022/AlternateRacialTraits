@@ -129,7 +129,7 @@ internal static class RacialWeaponFamiliarities
             }
             .Select(pair => (Deferred.GetBlueprint(pair.race).Combine(pair.wf), pair.wf.BlueprintGuid))
             .Append((Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.GnomeRace).Combine(gnomeWF), GeneratedGuid.GnomishWeaponFamiliarity))
-            .Append((Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HalflingRace).Combine(halflingWF), GeneratedGuid.HalfElfWeaponFamiliarity))
+            .Append((Deferred.GetBlueprint(BlueprintsDb.Owlcat.BlueprintRace.HalflingRace).Combine(halflingWF), GeneratedGuid.HalflingWeaponFamiliarity))
             .Select(pair =>
             {
                 var (context, guid) = pair;

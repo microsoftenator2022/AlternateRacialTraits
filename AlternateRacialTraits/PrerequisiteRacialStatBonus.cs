@@ -16,7 +16,7 @@ using MicroWrath.Localization;
 namespace AlternateRacialTraits;
 
 [AllowedOn(typeof(BlueprintFeature))]
-internal partial class PrerequisiteNoRaceStatBonus : Prerequisite, IParamPrerequisite
+internal partial class PrerequisiteRacialStatBonus : Prerequisite, IParamPrerequisite
 {
     public StatType Stat;
     public bool Parametrized;
@@ -25,7 +25,7 @@ internal partial class PrerequisiteNoRaceStatBonus : Prerequisite, IParamPrerequ
     {
         var statValue = unit.Stats.Attributes.First(s => s.Type == stat);
 
-        return !statValue.Modifiers.Any(m =>
+        return this.Not ^ statValue.Modifiers.Any(m =>
             m.ModDescriptor == ModifierDescriptor.Racial &&
             m.Source.Blueprint == unit.Progression.Race &&
             m.ModValue > 0);
@@ -35,7 +35,7 @@ internal partial class PrerequisiteNoRaceStatBonus : Prerequisite, IParamPrerequ
     {
         if (Parametrized && parametrizedFeature.ParameterType is FeatureParameterType.Skill)
         {
-            return Check(unit, param.StatType!.Value);
+            return this.Check(unit, param.StatType!.Value);
         }
 
         return true;
@@ -49,12 +49,17 @@ internal partial class PrerequisiteNoRaceStatBonus : Prerequisite, IParamPrerequ
         if (Parametrized)
             return true;
 
-        return Check(unit, Stat);
+        return this.Check(unit, Stat);
     }
+
+    public bool Not;
 
     [LocalizedString]
     public const string NoRacialAttributeText = "Doesn't have the following racial bonus";
 
+    [LocalizedString]
+    public const string HasRacialAttributeText = "Has the following racial bonus";
+
     public override string GetUITextInternal(UnitDescriptor unit) =>
-        $"{Localized.NoRacialAttributeText}: {LocalizedTexts.Instance.Stats.GetText(Stat)}";
+        $"{(this.Not ? Localized.NoRacialAttributeText : HasRacialAttributeText)}: {LocalizedTexts.Instance.Stats.GetText(Stat)}";
 }
